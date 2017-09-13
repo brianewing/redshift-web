@@ -1,20 +1,23 @@
 .strip:first-child {
-	margin-top: 10px;
-	/*margin: 0px;*/
-	/*padding: 0px;*/
+	/*margin-top: 10px;*/
 }
 
 .strip {
-	/*height: 100%;*/
+	height: 100%;
+	padding: 5px 0px;
+	/*border: 3px solid green;*/
 	/*opacity: 0.9;*/
 }
 
 .led {
 	display: inline-block;
 	width: 16px;
-	height: 350px;
+	/*width: 1.60vw;*/
+	height: 100%;
+	/*height: 350px;*/
 	/*height: 1px;*/
 	margin-right: 3px;
+	/*margin-right: 0.3vw;*/
 	border: 1px solid rgba(255,255,255,0.25);
 	transition: height 1s ease-in-out;
 

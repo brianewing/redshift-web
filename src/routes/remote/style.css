@@ -1,7 +1,10 @@
 .home {
-	padding: 56px 0px;
-	min-height: 100%;
+	position: absolute;
+	top: 57px;
+	/*padding: 56px 0px;*/
+	bottom: 0px;
 	width: 100%;
+	/*border: 1px solid red;*/
 
 	text-align: center;
 }

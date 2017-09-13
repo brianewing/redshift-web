@@ -23,12 +23,12 @@ export default class App extends Component {
 		}, 1000)
 	}
 
-	// componentDidUpdate() {
-	// 	if(!this.state.stripBuffer) return
-	// 	let darken = (x) => Math.max(0, x - 230)
-	// 	let cssColor = `rgb(${this.state.stripBuffer[1].map(darken).join(',')})`
-	// 	document.body.style.backgroundColor = cssColor
-	// }
+	componentDidUpdate() {
+		if(!this.state.stripBuffer) return
+		let darken = (x) => Math.max(0, x - 220)
+		let cssColor = `rgb(${this.state.stripBuffer[1].map(darken).join(',')})`
+		document.body.style.backgroundColor = cssColor
+	}
 
 	handleMessage = msg => {
 		this.messageCount += 1
