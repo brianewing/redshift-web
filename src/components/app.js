@@ -25,7 +25,7 @@ export default class App extends Component {
 
 	componentDidUpdate() {
 		if(!this.state.stripBuffer) return
-		let darken = (x) => Math.max(0, x - 220)
+		let darken = (x) => Math.max(0, x - 230)
 		let cssColor = `rgb(${this.state.stripBuffer[1].map(darken).join(',')})`
 		document.body.style.backgroundColor = cssColor
 	}
