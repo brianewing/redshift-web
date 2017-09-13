@@ -1,0 +1,26 @@
+.strip:first-child {
+	margin-top: 10px;
+	/*margin: 0px;*/
+	/*padding: 0px;*/
+}
+
+.strip {
+	/*height: 100%;*/
+	/*opacity: 0.9;*/
+}
+
+.led {
+	display: inline-block;
+	width: 16px;
+	height: 350px;
+	/*height: 1px;*/
+	margin-right: 3px;
+	border: 1px solid rgba(255,255,255,0.25);
+	transition: height 1s ease-in-out;
+
+	/*filter: sepia(30%);*/
+}
+
+.strip:hover .led {
+	/*height: 700px;*/
+}
