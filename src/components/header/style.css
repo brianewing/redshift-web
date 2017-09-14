@@ -9,7 +9,7 @@
 	/*background: #673AB7;*/
 	/*background: #111;*/
 	/*box-shadow: 0 0 1px rgba(255, 255, 255, 0.4);*/
-	/*background: rgba(0,0,0,0.5);*/
+	background: rgba(0,0,0,0);
 	text-shadow: 1px 1px 0px black;
 	z-index: 50;
 }
@@ -19,17 +19,18 @@
 	content: '';
 	z-index: -1;
 	top: 0.5px;
-	left: 0.5px;
-	right: 1.2px;
+	/*left: 0.5px;*/
+	/*right: 1.2px;*/
+	left: 0; right: 0;
 	bottom: 0.5px;
 	/*width: 100%;*/
 	/*height: 100%;*/
-	background: rgba(0,0,0,0.87); /* 0.75 nice with blur */
-	transition: 0.5s background-color;
+	background: rgba(0,0,0,0.77); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
+	transition: 1s background-color;
 }
 .header:hover:before {
-	/*background: rgba(0,0,0,0.55);*/
-	transition-duration: 1s;
+	background: rgba(0,0,0,0.35);
+	transition-duration: 2s;
 }
 .header:hover {
 	/*opacity: 0.96;*/

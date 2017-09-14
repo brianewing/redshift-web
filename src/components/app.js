@@ -15,20 +15,35 @@ export default class App extends Component {
 
 	messageCount = 0
 	mps = 0
+	toggleCount = 0
 
 	componentWillMount() {
 		setInterval(() => {
 			this.mps = this.messageCount
 			this.messageCount = 0
 		}, 1000)
+
+		window.addEventListener('orientationchange', this.orientationChange)
+		window.addEventListener('visibilitychange', this.visibilityChange)
+		window.addEventListener('blur', () => this.setState({hide: true}))
+		window.addEventListener('blur', () => this.setState({hide: false}))
 	}
 
-	componentDidUpdate() {
-		if(!this.state.stripBuffer) return
-		let darken = (x) => Math.max(0, x - 230)
-		let cssColor = `rgb(${this.state.stripBuffer[1].map(darken).join(',')})`
-		document.body.style.backgroundColor = cssColor
+	orientationChange = (e) => {
+		this.setState({hide: true})
+		setTimeout(() => this.setState({hide: false}), 0)
 	}
+
+	visibilityChange = (e) => {
+		this.setState({hide: document.hidden})
+	}
+
+	// componentDidUpdate() {
+	// 	if(!this.state.stripBuffer) return
+	// 	let darken = (x) => Math.max(0, x - 220)
+	// 	let cssColor = `rgb(${this.state.stripBuffer[1].map(darken).join(',')})`
+	// 	document.body.style.backgroundColor = cssColor
+	// }
 
 	handleMessage = msg => {
 		this.messageCount += 1
@@ -36,18 +51,20 @@ export default class App extends Component {
 			this.setState({stripBuffer: msg.buffer})
 	}
 
-	toggleOff = () => {
+	toggleOff = (e) => {
 		this.mps = 0
-		this.setState({off: !this.state.off})
+		setTimeout(() => this.setState({off: !this.state.off}), 0)
 	}
 
-	render({ }, { stripBuffer, off }) {
+	render({ }, { stripBuffer, off, hide }) {
+		if(hide) return;
+		let headerExtra = (document.body.clientWidth > 320) && `${this.mps} mps`
+
 		return (
 			<div id="app">
 				<Header stripBuffer={stripBuffer} toggleOff={this.toggleOff}>
 					<div style="padding-top: 20px; display: inline-block">
-						{this.mps} mps
-						{false && <LEDStrip buffer={stripBuffer && stripBuffer.slice(0,30)} />}
+						{headerExtra}
 					</div>
 				</Header>
 				{!off && <ServerConnection onMessage={this.handleMessage} url={WS_URL} />}

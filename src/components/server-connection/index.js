@@ -8,7 +8,7 @@ export default class WebSocket extends Component {
 	}
 
 	componentWillUnmount() {
-		this.webSocket.close()
+		this.webSocket && this.webSocket.close()
 		this.connect = () => {}
 	}
 
