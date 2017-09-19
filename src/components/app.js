@@ -15,7 +15,7 @@ export default class App extends Component {
 
 	messageCount = 0
 	mps = 0
-	toggleCount = 0
+	amps = 0
 
 	events = {
 		orientationchange: 'orientationChange',
@@ -56,7 +56,18 @@ export default class App extends Component {
 
 	handleBuffer = buffer => {
 		this.messageCount += 1
-		this.setState({stripBuffer: buffer})
+		this.setState({stripBuffer: buffer, amps: this.calculateAmps(buffer)})
+	}
+
+	calculateAmps = (buffer) => {
+		// 20mA per color channel on full brightness
+		let amps = 0
+		let ws2812_ComponentPower = (c) => (c / 255) * 0.02 
+		for(let i=0; i<buffer.length; i++) {
+			let [ r, g, b ] = buffer[i]
+			amps += (ws2812_ComponentPower(r) + ws2812_ComponentPower(g) + ws2812_ComponentPower(b))
+		}
+		return amps.toFixed(2)
 	}
 
 	toggleOff = (e) => {
@@ -64,9 +75,9 @@ export default class App extends Component {
 		setTimeout(() => this.setState({off: !this.state.off}), 0)
 	}
 
-	render({ }, { stripBuffer, off, hide }) {
+	render({ }, { stripBuffer, amps, off, hide }) {
 		if(hide) return;
-		let headerExtra = (document.body.clientWidth > 320) && `${this.mps} mps`
+		let headerExtra = (document.body.clientWidth > 450) && `${this.mps} mps // ${amps} amps`
 
 		return (
 			<div id="app">
