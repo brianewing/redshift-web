@@ -54,16 +54,25 @@ export default class WebSocket extends Component {
 	}
 }
 
+var _buffer = []
+
 // todo: refactor out of this file
 function unpack(data) {
 	data = new Uint8Array(data)
 
-	let buffer = []
 	let length = data.length
 
 	for(let i=0; i<length; i=i+3) {
-		buffer[i/3] = [data[i], data[i+1], data[i+2]]
+		if(!_buffer[i/3])
+			_buffer[i/3] = []
+
+		_buffer[i/3][0] = data[i]
+		_buffer[i/3][1] = data[i+1]
+		_buffer[i/3][2] = data[i+2]
 	}
 
-	return buffer
+	if(_buffer.length > length/3)
+		_buffer.length = length/3 // truncate extra pixels
+
+	return _buffer
 }
