@@ -17,16 +17,25 @@ export default class App extends Component {
 	mps = 0
 	toggleCount = 0
 
+	events = {
+		orientationchange: 'orientationChange',
+		visibilitychange: 'visibilityChange',
+		keypress: 'toggleOff'
+	}
+
 	componentWillMount() {
 		setInterval(() => {
 			this.mps = this.messageCount
 			this.messageCount = 0
 		}, 1000)
 
-		window.addEventListener('orientationchange', this.orientationChange)
-		window.addEventListener('visibilitychange', this.visibilityChange)
-		window.addEventListener('blur', () => this.setState({hide: true}))
-		window.addEventListener('blur', () => this.setState({hide: false}))
+		for(let event in this.events)
+			window.addEventListener(event, this[this.events[event]])
+	}
+
+	componentWillUnmount() {
+		for(let event in this.events)
+			window.removeEventListener(event, this[this.events[event]])
 	}
 
 	orientationChange = (e) => {
