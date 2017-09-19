@@ -54,10 +54,9 @@ export default class App extends Component {
 	// 	document.body.style.backgroundColor = cssColor
 	// }
 
-	handleMessage = msg => {
+	handleBuffer = buffer => {
 		this.messageCount += 1
-		if(msg.buffer)
-			this.setState({stripBuffer: msg.buffer})
+		this.setState({stripBuffer: buffer})
 	}
 
 	toggleOff = (e) => {
@@ -76,7 +75,7 @@ export default class App extends Component {
 						{headerExtra}
 					</div>
 				</Header>
-				{!off && <ServerConnection onMessage={this.handleMessage} url={WS_URL} />}
+				{!off && <ServerConnection onBuffer={this.handleBuffer} url={WS_URL} />}
 				<Router onChange={this.handleRoute}>
 					<Remote path="/" stripBuffer={stripBuffer} />
 					<Modes path="/modes" />
