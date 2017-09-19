@@ -21,7 +21,7 @@ export default class Header extends Component {
 					<nav>
 						<Link activeClassName={style.active} href="/"><FaGamepad /></Link>
 						<Link activeClassName={style.active} href="/modes"><FaStar /></Link>
-						<Link activeClassName={style.active} href="javascript:;" onTouchStart={toggleOff} onfowiClick={toggleOff}><FaPowerOff /></Link>
+						<Link activeClassName={style.active} href="javascript:;" onClick={toggleOff}><FaPowerOff /></Link>
 					</nav>
 				</header>
 			</div>
