@@ -1,9 +1,9 @@
 .home {
-	position: absolute;
+	position: fixed;
 	top: 57px;
+	bottom: 0px;
 	padding-top: 1px;
 	/*padding: 10px 0px;*/
-	bottom: 0px;
 	width: 100%;
 	/*border: 1px solid red;*/
 

@@ -13,7 +13,7 @@
 	vertical-align: middle;
 	width: auto;
 	/*max-height: 200px;*/
-	animation-duration: 0.5s;
+	animation-duration: 0.44s;
 	animation-iteration-count: infinite;
 	animation-direction: alternate;
 	animation-timing-function: ease-in-out;
@@ -24,5 +24,5 @@
 	0% { opacity: 0.8; transform: rotateZ(40deg) rotateX(0deg); filter: saturate(3) brightness(1) hue-rotate(0deg); }
 	50% { opacity: 0.2; }
 	/*80% { opacity: 0.7; }*/
-	100% { opacity: 0.8; transform: rotateZ(-20deg) rotateX(60deg); filter: saturate(3) brightness(1) hue-rotate(285deg); }
+	100% { opacity: 0.8; transform: rotateZ(-40deg) rotateX(240deg); filter: saturate(3) brightness(1) hue-rotate(285deg); }
 }

@@ -19,9 +19,9 @@
 	content: '';
 	z-index: -1;
 	top: 0.5px;
-	/*left: 0.5px;*/
-	/*right: 1.2px;*/
-	left: 0; right: 0;
+	left: 0.5px;
+	right: 1.2px;
+	/*left: 0; right: 0;*/
 	bottom: 0.5px;
 	/*width: 100%;*/
 	/*height: 100%;*/
@@ -77,17 +77,19 @@
 	padding: 0 15px;
 	min-width: 50px;
 	text-align: center;
-	background: rgba(255,255,255,0);
 	text-decoration: none;
 	color: #FFF;
 	will-change: background-color;
 }
 
 .header nav a.active {
-	background: rgba(255,255,255,0.15);
+	/*background: rgba(255,255,255,0.15);*/
+	background: rgba(0,0,0,0.7);
+	border-left: 1px solid rgba(255,255,255,0.30);
+	border-right: 1px solid rgba(255,255,255,0.30);
 }
 
 .header nav a:hover,
 .header nav a:active {
-	background: rgba(255,255,255,0.25);
+	background: rgba(0,0,0,0.6);
 }
