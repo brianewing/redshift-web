@@ -1,41 +1,111 @@
 import { Component } from 'preact'
 
+import Timings from '../../lib/timings'
+
 import style from './style'
 
-let RECALC = true
-
-window.onresize = () => {
-	RECALC = true
-}
+let i = 0
 
 export default class LEDStrip extends Component {
-	width = 0
+	componentWillMount() {
+		// this.timings = new Timings(`LEDStrip[${i++}]`).startLogging()
+		this.requestNextFrame()
+	}
 
-	recalcWidth = () => {
-		let margin = 3
-		let buffer = this.props.buffer || []
-		this.width = (document.body.clientWidth - (margin * buffer.length)) / buffer.length
+	componentWillUnmount() {
+		this.cancelNextFrame()
+		// this.timings.stopLogging()
+	}
+
+	componentDidUpdate() {
+		this.requestNextFrame()
 	}
 
 	render() {
-		let buffer = this.props.buffer || []
-
-		return <div class={style.strip}>
-			{buffer.map((led) => this.renderLed(led))}
+		return <div class={style.strip + ' ' + this.props.class}>
+			<canvas ref={this.setCanvas}></canvas>
 		</div>
-
-		// return <div class={style.strip}>
-			// {buffer.map(this.renderLed)}
-		// </div>
 	}
 
-	renderLed(rgb, width) {
-		if(RECALC) this.recalcWidth();
+	setCanvas = (el) => {
+		if(!el) return;
 
-		let bg
-		if(this.width) bg = `background-color: rgb(${rgb.join(',')}); width: ${this.width}px;`
-		else bg = `background-color: rgb(${rgb.join(',')});`
+		this.canvas = el
+		this.ctx = el.getContext('2d')
+	}
 
-		return <div class={style.led} style={bg}></div>
+	adjustCanvas = () => {
+		let canvas = this.canvas
+		let parentNode = canvas.parentNode
+
+		if(canvas.width != parentNode.clientWidth * 2 || canvas.height != parentNode.clientHeight * 2) {
+			let pixelRatio = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1)
+			// pixelRatio = 1
+			canvas.width = (parentNode.clientWidth * pixelRatio)
+			canvas.height = (parentNode.clientHeight * pixelRatio)
+			canvas.style.width = `${parentNode.clientWidth}px`
+			canvas.style.height = `${parentNode.clientHeight}px`
+		}
+	}
+
+	requestNextFrame = () => {
+		if(!this.props.buffer) return;
+
+		this.nextFrame = setTimeout(this._nextFrame, this._nextFrameTimeout(60))
+		// this.nextFrame = requestAnimationFrame(this._nextFrame)
+	}
+
+	_nextFrame = () => {
+		this.adjustCanvas()
+		this.renderFrame()
+		this.requestNextFrame()
+	}
+
+	_nextFrameTimeout = (fps) => {
+		let target = (1000 / fps)
+		let lastFrame = (this._lastFrame || 0)
+		let now = Date.now()
+
+		let timeout = Math.max(0, target - (now - lastFrame))
+		this._lastFrame = now + timeout
+
+		return timeout
+	}
+
+	cancelNextFrame = () => {
+		if(!this.nextFrame) return;
+		clearTimeout(this.nextFrame)
+		this.nextFrame = null
+	}
+
+	renderFrame = () => {
+		if(!this.ctx || !this.ctx.fillRect)
+			return console.error("Context not ready", ctx)
+
+		let { ctx, canvas } = this
+		let { buffer, reverse } = this.props
+		let len = buffer.length
+
+		let cWidth = canvas.width
+		let cHeight = canvas.height
+
+		let ledWidth = canvas.width / len
+		let ledHeight = canvas.height
+
+		for(let i=0; i<len; i++) {
+			let led = (reverse ? buffer[len - i - 1] : buffer[i])
+
+			ctx.fillStyle = `rgb(${led.join(',')})`
+			ctx.fillRect(ledWidth*i, 0, ledWidth, ledHeight)
+
+			ctx.fillStyle = '#000000'
+			ctx.fillRect(ledWidth*i - 4, 0, 4, ledHeight)
+
+			ctx.fillStyle = 'rgba(255,255,255,0.28)'
+			ctx.fillRect(ledWidth*i + 1, 1, 1, ledHeight) // left
+			ctx.fillRect(ledWidth*i + ledWidth - 6, 0, 1, ledHeight) // right
+			ctx.fillRect(ledWidth*i + 1, 0, ledWidth - 2, 1) // top
+			ctx.fillRect(ledWidth*i, ledHeight - 1, ledWidth, 1) // bottom
+		}
 	}
 }

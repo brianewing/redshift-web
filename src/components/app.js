@@ -10,32 +10,28 @@ import LEDStrip from './led-strip'
 
 const WS_URL = 'ws://192.168.1.3:9191/strip'
 
+// 20mA per color channel on full brightness
+let ws2812_ComponentPower = (c) => (c / 255) * 0.02
+
 export default class App extends Component {
 	handleRoute = e => { this.currentUrl = e.url }
 
-	messageCount = 0
-	mps = 0
-	amps = 0
-
 	events = {
 		orientationchange: 'orientationChange',
-		visibilitychange: 'visibilityChange',
+		// visibilitychange: 'visibilityChange',
 		keypress: 'toggleOff'
 	}
 
 	componentWillMount() {
-		setInterval(() => {
-			this.mps = this.messageCount
-			this.messageCount = 0
-		}, 1000)
-
-		for(let event in this.events)
+		for(let event in this.events) {
 			window.addEventListener(event, this[this.events[event]])
+		}
 	}
 
 	componentWillUnmount() {
-		for(let event in this.events)
+		for(let event in this.events) {
 			window.removeEventListener(event, this[this.events[event]])
+		}
 	}
 
 	orientationChange = (e) => {
@@ -54,15 +50,16 @@ export default class App extends Component {
 	// 	document.body.style.backgroundColor = cssColor
 	// }
 
-	handleBuffer = buffer => {
-		this.messageCount += 1
-		this.setState({stripBuffer: buffer, amps: this.calculateAmps(buffer)})
+	setBuffer = (buffer) => {
+		this.setState({buffer: buffer})
+	}
+
+	handleMessage = (msg) => {
+		this.latestMsg = msg
 	}
 
 	calculateAmps = (buffer) => {
-		// 20mA per color channel on full brightness
 		let amps = 0
-		let ws2812_ComponentPower = (c) => (c / 255) * 0.02 
 		for(let i=0; i<buffer.length; i++) {
 			let [ r, g, b ] = buffer[i]
 			amps += (ws2812_ComponentPower(r) + ws2812_ComponentPower(g) + ws2812_ComponentPower(b))
@@ -71,24 +68,25 @@ export default class App extends Component {
 	}
 
 	toggleOff = (e) => {
-		this.mps = 0
 		setTimeout(() => this.setState({off: !this.state.off}), 0)
 	}
 
-	render({ }, { stripBuffer, amps, off, hide }) {
+	render({ }, { buffer, amps, off, hide }) {
 		if(hide) return;
-		let headerExtra = (document.body.clientWidth > 450) && `${this.mps} mps // ${amps} amps`
+		let headerExtra = false && (document.body.clientWidth > 450) && `${this.mps} mps // ${amps} amps`
 
 		return (
 			<div id="app">
-				<Header stripBuffer={stripBuffer} toggleOff={this.toggleOff}>
+				{!off && <ServerConnection refBuffer={this.setBuffer} onMessage={this.handleMessage} url={WS_URL} />}
+
+				<Header buffer={buffer} toggleOff={this.toggleOff}>
 					<div style="padding-top: 20px; display: inline-block">
 						{headerExtra}
 					</div>
 				</Header>
-				{!off && <ServerConnection onBuffer={this.handleBuffer} url={WS_URL} />}
+
 				<Router onChange={this.handleRoute}>
-					<Remote path="/" stripBuffer={stripBuffer} />
+					<Remote path="/" buffer={buffer} />
 					<Modes path="/modes" />
 				</Router>
 			</div>

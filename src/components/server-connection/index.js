@@ -1,22 +1,30 @@
 import { Component } from 'preact'
 
-export default class WebSocket extends Component {
+import Timings from '../../lib/timings'
+
+export default class ServerConnection extends Component {
 	reconnectDelay = 50 // ms
 
 	componentWillMount() {
+		this.stripBuffer = []
+
+		let { refBuffer } = this.props
+		refBuffer && refBuffer(this.stripBuffer)
+
+		// this.timings = new Timings('ServerConnection.handleMessage').startLogging()
+
 		this.connect()
-		// this.timings = []
-		// setInterval(this.logTimings, 1000)
 	}
 
 	componentWillUnmount() {
 		this.webSocket && this.webSocket.close()
+		// this.timings.stopLogging()
 		this.connect = () => {}
 	}
 
 	connect() {
 		let { url } = this.props;
-		this.webSocket = new window.WebSocket(url)
+		this.webSocket = new WebSocket(url)
 		this.webSocket.onmessage = this.handleMessage
 		this.webSocket.binaryType = 'arraybuffer'
 		this.webSocket.onclose = () => {
@@ -28,51 +36,38 @@ export default class WebSocket extends Component {
 		let { data } = e
 		let { onBuffer, onMessage } = this.props
 
-		// let start = performance.now()
+		// this.timings.start()
 
 		if(data instanceof ArrayBuffer) {
-			onBuffer && onBuffer(unpack(data))
+			unpack(data, this.stripBuffer)
+			onBuffer && onBuffer(this.stripBuffer)
 		} else {
-			data = JSON.parse(data)
-			if(data.buffer) {
-				onBuffer && onBuffer(data.buffer)
-			} else {
-				onMessage && onMessage(data)
-			}
+			onMessage && onMessage(JSON.parse(data))
 		}
 
-		// this.timings.push(performance.now() - start)
-	}
-
-	logTimings = () => {
-		let sum = 0
-		for(let i=0; i<this.timings.length; i++)
-			sum += this.timings[i]
-
-		console.log(sum / this.timings.length)
-		this.timings = []
+		// this.timings.finish()
 	}
 }
 
-var _buffer = []
-
-// todo: refactor out of this file
-function unpack(data) {
+// Unpacks `data` into `buffer`
+// [r0, g0, b0, r1, g1, b1] => [[r, g, b], [r, g, b]]
+// todo: refactor this into another file
+function unpack(data, buffer) {
 	data = new Uint8Array(data)
 
 	let length = data.length
 
 	for(let i=0; i<length; i=i+3) {
-		if(!_buffer[i/3])
-			_buffer[i/3] = []
+		if(!buffer[i/3])
+			buffer[i/3] = []
 
-		_buffer[i/3][0] = data[i]
-		_buffer[i/3][1] = data[i+1]
-		_buffer[i/3][2] = data[i+2]
+		buffer[i/3][0] = data[i]
+		buffer[i/3][1] = data[i+1]
+		buffer[i/3][2] = data[i+2]
 	}
 
-	if(_buffer.length > length/3)
-		_buffer.length = length/3 // truncate extra pixels
+	if(buffer.length > length/3)
+		buffer.length = length/3 // truncate extra pixels
 
-	return _buffer
+	return buffer
 }

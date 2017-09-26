@@ -10,6 +10,11 @@
 	/*opacity: 0.9;*/
 }
 
+.strip canvas {
+	/*height: 100%;*/
+	/*width: 100%;*/
+}
+
 .led {
 	display: inline-block;
 	width: 16px;

@@ -11,33 +11,22 @@ import FaStar from 'react-icons/lib/fa/star'
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
 export default class Header extends Component {
-	render({ stripBuffer, toggleOff }) {
+	render({ buffer, toggleOff }) {
 		return (
 			<div>
-				<HeaderStrip buffer={stripBuffer || []} />
+				<LEDStrip buffer={buffer} class={style.headerStrip} reverse={true} />
 				<header class={style.header}>
-					<h1>Redshift</h1>
+					<h1 onClick={() => window.location = location}>Redshift</h1>
 					{this.props.children}
 					<nav>
 						<Link activeClassName={style.active} href="/"><FaGamepad /></Link>
 						<Link activeClassName={style.active} href="/modes"><FaStar /></Link>
+						<Link activeClassName={style.active} href="/repl">Repl</Link>
+						<Link activeClassName={style.active} href="/scripts">Scripts</Link>
 						<Link activeClassName={style.active} href="javascript:;" onClick={toggleOff}><FaPowerOff /></Link>
 					</nav>
 				</header>
 			</div>
 		);
-	}
-}
-
-class HeaderStrip extends Component {
-	render({ buffer }) {
-		buffer = buffer.slice(0).reverse()
-		let ledWidth = `${100 / buffer.length}%`
-		return <div class={style.headerStrip}>{buffer.map((led) => this.renderLed(led, ledWidth))}</div>
-	}
-
-	renderLed(led, width) {
-		let color = `rgb(${led.join(',')})`
-		return <div class={style.headerLed} style={`width: ${width}; background-color: ${color}`}></div>
 	}
 }
