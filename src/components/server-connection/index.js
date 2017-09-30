@@ -2,6 +2,8 @@ import { Component } from 'preact'
 
 import Timings from '../../lib/timings'
 
+const FPS = 60
+
 export default class ServerConnection extends Component {
 	reconnectDelay = 50 // ms
 
@@ -27,9 +29,14 @@ export default class ServerConnection extends Component {
 		this.webSocket = new WebSocket(url)
 		this.webSocket.onmessage = this.handleMessage
 		this.webSocket.binaryType = 'arraybuffer'
-		this.webSocket.onclose = () => {
-			setTimeout(() => this.connect(), this.reconnectDelay)
-		}
+		this.webSocket.onopen = () => this.requestStreamFps(FPS)
+		this.webSocket.onclose = () => setTimeout(() => this.connect(), this.reconnectDelay)
+	}
+
+	requestStreamFps = (fps) => {
+		let buffer = new ArrayBuffer(1)
+		new Uint8Array(buffer).set([fps])
+		this.webSocket.send(buffer) // just 1 byte representing the desired fps (0-255)
 	}
 
 	handleMessage = (e) => {

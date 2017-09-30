@@ -8,7 +8,7 @@ import Modes from '../routes/modes'
 
 import LEDStrip from './led-strip'
 
-const WS_URL = 'ws://192.168.1.3:9191/strip'
+const WS_URL = 'ws://192.168.1.3:9191/s/strip'
 
 // 20mA per color channel on full brightness
 let ws2812_ComponentPower = (c) => (c / 255) * 0.02
