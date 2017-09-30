@@ -12,13 +12,14 @@ export default class LEDStrip extends Component {
 		this.requestNextFrame()
 	}
 
-	componentWillUnmount() {
-		this.cancelNextFrame()
-		// this.timings.stopLogging()
-	}
-
 	componentDidUpdate() {
 		this.requestNextFrame()
+	}
+
+	componentWillUnmount() {
+		this.props.buffer = null
+		this.cancelNextFrame()
+		// this.timings.stopLogging()
 	}
 
 	render() {
@@ -29,7 +30,6 @@ export default class LEDStrip extends Component {
 
 	setCanvas = (el) => {
 		if(!el) return;
-
 		this.canvas = el
 		this.ctx = el.getContext('2d')
 	}
@@ -49,13 +49,14 @@ export default class LEDStrip extends Component {
 	}
 
 	requestNextFrame = () => {
-		if(this.props.paused || !this.props.buffer) return;
-
 		this.nextFrame = setTimeout(this._nextFrame, this._nextFrameTimeout(60))
 		// this.nextFrame = requestAnimationFrame(this._nextFrame)
 	}
 
 	_nextFrame = () => {
+		if(this.props.paused || !this.props.buffer)
+			return;
+
 		this.adjustCanvas()
 		this.renderFrame()
 		this.requestNextFrame()
