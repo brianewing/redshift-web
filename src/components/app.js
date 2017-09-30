@@ -79,14 +79,14 @@ export default class App extends Component {
 			<div id="app">
 				{!off && <ServerConnection refBuffer={this.setBuffer} onMessage={this.handleMessage} url={WS_URL} />}
 
-				<Header buffer={buffer} toggleOff={this.toggleOff}>
+				<Header buffer={buffer} toggleOff={this.toggleOff} off={off}>
 					<div style="padding-top: 20px; display: inline-block">
 						{headerExtra}
 					</div>
 				</Header>
 
 				<Router onChange={this.handleRoute}>
-					<Remote path="/" buffer={buffer} />
+					<Remote path="/" buffer={buffer} off={off} />
 					<Modes path="/modes" />
 				</Router>
 			</div>

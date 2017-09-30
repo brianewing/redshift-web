@@ -49,7 +49,7 @@ export default class LEDStrip extends Component {
 	}
 
 	requestNextFrame = () => {
-		if(!this.props.buffer) return;
+		if(this.props.paused || !this.props.buffer) return;
 
 		this.nextFrame = setTimeout(this._nextFrame, this._nextFrameTimeout(60))
 		// this.nextFrame = requestAnimationFrame(this._nextFrame)

@@ -5,9 +5,9 @@ import LEDStrip from '../../components/led-strip'
 import style from './style'
 
 export default class Remote extends Component {
-	render({ buffer }) {
+	render({ buffer, off }) {
 		return <div class={style.home}>
-			<LEDStrip buffer={buffer} />
+			<LEDStrip buffer={buffer} paused={off} />
 		</div>
 	}
 }
