@@ -2,19 +2,16 @@ import { Component } from 'preact'
 
 import Timings from '../../lib/timings'
 
-const FPS = 60
-
 export default class ServerConnection extends Component {
 	reconnectDelay = 50 // ms
 
 	componentWillMount() {
-		this.stripBuffer = []
-
 		let { refBuffer } = this.props
+
+		this.stripBuffer = []
 		refBuffer && refBuffer(this.stripBuffer)
 
 		// this.timings = new Timings('ServerConnection.handleMessage').startLogging()
-
 		this.connect()
 	}
 
@@ -25,18 +22,26 @@ export default class ServerConnection extends Component {
 	}
 
 	connect() {
-		let { url } = this.props;
+		let { url, fps } = this.props;
 		this.webSocket = new WebSocket(url)
-		this.webSocket.onmessage = this.handleMessage
 		this.webSocket.binaryType = 'arraybuffer'
-		this.webSocket.onopen = () => this.requestStreamFps(FPS)
+		this.webSocket.onmessage = this.handleMessage
+		this.webSocket.onopen = () => fps && this.requestStreamFps(fps)
 		this.webSocket.onclose = () => setTimeout(() => this.connect(), this.reconnectDelay)
 	}
 
 	requestStreamFps = (fps) => {
-		let buffer = new ArrayBuffer(1)
-		new Uint8Array(buffer).set([fps])
-		this.webSocket.send(buffer) // just 1 byte representing the desired fps (0-255)
+		this.sendBytes([fps]) // 1 byte representing the desired fps (0-255)
+	}
+
+	sendBytes = (bytes) => {
+		let buffer = new ArrayBuffer(bytes.length)
+		new Uint8Array(buffer).set(bytes)
+		this.sendMessage(buffer)
+	}
+
+	sendMessage = (msg) => {
+		this.webSocket && this.webSocket.send(msg)
 	}
 
 	handleMessage = (e) => {

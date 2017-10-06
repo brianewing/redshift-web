@@ -3,59 +3,71 @@ import { Router } from 'preact-router'
 
 import Header from './header'
 import ServerConnection from './server-connection'
-import Remote from '../routes/remote'
-import Modes from '../routes/modes'
+import Remote from './routes/remote'
+import Effects from './routes/effects'
 
 import LEDStrip from './led-strip'
 
-const WS_URL = 'ws://192.168.1.3:9191/s/strip'
+const WS_URL = 'ws://192.168.1.3:9191'
+const BUFFER_FPS = 60
+const EFFECTS_FPS = 20
 
 // 20mA per color channel on full brightness
 let ws2812_ComponentPower = (c) => (c / 255) * 0.02
 
 export default class App extends Component {
-	handleRoute = e => { this.currentUrl = e.url }
-
-	events = {
-		orientationchange: 'orientationChange',
-		// visibilitychange: 'visibilityChange',
-		keypress: 'toggleOff'
-	}
+	handleRoute = e => { this.setState({currentUrl: e.url}) }
 
 	componentWillMount() {
-		for(let event in this.events) {
-			window.addEventListener(event, this[this.events[event]])
-		}
+		window.app = this
+		window.addEventListener('orientationchange', this.onOrientationChange)
+		window.addEventListener('keypress', this.onKeyPress)
 	}
 
 	componentWillUnmount() {
-		for(let event in this.events) {
-			window.removeEventListener(event, this[this.events[event]])
-		}
+		window.removeEventListener('orientationchange', this.onOrientationChange)
+		window.removeEventListener('keypress', this.onKeyPress)
 	}
 
-	orientationChange = (e) => {
+	/* Events */
+
+	onOrientationChange = (e) => {
 		this.setState({hide: true})
 		setTimeout(() => this.setState({hide: false}), 0)
 	}
 
-	visibilityChange = (e) => {
+	onVisibilityChange = (e) => {
 		this.setState({hide: document.hidden})
 	}
 
-	// componentDidUpdate() {
-	// 	if(!this.state.stripBuffer) return
-	// 	let darken = (x) => Math.max(0, x - 220)
-	// 	let cssColor = `rgb(${this.state.stripBuffer[1].map(darken).join(',')})`
-	// 	document.body.style.backgroundColor = cssColor
-	// }
+	onKeyPress = (e) => {
+		console.log(e)
+	}
+
+	/* Server communication */
+
+	setBufferSocket = (ws) => {
+		this.bufferSocket = ws
+	}
+
+	setEffectsSocket = (ws) => {
+		this.effectsSocket = ws
+	}
 
 	setBuffer = (buffer) => {
 		this.setState({buffer: buffer})
 	}
 
-	handleMessage = (msg) => {
-		this.latestMsg = msg
+	setEffects = (effects) => {
+		this.setState({effects: effects})
+	}
+
+	sendBuffer = (buffer) => {
+		this.bufferSocket && this.bufferSocket.sendBytes(buffer)
+	}
+
+	sendCustomEffectsJson = (json) => {
+		this.effectsSocket && this.effectsSocket.sendMessage(json)
 	}
 
 	calculateAmps = (buffer) => {
@@ -71,13 +83,17 @@ export default class App extends Component {
 		setTimeout(() => this.setState({off: !this.state.off}), 0)
 	}
 
-	render({ }, { buffer, amps, off, hide }) {
+	render({ }, { currentUrl, buffer, effects, amps, off, hide }) {
+		let headerExtra
 		if(hide) return;
-		let headerExtra = false && (document.body.clientWidth > 450) && `${this.mps} mps // ${amps} amps`
+		if(false && document.body.clientWidth > 480) headerExtra = `${this.mps} mps // ${amps} amps`
 
 		return (
 			<div id="app">
-				{!off && <ServerConnection refBuffer={this.setBuffer} onMessage={this.handleMessage} url={WS_URL} />}
+				{!off && <ServerConnection ref={(ws) => window.ws = ws} refBuffer={this.setBuffer} fps={BUFFER_FPS} url={WS_URL + '/s/strip'} />}
+				{!off && <ServerConnection ref={this.setBufferSocket} url={WS_URL + '/strip'} />}
+				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
+				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}
 
 				<Header buffer={buffer} toggleOff={this.toggleOff} off={off}>
 					<div style="padding-top: 20px; display: inline-block">
@@ -87,7 +103,7 @@ export default class App extends Component {
 
 				<Router onChange={this.handleRoute}>
 					<Remote path="/" buffer={buffer} off={off} />
-					<Modes path="/modes" />
+					<Effects path="/effects" effects={effects} onCustomJson={this.sendCustomEffectsJson} />
 				</Router>
 			</div>
 		);

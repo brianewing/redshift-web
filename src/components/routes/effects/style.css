@@ -1,0 +1,28 @@
+.effects {
+	color: white;
+	text-align: center;
+}
+
+.effects pre {
+	border: 1px solid white;
+
+	word-break: break-all;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	padding: 2em;
+}
+
+.effects textarea, button {
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+}
+
+.effects textarea {
+	width: 100%;
+	height: 5em;
+}
+
+.effects button {
+	padding: 1em;
+	width: 100%;
+}

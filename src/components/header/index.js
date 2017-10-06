@@ -20,7 +20,7 @@ export default class Header extends Component {
 					{this.props.children}
 					<nav>
 						<Link activeClassName={style.active} href="/"><FaGamepad /></Link>
-						<Link activeClassName={style.active} href="/modes"><FaStar /></Link>
+						<Link activeClassName={style.active} href="/effects"><FaStar /></Link>
 						<Link activeClassName={style.active} href="/repl">Repl</Link>
 						<Link activeClassName={style.active} href="/scripts">Scripts</Link>
 						<Link activeClassName={style.active} href="javascript:;" onClick={toggleOff}><FaPowerOff /></Link>

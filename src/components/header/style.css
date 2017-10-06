@@ -57,6 +57,10 @@
 	/*text-shadow: 1px 1px 15px #fff;*/
 }
 
+@media(max-width: 410px) {
+	.header nav { display: none; }
+}
+
 .header nav {
 	float: right;
 	font-size: 100%;

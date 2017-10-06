@@ -1,6 +1,6 @@
 import { h, Component } from 'preact'
 
-import LEDStrip from '../../components/led-strip'
+import LEDStrip from '../../led-strip'
 
 import style from './style'
 
