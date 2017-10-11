@@ -3,7 +3,7 @@ import { Component } from 'preact'
 import Timings from '../../lib/timings'
 
 export default class ServerConnection extends Component {
-	reconnectDelay = 50 // ms
+	reconnectDelay = 500 // ms
 
 	componentWillMount() {
 		let { refBuffer } = this.props
