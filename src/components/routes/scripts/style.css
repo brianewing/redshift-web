@@ -1,0 +1,30 @@
+.scripts {
+	color: white;
+	text-align: center;
+	/*padding: 0 1em;*/
+}
+
+.scripts textarea {
+	width: 100%;
+	min-height: 25em;
+	border: 1px solid white;
+
+	word-break: break-all;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	padding: 2em;
+}
+
+.scripts textarea, button {
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+}
+
+.scripts button {
+	padding: 1em;
+	width: 100%;
+}
+
+.editor {
+	width: 100%;
+}

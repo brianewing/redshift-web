@@ -5,6 +5,7 @@ import Header from './header'
 import ServerConnection from './server-connection'
 import Remote from './routes/remote'
 import Effects from './routes/effects'
+import Scripts from './routes/scripts'
 
 import LEDStrip from './led-strip'
 
@@ -21,7 +22,7 @@ export default class App extends Component {
 	componentWillMount() {
 		window.app = this
 		window.addEventListener('orientationchange', this.onOrientationChange)
-		window.addEventListener('keypress', this.onKeyPress)
+		// window.addEventListener('keypress', this.onKeyPress)
 	}
 
 	componentWillUnmount() {
@@ -104,6 +105,7 @@ export default class App extends Component {
 				<Router onChange={this.handleRoute}>
 					<Remote path="/" buffer={buffer} off={off} />
 					<Effects path="/effects" effects={effects} onCustomJson={this.sendCustomEffectsJson} />
+					<Scripts path="/scripts" scripts={[]} onWrite={this.sendScript} />
 				</Router>
 			</div>
 		);
