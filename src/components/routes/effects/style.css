@@ -1,15 +1,11 @@
 .effects {
 	color: white;
-	text-align: center;
+	padding: 1em;
 }
 
-.effects pre {
-	border: 1px solid white;
-
-	word-break: break-all;
-	word-wrap: break-word;
-	white-space: pre-wrap;
-	padding: 2em;
+.effects ul {
+	list-style: none;
+	padding: 0;
 }
 
 .effects textarea, button {
@@ -19,7 +15,7 @@
 
 .effects textarea {
 	width: 100%;
-	height: 5em;
+	height: 15em;
 }
 
 .effects button {
