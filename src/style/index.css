@@ -1,3 +1,7 @@
+@import '../../node_modules/basiccontext/dist/basicContext.min.css';
+@import '../../node_modules/basiccontext/dist/themes/default.min.css';
+@import '../../node_modules/basiccontext/dist/addons/popin.min.css';
+
 @import url('https://fonts.googleapis.com/css?family=Dosis|Open+Sans');
 
 html, body {
