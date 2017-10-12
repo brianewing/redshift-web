@@ -10,9 +10,6 @@ import GoTerminal from 'react-icons/lib/go/terminal';
 import GoPlug from 'react-icons/lib/go/plug';
 import GoScreenFull from 'react-icons/lib/go/screen-full';
 
-import FaGamepad from 'react-icons/lib/fa/gamepad'
-import FaCubes from 'react-icons/lib/fa/cubes'
-import FaStar from 'react-icons/lib/fa/star'
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
 export default class Header extends Component {

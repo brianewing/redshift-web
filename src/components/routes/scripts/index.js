@@ -23,8 +23,8 @@ let THEMES = ['ambiance', 'merbivore', 'terminal', 'vibrant_ink', 'tomorrow_nigh
 
 export default class Scripts extends Component {
 	state = {
-		// currentTheme: 'terminal'
-		currentTheme: 'ambiance'
+		currentTheme: 'terminal'
+		// currentTheme: 'ambiance'
 	}
 
 	sendScript = () => {

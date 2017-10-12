@@ -11,10 +11,6 @@ export default class Effects extends Component {
 		onCustomJson && onCustomJson(customJson)
 	}
 
-	componentWillMount() {
-		window.ef = this
-	}
-
 	render({ effects }, { customJson }) {
 		return (
 			<div class={style.effects}>
