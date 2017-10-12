@@ -5,6 +5,11 @@ import LEDStrip from '../../components/led-strip'
 
 import style from './style'
 
+import GoPaintcan from 'react-icons/lib/go/paintcan';
+import GoTerminal from 'react-icons/lib/go/terminal';
+import GoPlug from 'react-icons/lib/go/plug';
+import GoScreenFull from 'react-icons/lib/go/screen-full';
+
 import FaGamepad from 'react-icons/lib/fa/gamepad'
 import FaCubes from 'react-icons/lib/fa/cubes'
 import FaStar from 'react-icons/lib/fa/star'
@@ -19,10 +24,10 @@ export default class Header extends Component {
 					<h1 onClick={() => window.location = location}>Redshift</h1>
 					{this.props.children}
 					<nav>
-						<Link activeClassName={style.active} href="/"><FaGamepad /></Link>
-						<Link activeClassName={style.active} href="/effects"><FaStar /></Link>
-						<Link activeClassName={style.active} href="/repl">Repl</Link>
-						<Link activeClassName={style.active} href="/scripts">Scripts</Link>
+						<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
+						<Link activeClassName={style.active} href="/effects"><GoPlug /></Link>
+						<Link activeClassName={style.active} href="/scripts"><GoPaintcan /></Link>
+						{false && <Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>}
 						<Link activeClassName={style.active} href="javascript:;" onClick={toggleOff}><FaPowerOff /></Link>
 					</nav>
 				</header>
