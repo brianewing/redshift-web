@@ -1,8 +1,13 @@
 @import '../../node_modules/basiccontext/dist/basicContext.min.css';
-@import '../../node_modules/basiccontext/dist/themes/default.min.css';
+/*@import '../../node_modules/basiccontext/dist/themes/bright.min.css';*/
+@import '../../node_modules/basiccontext/dist/themes/dark.min.css';
 @import '../../node_modules/basiccontext/dist/addons/popin.min.css';
 
 @import url('https://fonts.googleapis.com/css?family=Dosis|Open+Sans');
+
+::-webkit-scrollbar {
+	display: none;
+}
 
 html, body {
 	min-height: 100%;
@@ -24,12 +29,12 @@ html, body {
 	cursor: default;
 }
 
-::-webkit-scrollbar {
-	display: none;
-}
-
 * {
 	box-sizing: border-box;
+}
+
+.basicContext {
+	background-color: rgba(40,40,40,.85);
 }
 
 #app {

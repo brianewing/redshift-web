@@ -1,6 +1,8 @@
 import { h, Component } from 'preact'
 import { Router } from 'preact-router'
 
+import basicContext from 'basiccontext'
+
 import Header from './header'
 import ServerConnection from './server-connection'
 import Remote from './routes/remote'
@@ -28,6 +30,19 @@ export default class App extends Component {
 	componentWillUnmount() {
 		window.removeEventListener('orientationchange', this.onOrientationChange)
 		window.removeEventListener('keypress', this.onKeyPress)
+	}
+
+	showMenu = (e) => {
+		let noop = () => {}
+		let go = (url) => () => window.location = url
+		basicContext.show([
+			{title: 'Cinema', fn: go('/')},
+			{title: 'Effects', fn: go('/effects')},
+			{title: 'Script Editor', fn: go('/scripts')},
+			{},
+			{title: 'Change Server', fn: noop},
+			{title: 'Disconnect', fn: noop}
+		], e)
 	}
 
 	/* Events */
@@ -96,7 +111,7 @@ export default class App extends Component {
 				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}
 
-				<Header buffer={buffer} toggleOff={this.toggleOff} off={off}>
+				<Header buffer={buffer} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
 					<div style="padding-top: 20px; display: inline-block">
 						{headerExtra}
 					</div>

@@ -13,12 +13,12 @@ import GoScreenFull from 'react-icons/lib/go/screen-full';
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
 export default class Header extends Component {
-	render({ buffer, toggleOff, off }) {
+	render({ onTitleClick, buffer, toggleOff, off }) {
 		return (
 			<div>
 				<LEDStrip buffer={buffer} paused={off} class={style.headerStrip} reverse={true} />
 				<header class={style.header}>
-					<h1 onClick={() => window.location = location}>Redshift</h1>
+					<h1 onClick={onTitleClick}>Redshift</h1>
 					{this.props.children}
 					<nav>
 						<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
