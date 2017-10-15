@@ -7,7 +7,6 @@ import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 import 'brace/mode/python';
 import 'brace/keybinding/vim';
-import { StatusBar } from 'brace/ext/statusbar';
 
 import 'brace/theme/ambiance';
 import 'brace/theme/merbivore';
@@ -19,7 +18,7 @@ import 'brace/theme/vibrant_ink';
 let THEMES = ['ambiance', 'merbivore', 'terminal', 'vibrant_ink', 'tomorrow_night_bright']
 
 export default class Editor extends Component {
-	defaultProps = {
+	static defaultProps = {
 		mode: 'javascript',
 		theme: 'terminal',
 		keyboardHandler: 'vim',
@@ -34,9 +33,10 @@ export default class Editor extends Component {
 		return false;
     }
 
-	render({ mode, theme, keyboardHandler }) {
+	render({ filename, content, mode, theme, keyboardHandler }) {
 		return (
 			<div class={style.editor}>
+				<h3>Editing {filename}</h3>
 				<AceEditor
 					width="100%"
 					height="100%"
@@ -45,7 +45,7 @@ export default class Editor extends Component {
 				    keyboardHandler={keyboardHandler}
 				    showPrintMargin={false}
 				    fontSize="17px"
-				    defaultValue={SAMPLE_SCRIPTS[mode] || ''}
+				    defaultValue={content || SAMPLE_SCRIPTS[mode] || ''}
 				    onChange={(newText) => this.setState({script: newText})}
 				    editorProps={{$blockScrolling: false}}
 				  />

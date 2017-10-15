@@ -1,30 +1,39 @@
 import { h, Component } from 'preact';
 import style from './style';
 
-import WebDAV from '../../../lib/webdav';
-
 export default class FileChooser extends Component {
 	state = {
 		currentPath: '/'
 	}
 
 	componentWillMount() {
-		let fs = new WebDAV.Fs(this.props.serverUrl)
-		this.setState({ fs })
 		this.fetchFiles()
 	}
 
 	fetchFiles = () => {
-		let { currentPath, fs } = this.state
-		fs.dir(currentPath).children((files) => {
+		let { webDavFs } = this.props
+		let { currentPath } = this.state
+		webDavFs.dir(currentPath).children((files) => {
 			this.setState({ files })
 		})
+	}
+
+	chooseFile = (f) => {
+		this.props.onChoose && this.props.onChoose(f)
 	}
 
 	render({}, { files }) {
 		return <div class={style.fileChooser}>
 			<h1>File Chooser..</h1>
-			{JSON.stringify(files)}
+			{files ? this.renderFileList(files) : <i>Nothing to show</i>}
 		</div>
+	}
+
+	renderFileList(files) {
+		return	<ul>
+			{files.map((f) => <li onClick={this.chooseFile.bind(this, f)}>
+				{f.name}
+			</li>)}
+		</ul>
 	}
 }
