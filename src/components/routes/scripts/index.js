@@ -26,6 +26,10 @@ export default class Scripts extends Component {
 		}
 	}
 
+	returnToFileList = () => {
+		this.setState({ currentFile: null })
+	}
+
 	loadFile = ({ name, url }) => {
 		this.state.webDavFs.file(url).read((contents) => {
 			this.setState({ currentFile: { name, url, contents }})
@@ -35,7 +39,7 @@ export default class Scripts extends Component {
 	render({}, { webDavFs, currentFile }) {
 		if(currentFile) {
 			let { name, contents } = currentFile
-			return <Editor filename={name} content={contents} mode={this.getLanguageFromFilename(name)} />
+			return <Editor filename={name} content={contents} mode={this.getLanguageFromFilename(name)} onLeave={this.returnToFileList} />
 		} else {
 			return <FileChooser webDavFs={webDavFs} onChoose={this.loadFile} />
 		}

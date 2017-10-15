@@ -15,6 +15,8 @@ import 'brace/theme/tomorrow_night_bright';
 import 'brace/theme/twilight';
 import 'brace/theme/vibrant_ink';
 
+import GoArrowLeft from 'react-icons/go/arrow-left';
+
 let THEMES = ['ambiance', 'merbivore', 'terminal', 'vibrant_ink', 'tomorrow_night_bright']
 
 export default class Editor extends Component {
@@ -33,10 +35,13 @@ export default class Editor extends Component {
 		return false;
     }
 
-	render({ filename, content, mode, theme, keyboardHandler }) {
+	render({ filename, content, mode, theme, keyboardHandler, onLeave }) {
 		return (
 			<div class={style.editor}>
-				<h3>Editing {filename}</h3>
+				<h3>
+					{onLeave && <a href="javascript:;" onClick={onLeave}><GoArrowLeft /></a>}
+					Editing {filename}
+				</h3>
 				<AceEditor
 					width="100%"
 					height="100%"
