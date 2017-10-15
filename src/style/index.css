@@ -40,3 +40,11 @@ html, body {
 #app {
 	height: 100%;
 }
+
+#main {
+	position: absolute;
+	top: 56px; /* header height */
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}

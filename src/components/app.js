@@ -7,11 +7,12 @@ import Header from './header'
 import ServerConnection from './server-connection'
 import Remote from './routes/remote'
 import Effects from './routes/effects'
-import Scripts from './routes/scripts'
+import Scripts from './routes/scripts/index'
 
 import LEDStrip from './led-strip'
 
 const WS_URL = 'ws://192.168.1.3:9191'
+const SCRIPTS_URL = 'http://192.168.1.3:9292'
 const BUFFER_FPS = 60
 const EFFECTS_FPS = 20
 
@@ -117,11 +118,13 @@ export default class App extends Component {
 					</div>
 				</Header>
 
-				<Router onChange={this.handleRoute}>
-					<Remote path="/" buffer={buffer} off={off} />
-					<Effects path="/effects" effects={effects} onCustomJson={this.sendCustomEffectsJson} />
-					<Scripts path="/scripts" scripts={[]} onWrite={this.sendScript} />
-				</Router>
+				<div id="main">
+					<Router onChange={this.handleRoute}>
+						<Remote path="/" buffer={buffer} off={off} />
+						<Effects path="/effects" effects={effects} onCustomJson={this.sendCustomEffectsJson} />
+						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} onWrite={this.sendScript} />
+					</Router>
+				</div>
 			</div>
 		);
 	}
