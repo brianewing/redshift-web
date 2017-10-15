@@ -49,6 +49,7 @@ export default class Editor extends Component {
 				    theme={theme}
 				    keyboardHandler={keyboardHandler}
 				    showPrintMargin={false}
+				    wrapEnabled={true}
 				    fontSize="17px"
 				    defaultValue={content || SAMPLE_SCRIPTS[mode] || ''}
 				    onChange={(newText) => this.setState({script: newText})}
