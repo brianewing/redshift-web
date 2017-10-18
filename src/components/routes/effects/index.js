@@ -2,28 +2,46 @@ import { h, Component } from 'preact';
 import linkState from 'linkstate';
 import style from './style';
 
+import Editor from '../scripts/editor';
+
 import GoEllipsis from 'react-icons/lib/go/ellipsis';
 
 export default class Effects extends Component {
-	sendCustomJson = () => {
-		let { onCustomJson } = this.props
+	componentWillReceiveProps(props) {
 		let { customJson } = this.state
+		if(!customJson && props.effects) {
+			customJson = JSON.stringify(props.effects, null, '    ')
+			this.setState({ customJson })
+		}
+	}
+
+	sendCustomJson = () => {
+		let { customJson } = this.state
+		let { onCustomJson } = this.props
 		onCustomJson && onCustomJson(customJson)
 	}
 
-	render({ effects }, { customJson }) {
-		return (
-			<div class={style.effects}>
-				{this.renderEffects(effects)}
-				<textarea onInput={linkState(this, 'customJson')}></textarea>
-				<button onClick={this.sendCustomJson}>Set Effects</button>
-			</div>
-		);
+	editorChangeHandler = (newText) => {
+		try { JSON.parse(newText) }
+		catch(err) { return; }
+
+		this.setState({customJson: newText})
+		this.sendCustomJson()
 	}
 
-	renderEffects = (effects) => <ul>
-		{effects && effects.map(this.renderEffect)}
-	</ul>
+	render({ effects }, { customJson }) {
+		return <div class={style.effects}>
+			{customJson && <Editor
+				filename="effects"
+				mode="javascript"
+				content={customJson}
+				onSave={this.editorChangeHandler}
+				onChange={this.editorChangeHandler} />}
+		</div>
+	}
+
+	/* Not in use */
+	renderEffects = (effects) => <ul>{effects && effects.map(this.renderEffect)}</ul>
 
 	renderEffect = (effect) => <li>
 		{this.icon(effect)} <strong>{effect.Type}</strong>
@@ -41,7 +59,5 @@ export default class Effects extends Component {
 			return JSON.stringify(value)
 	}
 
-	icon = (effect) => {
-		return <GoEllipsis />
-	}
+	icon = (effect) => <GoEllipsis />
 }
