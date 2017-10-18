@@ -16,6 +16,9 @@ export default class FileChooser extends Component {
 		let { webDavFs } = this.props
 		let { currentPath } = this.state
 		webDavFs.dir(currentPath).children((files) => {
+			if(String.prototype.localeCompare) {
+				files.sort((a, b) => a.name.localeCompare(b.name))
+			}
 			this.setState({ files })
 		})
 	}
