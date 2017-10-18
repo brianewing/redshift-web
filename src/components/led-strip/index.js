@@ -7,9 +7,13 @@ import style from './style'
 let i = 0
 
 export default class LEDStrip extends Component {
+	static defaultProps = {
+		fps: 60
+	}
+
 	componentWillMount() {
-		// this.timings = new Timings(`LEDStrip[${i++}]`).startLogging()
 		this.requestNextFrame()
+		// this.timings = new Timings(`LEDStrip[${i++}]`).startLogging()
 	}
 
 	componentDidUpdate() {
@@ -49,7 +53,8 @@ export default class LEDStrip extends Component {
 	}
 
 	requestNextFrame = () => {
-		this.nextFrame = setTimeout(this._nextFrame, this._nextFrameTimeout(60))
+		let { fps } = this.props
+		this.nextFrame = setTimeout(this._nextFrame, this._nextFrameTimeout(fps))
 		// this.nextFrame = requestAnimationFrame(this._nextFrame)
 	}
 
