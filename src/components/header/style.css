@@ -25,13 +25,17 @@
 	bottom: 1px;
 	/*width: 100%;*/
 	/*height: 100%;*/
-	background: rgba(0,0,0,0.70); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
-	transition: 0.7s background-color;
+	background: rgba(0,0,0,0.10); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
+	transition: 3.5s background-color;
+}
+.cinema:before {
+	background: rgba(0,0,0,0.10);
 }
 .header:hover:before {
-	background: rgba(0,0,0,0.90);
+	background: rgba(0,0,0,0.70);
 }
 .header:hover {
+	transition-duration: 0.7s;
 	/*opacity: 0.96;*/
 }
 
@@ -42,6 +46,8 @@
 	opacity: 1;
 	/*filter: blur(0px);*/
 	/*z-index: 6;*/
+	position:absolute;
+	height:100%;
 }
 
 .header h1 {

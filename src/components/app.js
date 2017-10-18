@@ -110,7 +110,7 @@ export default class App extends Component {
 				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}
 
-				<Header buffer={buffer} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
+				<Header buffer={buffer} cinemaMode={currentUrl == '/'} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
 					<div style="padding-top: 20px; display: inline-block">
 						{headerExtra}
 					</div>
