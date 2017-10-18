@@ -1,29 +1,27 @@
 .fileChooser, .editor {
-	/*margin-top: 56px;*/
 	color: white;
 	text-align: center;
+	position: absolute;
+	width: 100%;
+	/*height: 100%;*/
+	top: 0px;
+	bottom: 0em; /*3.5em;*/
+	overflow: scroll;
+	/*bottom: 3.5em;*/
+	/*margin-top: 56px;*/
 	/*padding: 0 1em;*/
-	width: 100%;
-	height: 100%;
+	text-shadow: 1px 1px 7px black;
+	background-color: rgba(0,0,0,0.8);
 }
 
-.scripts textarea {
-	width: 100%;
-	min-height: 25em;
-	border: 1px solid white;
-
-	word-break: break-all;
-	word-wrap: break-word;
-	white-space: pre-wrap;
-	padding: 2em;
+.fileChooser ul {
+	padding: 0;
+	list-style: none;
 }
 
-.scripts textarea, button {
-	background-color: rgba(0,0,0,0.5);
-	color: white;
-}
-
-.scripts button {
-	padding: 1em;
-	width: 100%;
+.fileChooser li {
+	font-size: 1.1em;
+	font-weight: bold;
+	padding: 0.5em;
+	cursor: pointer;
 }
