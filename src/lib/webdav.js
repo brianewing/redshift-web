@@ -94,20 +94,26 @@ WebDAV.Fs = function(rootUrl) {
 		this.name = fs.nameFor(this.url);
 
 		this.children = function(callback) {
-			var childrenFunc = function(doc) {
+			var childrenFunc = function(doc, dropPrefix) {
 				if(doc.childNodes == null) {
 					throw('No such directory: ' + url);
 				}
+				var prefix = (dropPrefix ? '' : 'D:');
 				var result = [];
 				// Start at 1, because the 0th is the same as self.
 				for(var i=1; i< doc.childNodes.length; i++) {
 					var response     = doc.childNodes[i];
-					var href         = response.getElementsByTagName('D:href')[0].firstChild.nodeValue;
+					try {
+						var href = response.getElementsByTagName(prefix + 'href')[0].firstChild.nodeValue;
+					} catch(ex) {
+						if(!dropPrefix)
+							return childrenFunc(doc, true);
+					}
 					href = href.replace(/\/$/, ''); // Strip trailing slash
-					var propstat     = response.getElementsByTagName('D:propstat')[0];
-					var prop         = propstat.getElementsByTagName('D:prop')[0];
-					var resourcetype = prop.getElementsByTagName('D:resourcetype')[0];
-					var collection   = resourcetype.getElementsByTagName('D:collection')[0];
+					var propstat     = response.getElementsByTagName(prefix + 'propstat')[0];
+					var prop         = propstat.getElementsByTagName(prefix + 'prop')[0];
+					var resourcetype = prop.getElementsByTagName(prefix + 'resourcetype')[0];
+					var collection   = resourcetype.getElementsByTagName(prefix + 'collection')[0];
 
 					if(collection) {
 						result[i-1] = new fs.dir(href);
