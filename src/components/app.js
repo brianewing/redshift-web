@@ -1,5 +1,5 @@
 import { h, Component } from 'preact'
-import { Router } from 'preact-router'
+import { Router, route } from 'preact-router'
 
 import basicContext from 'basiccontext'
 
@@ -8,8 +8,6 @@ import ServerConnection from './server-connection'
 import Remote from './routes/remote'
 import Effects from './routes/effects'
 import Scripts from './routes/scripts/index'
-
-import LEDStrip from './led-strip'
 
 const WS_URL = 'ws://192.168.1.3:9191'
 const SCRIPTS_URL = 'http://192.168.1.3:9292'
@@ -35,14 +33,14 @@ export default class App extends Component {
 
 	showMenu = (e) => {
 		let noop = () => {}
-		let go = (url) => () => window.location = url
+		let go = (url) => () => route(url)
 		basicContext.show([
 			{title: 'Cinema', fn: go('/')},
 			{title: 'Effects', fn: go('/effects')},
 			{title: 'Script Editor', fn: go('/scripts')},
 			{},
 			{title: 'Change Server', fn: noop},
-			{title: 'Disconnect', fn: noop}
+			{title: (this.state.off ? 'Connect' : 'Disconnect'), fn: this.toggleOff}
 		], e)
 	}
 
