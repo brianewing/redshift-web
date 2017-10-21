@@ -24,23 +24,31 @@ export default class Effects extends Component {
 
 	render({}, { effects }) {
 		return <div class={style.effects}>
-			{<EffectsList items={effects} onSortEnd={this.onSortEnd} />}
+			{<List items={effects} onSortEnd={this.onSortEnd} />}
 		</div>
 	}
 }
 
-const EffectsList = SortableContainer(({ items }) => {
-	return <ul>
-		{items && items.map((value, index) => <Effect key={`item-${index}`} index={index} value={value} />)}
-	</ul>
-})
+@SortableContainer
+class List extends Component {
+	render({ items }) {
+		return <ul>
+			{items && items.map((value, index) => <Effect key={`item-${index}`} index={index} value={value} />)}
+		</ul>
+	}
+}
 
-const Effect = SortableElement(({ value }) => <li>
-	<GoEllipsis /> <strong>{value.Type}</strong>
-	{ " {" }
-		{Object.entries(value.Params).map(([key, value]) => {
-			return <span><strong> {key}</strong> {JSON.stringify(value)}</span>
-			// return <span><strong> {key}</strong> {this.renderValue(value, key)}</span>;
-		})}
-	{ " }" }
-</li>)
+@SortableElement
+class Effect extends Component {
+	render({ value }) {
+		return <li>
+			<GoEllipsis /> <strong>{value.Type}</strong>
+			{ " {" }
+				{Object.entries(value.Params).map(([key, value]) => {
+					return <span><strong> {key}</strong> {JSON.stringify(value)}</span>
+					// return <span><strong> {key}</strong> {this.renderValue(value, key)}</span>;
+				})}
+			{ " }" }
+		</li>
+	}
+}
