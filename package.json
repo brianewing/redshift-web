@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "basiccontext": "^3.5.1",
+    "basicgrid": "^3.0.0",
     "linkstate": "^1.1.0",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",
