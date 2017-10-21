@@ -7,38 +7,67 @@ import WebDAV from '../../../lib/webdav';
 import Editor from './editor';
 import FileChooser from './file-chooser';
 
+import style from './style';
+
 export default class Scripts extends Component {
 	state = {
-		currentFile: null,
+		webDavFs: null,
 		panes: []
 	}
 
 	componentWillMount() {
 		let webDavFs = new WebDAV.Fs(this.props.serverUrl)
-		this.setState({ webDavFs: webDavFs })
+		this.setState({ webDavFs })
+		this.newPane()
 	}
 
-	showMenu = (e) => {
-		let noop = () => {}
-		let close = () => {
-			if(this.state.panes.length == 0)
-				route('/')
-		}
+	_nextPaneId = 1
+
+	newPane = () => {
+		let panes = this.state.panes.concat([this._nextPaneId++])
+		this.setState({ panes })
+	}
+
+	closePane = (id) => {
+		let panes = this.state.panes.concat([])
+		panes.splice(panes.indexOf(id), 1)
+
+		if(panes.length == 0)
+			route('/')
+		else
+			this.setState({ panes })
+	}
+
+	showMenu = (paneId, e) => {
 		basicContext.show([
-			{title: 'New Pane', fn: noop},
-			{title: 'Close This', fn: close},
+			{title: 'New Pane', fn: () => this.newPane()},
+			{title: 'Close This', fn: () => this.closePane(paneId)},
 		], e)
 	}
 
+	render({}, { webDavFs, panes }) {
+		return <div class={style.panes}>
+			{panes.map((id) => <div key={id} class={style.pane} onContextMenu={this.showMenu.bind(this, id)}>
+				<Pane webDavFs={webDavFs} />
+			</div>)}
+		</div>
+	}
+}
+
+class Pane extends Component {
+	state = {
+		currentFile: null
+	}
+
 	loadFile = ({ name, url }) => {
-		this.state.webDavFs.file(url).read((contents) => {
+		this.props.webDavFs.file(url).read((contents) => {
 			this.setState({ currentFile: { name, url, contents }})
 		})
 	}
 
 	writeFile = ({ url, contents }) => {
 		console.log("Write", url)
-		this.state.webDavFs.file(url).write(contents, (resp) => {
+		this.props.webDavFs.file(url).write(contents, (resp) => {
 			console.log("Written")
 		})
 	}
@@ -57,22 +86,16 @@ export default class Scripts extends Component {
 		this.setState({ currentFile: null })
 	}
 
-	render(props, state) {
-		return <div onContextMenu={this.showMenu}>
-			{this.renderMode(props, state)}
-		</div>
-	}
-
-	renderMode({}, { webDavFs, currentFile }) {
+	render({ webDavFs }, { currentFile }) {
 		if(currentFile) {
 			let { name, url, contents } = currentFile
-			let onSave = (newContent) => this.writeFile({ url, contents: newContent })
+			let save = (contents) => this.writeFile({ url, contents })
 			return <Editor
 				filename={name}
 				content={contents}
 				mode={this.getLanguageFromFilename(name)}
-				onSave={onSave}
-				onChange={onSave}
+				onSave={save}
+				onChange={save}
 				onLeave={this.returnToFileList} />
 		} else {
 			return <FileChooser webDavFs={webDavFs} onChoose={this.loadFile} />
