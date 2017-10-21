@@ -12,25 +12,29 @@ import GoTerminal from 'react-icons/lib/go/terminal';
 import GoPlug from 'react-icons/lib/go/plug';
 import GoScreenFull from 'react-icons/lib/go/screen-full';
 
+import FaAdjust from 'react-icons/lib/fa/adjust';
+import FaDesktop from 'react-icons/lib/fa/desktop';
+import FaStar from 'react-icons/lib/fa/star';
+import FaListUl from 'react-icons/lib/fa/list-ul';
+import FaArrowsAlt from 'react-icons/lib/fa/arrows-alt';
+
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
 export default class Header extends Component {
-	render({ onTitleClick, buffer, cinemaMode, toggleOff, off }) {
-		return (
-			<div>
-				<LEDStrip buffer={buffer} paused={off} class={style.headerStrip} reverse={cinemaMode} />
-				<header class={style.header + ' ' + (cinemaMode && style.cinema)}>
-					<h1 onClick={onTitleClick}>Redshift</h1>
-					{this.props.children}
-					<nav>
-						<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
-						<Link activeClassName={style.active} href="/effects"><GoPlug /></Link>
-						<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
-						{false && <Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>}
-						<Link activeClassName={style.active} href="javascript:;" onClick={toggleOff}><FaPowerOff /></Link>
-					</nav>
-				</header>
-			</div>
-		);
+	render({ onTitleClick, buffer, reverseStrip, toggleOff, off }) {
+		return <div>
+			<LEDStrip buffer={buffer} paused={off} class={style.headerStrip} reverse={reverseStrip} />
+			<header class={style.header + ' '}>
+				<h1 onClick={onTitleClick}>Redshift</h1>
+				{this.props.children}
+				<nav>
+					<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
+					<Link activeClassName={style.active} href="/effects"><GoPlug /></Link>
+					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
+					{false && <Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>}
+					<Link activeClassName={style.active} href="javascript:;" onClick={toggleOff}><FaPowerOff /></Link>
+				</nav>
+			</header>
+		</div>
 	}
 }

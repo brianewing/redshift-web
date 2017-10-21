@@ -28,9 +28,6 @@
 	background: rgba(0,0,0,0.10); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
 	transition: 3.5s background-color;
 }
-.cinema:before {
-	background: rgba(0,0,0,0.10);
-}
 .header:hover:before {
 	background: rgba(0,0,0,0.70);
 }

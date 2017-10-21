@@ -110,19 +110,19 @@ export default class App extends Component {
 				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}
 
-				<Header buffer={buffer} cinemaMode={currentUrl == '/'} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
+				<Header buffer={buffer} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
 					<div style="padding-top: 20px; display: inline-block">
 						{headerExtra}
 					</div>
 				</Header>
 
-				<div id="main">
+				<main id="main">
 					<Router onChange={this.handleRoute}>
-						<Remote path="/" buffer={buffer} off={off} />
+						<div path="/">{/* Cinema Mode */}</div>
 						<Effects path="/effects" effects={effects} onCustomJson={this.sendCustomEffectsJson} />
 						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} onWrite={this.sendScript} />
 					</Router>
-				</div>
+				</main>
 			</div>
 		);
 	}
