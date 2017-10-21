@@ -1,9 +1,41 @@
+/* List */
 .effects {
 	height: 100%;
+	font-size: 1.1em;
 	color: white;
+	text-align: center;
 }
 
 .effects ul {
 	list-style: none;
-	padding-left: 1em;
+	padding: 0em 1em;
+}
+
+.effects ul ul {
+	padding-bottom: 0.5em;
+}
+
+.effects svg {
+	color: yellow;
+	opacity: 0.9;
+	line-height: 3em;
+}
+
+/* List items */
+.effect {
+	text-align: center;
+	list-style: none;
+	min-height: 3em;
+	line-height: 3em;
+
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.60);
+}
+
+.effect:not(:last-child) {
+	margin-bottom: 0.5em;
+}
+
+.effect .effect {
+	background: rgba(0, 0, 0, 0.35);
 }
