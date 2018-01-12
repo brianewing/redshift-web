@@ -88,7 +88,8 @@ export default class App extends Component {
 		this.bufferSocket && this.bufferSocket.sendBytes(buffer)
 	}
 
-	sendCustomEffectsJson = (json) => {
+	sendEffects = (effects) => {
+		const json = JSON.stringify(effects)
 		this.effectsSocket && this.effectsSocket.sendMessage(json)
 	}
 
@@ -123,8 +124,8 @@ export default class App extends Component {
 				<main id="main">
 					<Router onChange={this.handleRoute}>
 						<div path="/">{/* Cinema Mode */}</div>
-						<Effects path="/effects" effects={effects} onCustomJson={this.sendCustomEffectsJson} />
-						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} onWrite={this.sendScript} />
+						<Effects path="/effects" effects={effects} onSend={this.sendEffects} />
+						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
 					</Router>
 				</main>
 			</div>
