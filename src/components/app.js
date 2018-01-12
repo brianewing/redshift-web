@@ -9,54 +9,61 @@ import Remote from './routes/remote'
 import Effects from './routes/effects'
 import Scripts from './routes/scripts/index'
 
-const WS_URL = 'ws://192.168.1.3:9191'
-const SCRIPTS_URL = 'http://192.168.1.3:9292'
+const HOST = location.hostname
+
+const WS_URL = `ws://${HOST}:9191`
+const SCRIPTS_URL = `http://${HOST}:9292`
+
 const BUFFER_FPS = 60
 const EFFECTS_FPS = 20
 
-// 20mA per color channel on full brightness
-let ws2812_ComponentPower = (c) => (c / 255) * 0.02
+let ws2812_ComponentPower = (c) => (c / 255) * 0.02 // 20mA per color channel on full brightness
 
 export default class App extends Component {
 	handleRoute = e => { this.setState({currentUrl: e.url}) }
 
 	componentWillMount() {
-		window.app = this
 		window.addEventListener('orientationchange', this.onOrientationChange)
-		// window.addEventListener('keypress', this.onKeyPress)
+		// window.addEventListener('blur', this.turnOff)
+		// window.addEventListener('focus', this.turnOn)
+		window.app = this
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener('orientationchange', this.onOrientationChange)
-		window.removeEventListener('keypress', this.onKeyPress)
+		window.removeEventListener('blur', this.turnOff)
+		window.removeEventListener('focus', this.turnOn)
 	}
 
 	showMenu = (e) => {
-		let noop = () => {}
 		let go = (url) => () => route(url)
 		basicContext.show([
 			{title: 'Cinema', fn: go('/')},
 			{title: 'Effects', fn: go('/effects')},
 			{title: 'Script Editor', fn: go('/scripts')},
 			{},
-			{title: 'Change Server', fn: noop},
-			{title: (this.state.off ? 'Connect' : 'Disconnect'), fn: this.toggleOff}
+			{title: 'Change Server', fn: () => alert('Not implemented yet')},
+			{title: (this.state.off ? 'Connect' : 'Disconnect'), fn: this.toggleOff},
+			{title: 'Refresh', fn: () => window.location = window.location},
 		], e)
 	}
+
+	toggleOff = (e) => { // closes all server connections
+		this.state.off ? this.turnOn() : this.turnOff()
+	}
+
+	turnOn = (e) => { this.setState({off: false}) }
+	turnOff = (e) => { this.setState({off: true}) }
 
 	/* Events */
 
 	onOrientationChange = (e) => {
-		this.setState({hide: true})
-		setTimeout(() => this.setState({hide: false}), 0)
+		this.turnOff()
+		setTimeout(() => this.turnOn(), 0)
 	}
 
 	onVisibilityChange = (e) => {
 		this.setState({hide: document.hidden})
-	}
-
-	onKeyPress = (e) => {
-		console.log(e)
 	}
 
 	/* Server communication */
@@ -85,6 +92,8 @@ export default class App extends Component {
 		this.effectsSocket && this.effectsSocket.sendMessage(json)
 	}
 
+	/* Rendering */
+
 	calculateAmps = (buffer) => {
 		let amps = 0
 		for(let i=0; i<buffer.length; i++) {
@@ -94,18 +103,13 @@ export default class App extends Component {
 		return amps.toFixed(2)
 	}
 
-	toggleOff = (e) => {
-		setTimeout(() => this.setState({off: !this.state.off}), 0)
-	}
-
-	render({ }, { currentUrl, buffer, effects, amps, off, hide }) {
+	render({ }, { currentUrl, buffer, effects, amps, off }) {
 		let headerExtra
-		if(hide) return;
 		if(false && document.body.clientWidth > 480) headerExtra = `${this.mps} mps // ${amps} amps`
 
 		return (
 			<div id="app">
-				{!off && <ServerConnection ref={(ws) => window.ws = ws} refBuffer={this.setBuffer} fps={BUFFER_FPS} url={WS_URL + '/s/strip'} />}
+				{!off && <ServerConnection refBuffer={this.setBuffer} fps={BUFFER_FPS} url={WS_URL + '/s/strip'} />}
 				{!off && <ServerConnection ref={this.setBufferSocket} url={WS_URL + '/strip'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}

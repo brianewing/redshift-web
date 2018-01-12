@@ -59,7 +59,7 @@ export default class Editor extends Component {
 					keyboardHandler={keyboardHandler}
 					showPrintMargin={false}
 					wrapEnabled={true}
-					fontSize="16px"
+					fontSize="1em"
 					commands={this.aceCommands()}
 					defaultValue={content || SAMPLE_SCRIPTS[mode] || ''}
 					onChange={this.handleChange}

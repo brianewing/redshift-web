@@ -41,10 +41,9 @@ export default class LEDStrip extends Component {
 	adjustCanvas = () => {
 		let canvas = this.canvas
 		let parentNode = canvas.parentNode
+		let pixelRatio = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1)
 
-		if(canvas.width != parentNode.clientWidth * 2 || canvas.height != parentNode.clientHeight * 2) {
-			let pixelRatio = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1)
-			// pixelRatio = 1
+		if(canvas.width != parentNode.clientWidth * pixelRatio || canvas.height != parentNode.clientHeight * pixelRatio) {
 			canvas.width = (parentNode.clientWidth * pixelRatio)
 			canvas.height = (parentNode.clientHeight * pixelRatio)
 			canvas.style.width = `${parentNode.clientWidth}px`
