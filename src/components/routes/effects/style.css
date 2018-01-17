@@ -26,16 +26,22 @@
 	text-align: center;
 	list-style: none;
 	min-height: 3em;
-	line-height: 3em;
 
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.60);
-}
-
-.effect:not(:last-child) {
+} .effect:not(:last-child) {
 	margin-bottom: 0.5em;
 }
 
+.effect .effectName {
+	line-height: 3em;
+}
+
+.effect .effectParams {
+	padding-bottom: 0.9em;
+}
+
+/* Nested effects (e.g. Layer) */
 .effect .effect {
 	background: rgba(0, 0, 0, 0.35);
 }

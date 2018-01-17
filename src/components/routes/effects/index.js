@@ -54,11 +54,15 @@ class List extends Component {
 @SortableElement
 class Effect extends Component {
 	render({ value }) {
+		const params = Object.entries(value.Params)
+
 		return <li class={style.effect}>
-			<div style="display:block">
+			<div class={style.effectName}>
 				{this.renderIcon(value)} <strong>{value.Type}</strong>
 			</div>
-			{Object.entries(value.Params).map(([key, value]) => this.renderValue(value, key))}
+			{params.length > 0 && <div class={style.effectParams}>
+				{params.map(([key, value]) => this.renderValue(value, key))}
+			</div>}
 		</li>
 	}
 
@@ -79,6 +83,6 @@ class Effect extends Component {
 		if(key == 'Effects')
 			return <List items={value} />
 		else
-			return <span><strong> {key}</strong> {JSON.stringify(value)}</span>
+			return <div><strong> {key}</strong> {JSON.stringify(value)}</div>
 	}
 }
