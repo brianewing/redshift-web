@@ -5,7 +5,7 @@
 
 @import '../../node_modules/basicgrid/dist/basicGrid.min.css';
 
-@import url('https://fonts.googleapis.com/css?family=Dosis|Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Dosis');
 
 ::-webkit-scrollbar {
 	display: none;
@@ -19,7 +19,7 @@ html, body {
 	margin: 0;
 	/*background: #FAFAFA;*/
 	background: #111;
-	font-family: 'Dosis', 'Helvetica Neue', 'Open Sans', arial, sans-serif;
+	font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
 	font-weight: 400;
 	/*color: #444;*/
 	color: #ccc;
