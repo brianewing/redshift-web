@@ -24,8 +24,8 @@ export default class App extends Component {
 
 	componentWillMount() {
 		window.addEventListener('orientationchange', this.onOrientationChange)
-		// window.addEventListener('blur', this.turnOff)
-		// window.addEventListener('focus', this.turnOn)
+		window.addEventListener('blur', this.turnOff)
+		window.addEventListener('focus', this.turnOn)
 		window.app = this
 	}
 
