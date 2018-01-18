@@ -39,8 +39,10 @@ var WebDAV = {
 		if(callback) {
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState == 4) { // complete.
-					var b = body();
-					callback(b);
+					if(xhr.status >= 200 && xhr.status <= 299)
+						callback(body(), xhr);
+					else
+						callback(null, xhr);
 				}
 			};
 		}
