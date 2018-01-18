@@ -3,7 +3,7 @@
 @import '../../node_modules/basiccontext/dist/themes/dark.min.css';
 @import '../../node_modules/basiccontext/dist/addons/popin.min.css';
 
-@import '../../node_modules/basicgrid/dist/basicGrid.min.css';
+@import '../../node_modules/basicmodal/dist/basicModal.min.css';
 
 @import url('https://fonts.googleapis.com/css?family=Dosis');
 

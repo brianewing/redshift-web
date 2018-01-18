@@ -25,6 +25,7 @@
   "dependencies": {
     "basiccontext": "^3.5.1",
     "basicgrid": "^3.0.0",
+    "basicmodal": "^3.3.9",
     "linkstate": "^1.1.0",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",

@@ -10,7 +10,6 @@ import Effects from './routes/effects'
 import Scripts from './routes/scripts/index'
 
 const HOST = location.hostname
-
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
