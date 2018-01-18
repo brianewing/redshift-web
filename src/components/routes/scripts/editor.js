@@ -76,9 +76,7 @@ const SAMPLE_SCRIPTS = {
 let redshift = require('./redshift');
 
 redshift((frame) => {
-	for(let i=0; i<frame.length; i++) {
-		frame[i][0] = Math.max(0, frame[i][2] - frame[i][0]);
-	}
+	frame[0] = [255, 0, 0]; // set first pixel to red
 });`,
 
 	python: `#!/usr/bin/env python
@@ -86,7 +84,7 @@ redshift((frame) => {
 from redshift import run
 
 def animation(frame):
-	frame[0] = (255, 0, 0)
+	frame[0] = (255, 0, 0) # set first pixel to red
 
 run(animation)`
 }
