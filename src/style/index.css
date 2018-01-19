@@ -7,6 +7,8 @@
 
 @import url('https://fonts.googleapis.com/css?family=Dosis');
 
+@import './forms';
+
 ::-webkit-scrollbar {
 	display: none;
 }
@@ -21,8 +23,7 @@ html, body {
 	background: #111;
 	font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
 	font-weight: 400;
-	/*color: #444;*/
-	color: #ccc;
+	color: white;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
