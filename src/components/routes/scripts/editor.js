@@ -60,12 +60,12 @@ export default class Editor extends Component {
 	}
 
 	render({ filename, content, mode, theme, keyboardHandler, onLeave }) {
-		return (
-			<div class={style.editor}>
-				<h3 style="line-height: 0.3em">
-					{onLeave && <a href="javascript:;" style="color:white !important" onClick={onLeave}><GoArrowLeft /></a>}
-					<strong>Editing {filename}</strong>
-				</h3>
+		return <div class={style.editor}>
+			<div class={style.editorHeader}>
+				{onLeave && <a href="javascript:;" style="color:white !important" onClick={onLeave}><GoArrowLeft /></a>}
+				Editing {filename}
+			</div>
+			<div class={style.ace}>
 				<AceEditor
 					width="100%"
 					height="100%"
@@ -81,7 +81,7 @@ export default class Editor extends Component {
 					editorProps={{$blockScrolling: false}}
 				  />
 			</div>
-		)
+		</div>
 	}
 }
 

@@ -6,7 +6,7 @@
 	width: 100%;
 }
 .pane {
-	flex: auto;
+	flex: 1;
 	height: 100%;
 }
 
@@ -33,4 +33,18 @@
 	font-weight: bold;
 	padding: 0.5em;
 	cursor: pointer;
+}
+
+.editor .editorHeader {
+	height: 2em;
+	line-height: 2em;
+	font-weight: bold;
+}
+
+.editor .ace {
+	position: relative;
+	top: 0px; bottom: 0px;
+
+	width: 100%;
+	height: calc(100% - 2em);
 }
