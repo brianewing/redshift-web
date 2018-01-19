@@ -25,23 +25,38 @@ export default class Editor extends Component {
 		keyboardHandler: 'vim',
 	}
 
-	aceCommands() {
-		let { onSave } = this.props, commands = []
-		onSave && commands.push({
-			name: 'save',
-			bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-			exec: () => { onSave(this.state.newContent) }
-		})
-		return commands
-	}
-
-	handleChange = (newText) => {
-		this.setState({newContent: newText})
-		this.props.onChange && this.props.onChange(newText)
+	componentWillMount() {
+		if(!this.props.content) {
+			const mode = this.props.mode
+			this.props.content = SAMPLE_SCRIPTS[mode]
+			this.save() // CREATES NEW FILES, TODO: REFACTOR INTO FILE CHOOSER
+		}
 	}
 
 	shouldComponentUpdate() {
 		return false;
+	}
+
+	aceCommands() {
+		return [
+			{
+				name: 'save',
+				bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+				exec: this.save,
+			},
+		]
+	}
+
+	save = () => {
+		const { onSave } = this.props
+		onSave && onSave(this.state.newContent)
+	}
+
+	handleChange = (newText) => {
+		this.setState({ newContent: newText })
+
+		if(this.props.onChange)
+			this.props.onChange(newText)
 	}
 
 	render({ filename, content, mode, theme, keyboardHandler, onLeave }) {
@@ -61,7 +76,7 @@ export default class Editor extends Component {
 					wrapEnabled={true}
 					fontSize="1em"
 					commands={this.aceCommands()}
-					defaultValue={content || SAMPLE_SCRIPTS[mode] || ''}
+					defaultValue={content}
 					onChange={this.handleChange}
 					editorProps={{$blockScrolling: false}}
 				  />
