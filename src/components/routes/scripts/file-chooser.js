@@ -1,5 +1,7 @@
 import { h, Component } from 'preact';
 
+import basicContext from 'basiccontext';
+
 import NewFileDialog from './new-file-dialog';
 
 import style from './style';
@@ -25,6 +27,17 @@ export default class FileChooser extends Component {
 	onNewFileDialogSubmit = (name) => {
 		this.closeNewFileDialog()
 		this.createFile(name)
+	}
+
+	showMenu = (e, file) => {
+		if(file) {
+			basicContext.show([
+				{title: 'Edit File', fn: () => this.chooseFile(file)},
+				{title: 'Delete File', fn: () => {
+					file.rm(() => this.fetchFiles())
+				}},
+			], e)
+		}
 	}
 
 	fetchFiles = () => {
@@ -63,6 +76,10 @@ export default class FileChooser extends Component {
 	renderFileList(files) {
 		return (files.length == 0
 			? <i>Nothing to show</i>
-			: <ul>{files.map((f) => <li onClick={() => this.chooseFile(f)}>{f.name}</li>)}</ul>)
+			: <ul>
+				{files.map((f) => <li onClick={() => this.chooseFile(f)} onContextMenu={(e) => this.showMenu(e, f)}>
+						{f.name}
+					</li>)}
+				</ul>)
 	}
 }
