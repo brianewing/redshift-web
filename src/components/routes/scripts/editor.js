@@ -73,7 +73,7 @@ export default class Editor extends Component {
 					theme={theme}
 					keyboardHandler={keyboardHandler}
 					showPrintMargin={false}
-					wrapEnabled={true}
+					wrapEnabled={false}
 					fontSize="1em"
 					commands={this.aceCommands()}
 					defaultValue={content}
