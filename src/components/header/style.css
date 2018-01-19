@@ -4,7 +4,8 @@
 	top: 0;
 	/*top: 0.5px;*/
 	width: 100%;
-	height: 56px;
+	height: 3.0em;
+	font-size: 0.85em;
 	padding: 0;
 	/*background: #673AB7;*/
 	/*background: #111;*/
@@ -12,8 +13,7 @@
 	background: rgba(0,0,0,0);
 	text-shadow: 1px 1px 0px black;
 	z-index: 50;
-}
-.header:before {
+} .header:before {
 	position: absolute;
 	display: block;
 	content: '';
@@ -25,20 +25,18 @@
 	bottom: 1px;
 	/*width: 100%;*/
 	/*height: 100%;*/
-	background: rgba(0,0,0,0.10); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
+	background: rgba(0,0,0,0.25); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
 	transition: 3.5s background-color;
-}
-.header:hover:before {
+} .header:hover:before {
 	background: rgba(0,0,0,0.70);
-}
-.header:hover {
+} .header:hover {
 	transition-duration: 0.7s;
 	/*opacity: 0.96;*/
 }
 
 .headerStrip {
 	/*display: none;*/
-	height: 56px;
+	height: 3.0em;
 	width: 100%;
 	opacity: 1;
 	/*filter: blur(0px);*/
@@ -52,8 +50,8 @@
 	float: left;
 	margin: 0;
 	padding: 0 15px;
-	font-size: 24px;
-	line-height: 56px;
+	font-size: 1.4em;
+	line-height: 2.1em;
 	font-weight: 400;
 	color: #FFF;
 	color: #fff;
@@ -66,40 +64,43 @@
 
 .header nav {
 	float: right;
-	font-size: 100%;
 }
 
 .header nav a {
 	display: inline-block;
-	height: 54px;
-	margin-top: 1px;
-	line-height: 56px;
-	padding: 0 15px;
-	min-width: 50px;
+	height: 2.95em;
+	font-size: 1.0em;
+	/* margin-top: 1px; */
+	/* line-height: 100%; */
+	line-height: 2.8em;
+	padding: 0 0.1em;
+	min-width: 2.5em;
 	text-align: center;
 	text-decoration: none;
 	color: #FFF;
 	outline: 0;
 	will-change: background-color;
-}
-
-.header nav a.active {
+} .header nav a.active {
 	/*background: rgba(255,255,255,0.15);*/
 	background: rgba(0,0,0,0.9);
 	/*border-left: 1px solid rgba(255,255,255,0.30);*/
 	/*border-right: 1px solid rgba(255,255,255,0.30);*/
 }
 
-.header nav a:hover,
-.header nav a:active {
-	background: rgba(255,255,255, 0.9);
+.header nav a svg {
+	vertical-align: middle;
+	/* line-height: 3em; */
 }
 
-.header nav a:last-child:hover {
-	background: rgba(255, 0, 0, 0.85);
+.header nav a:hover, .header nav a:active {
+	background: rgba(255,255,255, 0.9);
 }
 
 .header nav a:hover svg,
 .header nav a:active svg {
 	color: black;
+}
+
+.header nav a:last-child:hover {
+	background: rgba(255, 0, 0, 0.85);
 }

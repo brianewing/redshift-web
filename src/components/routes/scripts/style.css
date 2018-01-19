@@ -29,7 +29,6 @@
 }
 
 .fileChooser li {
-	font-size: 1.1em;
 	font-weight: bold;
 	padding: 0.5em;
 	cursor: pointer;
@@ -46,5 +45,7 @@
 	top: 0px; bottom: 0px;
 
 	width: 100%;
-	height: calc(100% - 2em);
+	height: calc(100% - calc(2em/0.8));
+	font-size: 0.8em;
+	overflow: hidden;
 }

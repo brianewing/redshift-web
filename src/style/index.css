@@ -9,9 +9,9 @@
 
 @import './forms';
 
-::-webkit-scrollbar {
-	display: none;
-}
+::-webkit-scrollbar { display: none; }
+
+* { box-sizing: border-box; }
 
 html, body {
 	min-height: 100%;
@@ -26,18 +26,11 @@ html, body {
 	color: white;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	font-size: 1.1em;
 
 	user-select: none;
 	overflow: hidden;
 	cursor: default;
-}
-
-* {
-	box-sizing: border-box;
-}
-
-.basicContext {
-	background-color: rgba(15,15,15,.85);
 }
 
 #app {
@@ -47,10 +40,15 @@ html, body {
 #main {
 	position: absolute;
 	overflow: auto;
-	top: 56px; /* header height */
+	top: 2.55em; /* header height */
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
+}
+
+.basicContext {
+	background-color: rgba(15,15,15,.85);
+	border-radius: 1px;
 }
 
 .ace_editor, .ace_print-margin {
