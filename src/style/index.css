@@ -5,9 +5,11 @@
 
 @import '../../node_modules/basicmodal/dist/basicModal.min.css';
 
-@import url('https://fonts.googleapis.com/css?family=Dosis');
+@import '../../node_modules/preact-range-slider/assets/index.css';
 
 @import './forms';
+
+@import url('https://fonts.googleapis.com/css?family=Dosis');
 
 ::-webkit-scrollbar { display: none; }
 

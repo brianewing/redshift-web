@@ -3,6 +3,8 @@ import linkState from 'linkstate';
 
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
 
+import EffectEditModal from './edit-modal';
+
 import FaAutomobile from 'react-icons/lib/fa/automobile';
 import FaCab from 'react-icons/lib/fa/cab';
 import FaClone from 'react-icons/lib/fa/clone';
@@ -30,33 +32,58 @@ export default class Effects extends Component {
 	send = () => this.props.onSend && this.props.onSend(this.state.effects)
 
 	onSortEnd = ({oldIndex, newIndex}) => {
-		this.setState({effects: arrayMove(this.state.effects, oldIndex, newIndex)})
+		this.onChange(arrayMove(this.state.effects, oldIndex, newIndex))
+	}
+
+	onChange = (effects) => {
+		this.setState({ effects })
 		this.send()
 	}
 
 	render({}, { effects }) {
 		return <div class={style.effects}>
 			<h2>Effects</h2>
-			{<List items={effects} transitionDuration={0} onSortStart={this.onSortStart} onSortEnd={this.onSortEnd} />}
+			{<List items={effects} transitionDuration={0} onSortStart={this.onSortStart} onSortEnd={this.onSortEnd} onChange={this.onChange} />}
 		</div>
 	}
 }
 
-@SortableContainer
+// @SortableContainer
 class List extends Component {
+	effectChanged = (index, newEffect) => {
+		console.log("effect changed!", index, newEffect)
+		const { items, onChange } = this.props
+		items[index] = newEffect
+		onChange(items)
+	}
+
 	render({ items }) {
 		return <ul>
-			{items && items.map((value, index) => <Effect index={index} value={value} />)}
+			{items && items.map((value, index) => <Effect index={index} value={value} onChange={this.effectChanged.bind(null, index)} />)}
 		</ul>
 	}
 }
 
-@SortableElement
+// @SortableElement
 class Effect extends Component {
-	render({ value }) {
+	showEditModal = () => this.setState({ edit: true })
+	hideEditModal = () => this.setState({ edit: false })
+
+	onEdit = (field, newValue) => {
+		const { onChange, value  } = this.props
+		value.Params[field] = newValue
+		onChange(value)
+	}
+
+	render({ value }, { edit }) {
 		const params = Object.entries(value.Params)
 
-		return <li class={style.effect}>
+		return <li class={style.effect} onClick={this.showEditModal}>
+			{ edit ? <EffectEditModal effect={value}
+				onClose={this.hideEditModal}
+				onEdit={this.onEdit}
+			/> : null}
+
 			<div class={style.effectName}>
 				{this.renderIcon(value)} <strong>{value.Type}</strong>
 			</div>

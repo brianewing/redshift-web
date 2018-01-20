@@ -20,7 +20,10 @@
     "eslint": "^4.6.0",
     "eslint-config-synacor": "^1.1.1",
     "if-env": "^1.0.0",
-    "preact-cli": "^1.4.1"
+    "preact": "^8.2.7",
+    "preact-cli": "^1.4.1",
+    "preact-range-slider": "^0.2.0",
+    "tslib": "^1.9.0"
   },
   "dependencies": {
     "basiccontext": "^3.5.1",

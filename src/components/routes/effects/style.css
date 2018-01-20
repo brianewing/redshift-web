@@ -44,3 +44,25 @@
 .effect .effect {
 	background: rgba(0, 0, 0, 0.35);
 }
+
+/* Edit modal */
+
+.edit {
+	text-align: center;
+}
+
+.edit ul {
+	list-style: none;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+.editFields {
+}
+
+.editField label {
+	margin: 1em;
+}
+
+.editField input {
+}
