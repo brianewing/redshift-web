@@ -1,18 +1,21 @@
 import { h, Component } from 'preact';
-import style from './style';
 
 import AceEditor from 'react-ace';
+import basicContext from 'basiccontext';
 
 import 'brace/mode/javascript';
 import 'brace/mode/python';
 
 import 'brace/keybinding/vim';
+import 'brace/keybinding/emacs';
 
 import 'brace/theme/ambiance';
 import 'brace/theme/merbivore';
 import 'brace/theme/terminal';
 import 'brace/theme/tomorrow_night_bright';
 import 'brace/theme/vibrant_ink';
+
+import style from './style';
 
 import GoArrowLeft from 'react-icons/go/arrow-left';
 
@@ -22,7 +25,10 @@ export default class Editor extends Component {
 	static defaultProps = {
 		mode: 'javascript',
 		theme: 'merbivore',
-		keyboardHandler: 'vim',
+	}
+
+	state = {
+		fontSize: 1.0,
 	}
 
 	componentWillMount() {
@@ -34,7 +40,7 @@ export default class Editor extends Component {
 	}
 
 	shouldComponentUpdate() {
-		return false;
+		return false; // AceEditor can't handle prop changes, resets instance
 	}
 
 	aceCommands() {
@@ -45,6 +51,32 @@ export default class Editor extends Component {
 				exec: this.save,
 			},
 		]
+	}
+
+	showMenu = (e) => {
+		const { editor } = this.aceComponent
+
+		const changeFontSize = (delta) => {
+			let { fontSize } = this.state
+			fontSize += delta
+			this.setState({ fontSize })
+			this.aceComponent.editor.setFontSize(`${fontSize}em`)
+		}
+
+		const setKeyboardHandler = (mode) => {
+			this.aceComponent.editor.setKeyboardHandler(mode ? `ace/keyboard/${mode}` : null)
+		}
+
+		basicContext.show([
+			{title: 'Font size ++', fn: () => { changeFontSize(+0.1) }},
+			{title: 'Font size --', fn: () => { changeFontSize(-0.1) }},
+			{},
+			{title: 'Normal mode', fn: () => { setKeyboardHandler(null) }},
+			{title: 'Vim mode',    fn: () => { setKeyboardHandler('vim') }},
+			{title: 'Emacs mode',  fn: () => { setKeyboardHandler('emacs') }},
+			{},
+			{title: 'Saved automatically', disabled: true},
+		], e)
 	}
 
 	save = () => {
@@ -59,14 +91,19 @@ export default class Editor extends Component {
 			this.props.onChange(newText)
 	}
 
-	render({ filename, content, mode, theme, keyboardHandler, onLeave }) {
+	setAceComponent = (component) => {
+		this.aceComponent = component;
+	}
+
+	render({ filename, content, mode, theme, keyboardHandler, onLeave }, { fontSize }) {
 		return <div class={style.editor}>
 			<div class={style.editorHeader}>
 				{onLeave && <a href="javascript:;" style="color:white !important" onClick={onLeave}><GoArrowLeft /></a>}
 				Editing {filename}
 			</div>
-			<div class={style.ace}>
+			<div class={style.ace} onContextMenu={this.showMenu}>
 				<AceEditor
+					ref={this.setAceComponent}
 					width="100%"
 					height="100%"
 					mode={mode}
