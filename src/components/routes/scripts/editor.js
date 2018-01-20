@@ -67,6 +67,11 @@ export default class Editor extends Component {
 			this.aceComponent.editor.setKeyboardHandler(mode ? `ace/keyboard/${mode}` : null)
 		}
 
+		const toggleLineWrapping = () => {
+			const session = this.aceComponent.editor.getSession()
+			session.setUseWrapMode(!session.getUseWrapMode())
+		}
+
 		basicContext.show([
 			{title: 'Font size ++', fn: () => { changeFontSize(+0.1) }},
 			{title: 'Font size --', fn: () => { changeFontSize(-0.1) }},
@@ -74,6 +79,8 @@ export default class Editor extends Component {
 			{title: 'Normal mode', fn: () => { setKeyboardHandler(null) }},
 			{title: 'Vim mode',    fn: () => { setKeyboardHandler('vim') }},
 			{title: 'Emacs mode',  fn: () => { setKeyboardHandler('emacs') }},
+			{},
+			{title: 'Toggle line wrap', fn: () => { toggleLineWrapping() }},
 			{},
 			{title: 'Saved automatically', disabled: true},
 		], e)
