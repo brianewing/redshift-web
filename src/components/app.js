@@ -22,14 +22,12 @@ export default class App extends Component {
 	handleRoute = e => { this.setState({currentUrl: e.url}) }
 
 	componentWillMount() {
-		window.addEventListener('orientationchange', this.onOrientationChange)
 		window.addEventListener('blur', this.turnOff)
 		window.addEventListener('focus', this.turnOn)
 		window.app = this
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener('orientationchange', this.onOrientationChange)
 		window.removeEventListener('blur', this.turnOff)
 		window.removeEventListener('focus', this.turnOn)
 	}
@@ -55,11 +53,6 @@ export default class App extends Component {
 	turnOff = (e) => { this.setState({off: true}) }
 
 	/* Events */
-
-	onOrientationChange = (e) => {
-		this.turnOff()
-		setTimeout(() => this.turnOn(), 0)
-	}
 
 	onVisibilityChange = (e) => {
 		this.setState({hide: document.hidden})
