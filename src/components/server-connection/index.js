@@ -22,12 +22,18 @@ export default class ServerConnection extends Component {
 	}
 
 	connect() {
-		let { url, fps } = this.props;
+		let { url, fps, onChange } = this.props;
 		this.webSocket = new WebSocket(url)
 		this.webSocket.binaryType = 'arraybuffer'
 		this.webSocket.onmessage = this.handleMessage
-		this.webSocket.onopen = () => fps && this.requestStreamFps(fps)
-		this.webSocket.onclose = () => setTimeout(() => this.connect(), this.reconnectDelay)
+		this.webSocket.onopen = () => {
+			if(fps) this.requestStreamFps(fps)
+			if(onChange) onChange(true)
+		}
+		this.webSocket.onclose = () => {
+			if(onChange) onChange(false)
+			setTimeout(() => this.connect(), this.reconnectDelay)
+		}
 	}
 
 	requestStreamFps = (fps) => {

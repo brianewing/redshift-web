@@ -9,6 +9,8 @@ import Remote from './routes/remote'
 import Effects from './routes/effects'
 import Scripts from './routes/scripts/index'
 
+import Modal from './modal'
+
 const HOST = location.hostname
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
@@ -58,6 +60,10 @@ export default class App extends Component {
 		this.setState({hide: document.hidden})
 	}
 
+	onConnectionChange = (connected) => {
+		this.setState({ connected })
+	}
+
 	/* Server communication */
 
 	setBufferSocket = (ws) => {
@@ -96,13 +102,13 @@ export default class App extends Component {
 		return amps.toFixed(2)
 	}
 
-	render({ }, { currentUrl, buffer, effects, amps, off }) {
+	render({ }, { currentUrl, connected, buffer, effects, amps, off }) {
 		let headerExtra
 		if(false && document.body.clientWidth > 480) headerExtra = `${this.mps} mps // ${amps} amps`
 
 		return (
 			<div id="app">
-				{!off && <ServerConnection refBuffer={this.setBuffer} fps={BUFFER_FPS} url={WS_URL + '/s/strip'} />}
+				{!off && <ServerConnection refBuffer={this.setBuffer} fps={BUFFER_FPS} url={WS_URL + '/s/strip'} onChange={this.onConnectionChange} />}
 				{!off && <ServerConnection ref={this.setBufferSocket} url={WS_URL + '/strip'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}
@@ -114,6 +120,8 @@ export default class App extends Component {
 				</Header>
 
 				<main id="main">
+					{ !connected && !off ? <Modal>Connecting...</Modal> : null }
+
 					<Router onChange={this.handleRoute}>
 						<div path="/">{/* Cinema Mode */}</div>
 						<Effects path="/effects" effects={effects} onSend={this.sendEffects} />
