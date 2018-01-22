@@ -11,35 +11,27 @@ export default class EditModal extends Component {
 		return true
 	}
 
-	onFieldChange = (name, newValue) => {
-		const { onEdit } = this.props
-		console.log('onFieldChange', name, newValue)
-		onEdit(name, newValue)
-	}
-
-	render({ effect, onClose, onEdit }) {
+	render({ onTypeChange, onFieldChange, effect, onClose, onEdit }) {
 		const type = effect.Type
-		const params = Object.entries(effect.Params)
+		const params = Object.entries(effect.Params || {})
 
 		return <Modal onClose={onClose}>
 			<div class={style.edit}>
-				<strong>Edit {type}</strong>
+				<strong>
+					Edit
+					<select onChange={(e) => onTypeChange(e.target.value)}>
+						{TYPES.map((type) => <option name={type}>{type}</option>)}
+					</select>
+				</strong>
 
-				{ params.length > 0
-					? <ul class={style.editFields}>
-						{params.map(([name, value]) => {
-							return this.renderField(name, value)
-						})}
+				{ params.length > 0 ? <ul class={style.editFields}>
+						{params.map(([name, value]) => <li class={style.editField}>
+							<label for={name}>{name}</label>
+							<EditField name={name} value={value} onChange={onFieldChange.bind(this, name)} />
+						</li>)}
 					</ul> : <div>This effect has no parameters!</div> }
 			</div>
 		</Modal>
-	}
-
-	renderField(name, value) {
-		return <li class={style.editField}>
-			<label for={name}>{name}</label>
-			<EditField name={name} value={value} onChange={this.onFieldChange.bind(this, name)} />
-		</li>
 	}
 }
 
@@ -66,3 +58,19 @@ class EditField extends Component {
 		}
 	}
 }
+
+const TYPES = [
+	"BlueEffect",
+	"Brightness",
+	"Buffer",
+	"Clear",
+	"External",
+	"Fill",
+	"Layer",
+	"LarsonEffect",
+	"MoodEffect",
+	"Null",
+	"RainbowEffect",
+	"RandomEffect",
+	"Stripe"
+]

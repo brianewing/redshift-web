@@ -31,6 +31,13 @@ export default class Effects extends Component {
 
 	send = () => this.props.onSend && this.props.onSend(this.state.effects)
 
+	addNewEffect = () => {
+		const { effects } = this.state
+		this.setState({ effects: [{ Type: "Null" }, ...(effects || [])]})
+		this.send()
+		console.log(this.state.effects)
+	}
+
 	onSortEnd = ({oldIndex, newIndex}) => {
 		this.onChange(arrayMove(this.state.effects, oldIndex, newIndex))
 	}
@@ -43,6 +50,10 @@ export default class Effects extends Component {
 	render({}, { effects }) {
 		return <div class={style.effects}>
 			<h2>Effects</h2>
+			<button onClick={this.addNewEffect}>
+				Add New Effect
+			</button>
+
 			{<List items={effects} transitionDuration={0} onSortStart={this.onSortStart} onSortEnd={this.onSortEnd} onChange={this.onChange} />}
 		</div>
 	}
@@ -50,16 +61,25 @@ export default class Effects extends Component {
 
 // @SortableContainer
 class List extends Component {
-	effectChanged = (index, newEffect) => {
-		console.log("effect changed!", index, newEffect)
+	fieldChange = (index, newEffect) => {
 		const { items, onChange } = this.props
 		items[index] = newEffect
 		onChange(items)
 	}
 
+	typeChange = (index, newType) => {
+		const { items, onChange } = this.props
+		items[index] = { Type: newType }
+		onChange(items)
+	}
+
 	render({ items }) {
 		return <ul>
-			{items && items.map((value, index) => <Effect index={index} value={value} onChange={this.effectChanged.bind(null, index)} />)}
+			{items && items.map((value, index) =>
+				<Effect index={index} value={value}
+					onChange={this.fieldChange.bind(null, index)}
+					onTypeChange={this.typeChange.bind(null, index)} />
+			)}
 		</ul>
 	}
 }
@@ -69,24 +89,32 @@ class Effect extends Component {
 	showEditModal = () => this.setState({ edit: true })
 	hideEditModal = () => this.setState({ edit: false })
 
-	onEdit = (field, newValue) => {
-		const { onChange, value  } = this.props
+	onFieldChange = (field, newValue) => {
+		const { onFieldChange, value  } = this.props
 		value.Params[field] = newValue
-		onChange(value)
+		onFieldChange(value)
+	}
+
+	onTypeChange = (newType) => {
+		console.log('effect type change', newType)
+		const { onTypeChange } = this.props
+		onTypeChange(newType)
 	}
 
 	render({ value }, { edit }) {
-		const params = Object.entries(value.Params)
+		const params = Object.entries(value.Params || {})
 
 		return <li class={style.effect} onClick={this.showEditModal}>
 			{ edit ? <EffectEditModal effect={value}
 				onClose={this.hideEditModal}
-				onEdit={this.onEdit}
+				onFieldChange={this.onFieldChange}
+				onTypeChange={this.onTypeChange}
 			/> : null}
 
 			<div class={style.effectName}>
 				{this.renderIcon(value)} <strong>{value.Type}</strong>
 			</div>
+
 			{params.length > 0 && <div class={style.effectParams}>
 				{params.map(([key, value]) => this.renderValue(value, key))}
 			</div>}
