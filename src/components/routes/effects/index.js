@@ -3,6 +3,8 @@ import linkState from 'linkstate';
 
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
 
+import basicContext from 'basiccontext';
+
 import EffectEditModal from './edit-modal';
 
 import FaAutomobile from 'react-icons/lib/fa/automobile';
@@ -33,7 +35,7 @@ export default class Effects extends Component {
 
 	addNewEffect = () => {
 		const { effects } = this.state
-		this.setState({ effects: [{ Type: "Null" }, ...(effects || [])]})
+		this.setState({ effects: [...(effects || []), { Type: "Null" }]})
 		this.send()
 		console.log(this.state.effects)
 	}
@@ -50,16 +52,15 @@ export default class Effects extends Component {
 	render({}, { effects }) {
 		return <div class={style.effects}>
 			<h2>Effects</h2>
-			<button onClick={this.addNewEffect}>
+			<button onClick={() => this.addNewEffect()}>
 				Add New Effect
 			</button>
 
-			{<List items={effects} transitionDuration={0} onSortStart={this.onSortStart} onSortEnd={this.onSortEnd} onChange={this.onChange} />}
+			{<List items={effects} onChange={this.onChange} />}
 		</div>
 	}
 }
 
-// @SortableContainer
 class List extends Component {
 	fieldChange = (index, newEffect) => {
 		const { items, onChange } = this.props
@@ -73,51 +74,76 @@ class List extends Component {
 		onChange(items)
 	}
 
+	move = (index, delta) => {
+		const { items, onChange } = this.props
+		const newIndex = index+delta
+		if(newIndex >= 0 && newIndex <= items.length) {
+			items.splice(index+delta, 0, items.splice(index, 1)[0])
+			onChange(items)
+		}
+	}
+
+	remove = (index) => {
+		const { items, onChange } = this.props
+		items.splice(index, 1)
+		onChange(items)
+	}
+
 	render({ items }) {
 		return <ul>
 			{items && items.map((value, index) =>
-				<Effect index={index} value={value}
-					onChange={this.fieldChange.bind(null, index)}
-					onTypeChange={this.typeChange.bind(null, index)} />
+				<Effect effect={value}
+					isFirst={index==0} isLast={index==items.length-1}
+					onTypeChange={this.typeChange.bind(null, index)}
+					onFieldChange={this.fieldChange.bind(null, index)}
+					onMove={this.move.bind(null, index)}
+					onRemove={this.remove.bind(null, index)} />
 			)}
 		</ul>
 	}
 }
 
-// @SortableElement
 class Effect extends Component {
 	showEditModal = () => this.setState({ edit: true })
 	hideEditModal = () => this.setState({ edit: false })
 
-	onFieldChange = (field, newValue) => {
-		const { onFieldChange, value  } = this.props
-		value.Params[field] = newValue
-		onFieldChange(value)
+	showMenu = (e) => {
+		const { isFirst, isLast } = this.props
+		basicContext.show([
+			{title: 'Move Up', fn: () => this.props.onMove(-1), disabled: isFirst},
+			{title: 'Move Down', fn: () => this.props.onMove(1), disabled: isLast},
+			{title: 'Remove', fn: () => this.props.onRemove()},
+		], e)
 	}
 
 	onTypeChange = (newType) => {
-		console.log('effect type change', newType)
 		const { onTypeChange } = this.props
 		onTypeChange(newType)
 	}
 
-	render({ value }, { edit }) {
-		const params = Object.entries(value.Params || {})
+	onFieldChange = (field, newValue) => {
+		const { onFieldChange, effect  } = this.props
+		effect.Params[field] = newValue
+		onFieldChange(effect)
+	}
 
-		return <li class={style.effect} onClick={this.showEditModal}>
-			{ edit ? <EffectEditModal effect={value}
-				onClose={this.hideEditModal}
-				onFieldChange={this.onFieldChange}
-				onTypeChange={this.onTypeChange}
-			/> : null}
+	render({ effect }, { edit }) {
+		const params = Object.entries(effect.Params || {})
 
+		return <li class={style.effect} onDblClick={this.showEditModal} onContextMenu={this.showMenu}>
 			<div class={style.effectName}>
-				{this.renderIcon(value)} <strong>{value.Type}</strong>
+				{this.renderIcon(effect)} <strong>{effect.Type}</strong>
 			</div>
 
 			{params.length > 0 && <div class={style.effectParams}>
 				{params.map(([key, value]) => this.renderValue(value, key))}
 			</div>}
+
+			{ edit ? <EffectEditModal effect={effect}
+				onClose={this.hideEditModal}
+				onFieldChange={this.onFieldChange}
+				onTypeChange={this.onTypeChange}
+			/> : null}
 		</li>
 	}
 

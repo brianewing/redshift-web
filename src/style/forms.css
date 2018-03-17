@@ -1,3 +1,23 @@
+button, select {
+    padding: 0.5em;
+
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 1px;
+
+    color: white;
+    opacity: 0.9;
+
+    outline: none;
+}
+
+button:hover {
+    opacity: 1;
+} button:active {
+    opacity: 0.7;
+    transform: scale(0.97) translate(1px, 1px);
+}
+
 input:not([type="file"]) {
     padding: 0.5em;
     text-shadow: none;

@@ -29,12 +29,14 @@
     "basiccontext": "^3.5.1",
     "basicgrid": "^3.0.0",
     "basicmodal": "^3.3.9",
+    "coloreact": "^0.2.4",
     "linkstate": "^1.1.0",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",
     "preact-portal": "^1.1.2",
     "preact-router": "^2.5.7",
     "react-ace": "^5.2.2",
+    "react-color": "^2.13.8",
     "react-icons": "^2.2.5",
     "react-sortable-hoc": "^0.6.8"
   }

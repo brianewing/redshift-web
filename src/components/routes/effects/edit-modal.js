@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 
 import { Slider } from 'preact-range-slider';
+import ColorPicker from 'coloreact';
 
 import Modal from '../../modal';
 
@@ -12,15 +13,14 @@ export default class EditModal extends Component {
 	}
 
 	render({ onTypeChange, onFieldChange, effect, onClose, onEdit }) {
-		const type = effect.Type
 		const params = Object.entries(effect.Params || {})
 
 		return <Modal onClose={onClose}>
 			<div class={style.edit}>
 				<strong>
-					Edit
+					Edit &nbsp;
 					<select onChange={(e) => onTypeChange(e.target.value)}>
-						{TYPES.map((type) => <option name={type}>{type}</option>)}
+						{TYPES.map((type) => <option name={type} selected={type == effect.Type}>{type}</option>)}
 					</select>
 				</strong>
 
@@ -45,16 +45,22 @@ class EditField extends Component {
 	}
 
 	render({ name, value }) {
-		switch(typeof value) {
-			case 'number':
-				// these heuristics will be removed - the server should define min/max/step
-				const step = (name == 'Size' || name == 'Position' ? 1 : 0.1)
-				const max = (name == 'Speed' ? 5 : 255)
-				return <Slider min={0} max={max} step={step} value={value} onChange={this.onChange} />
-			case 'boolean':
-				return <strong style="display:block" onClick={this.onChange.bind(null, !value)}>{value.toString()}</strong>
-			default:
-				return <input name={name} value={value} onInput={this.onInput} />
+		// these heuristics will be removed - server should define parameter types
+		if(typeof value == 'number') {
+			const step = (name == 'Speed' ? 0.1 : 1)
+			const max = (name == 'Speed' ? 5 : 255)
+			return <Slider min={0} max={max} step={step} value={value} onChange={this.onChange} />
+		} else if(typeof value == 'boolean') {
+			return <strong style="display:block" onClick={this.onChange.bind(null, !value)}>{value.toString()}</strong>
+		} else if(name == 'Color') {
+			const toArray = ({ rgb }) => {
+				console.log('color change', rgb)
+				return [rgb.r, rgb.g, rgb.b]
+			}
+			const currentValue = (value ? `rgb(${value.join(',')})` : null)
+			return <div><ColorPicker color={currentValue} onChange={(c) => this.onChange(toArray(c))} /></div>
+		} else {
+			return <input name={name} value={value} onInput={this.onInput} />
 		}
 	}
 }
