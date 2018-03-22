@@ -42,7 +42,7 @@ html, body {
 #main {
 	position: absolute;
 	overflow: auto;
-	top: 2.85em; /* header height */
+	top: 2.50em; /* header height */
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
