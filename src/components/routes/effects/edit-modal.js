@@ -13,7 +13,7 @@ export default class EditModal extends Component {
 	}
 
 	render({ onTypeChange, onFieldChange, effect, onClose, onEdit }) {
-		const params = Object.entries(effect.Params || {})
+		const params = Object.entries(effect.Effect || {})
 
 		return <Modal onClose={onClose}>
 			<div class={style.edit}>
@@ -47,7 +47,7 @@ class EditField extends Component {
 	render({ name, value }) {
 		// these heuristics will be removed - server should define parameter types
 		if(typeof value == 'number') {
-			const step = (name == 'Speed' ? 0.1 : 1)
+			const step = (name == 'Speed' ? 0.01 : 1)
 			const max = (name == 'Speed' ? 5 : 255)
 			return <Slider min={0} max={max} step={step} value={value} onChange={this.onChange} />
 		} else if(typeof value == 'boolean') {
@@ -74,9 +74,15 @@ const TYPES = [
 	"Fill",
 	"Layer",
 	"LarsonEffect",
+	"Mirror",
 	"MoodEffect",
 	"Null",
 	"RainbowEffect",
 	"RandomEffect",
-	"Stripe"
+	"Slideshow",
+	"Stripe",
+	"Strobe",
+	"Switch",
+	"Toggle",
+	"Wheee",
 ]

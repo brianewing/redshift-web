@@ -1,4 +1,7 @@
-/* List */
+/*
+ * Effect Sets
+ */
+
 .effects {
 	height: 100%;
 	color: white;
@@ -20,7 +23,10 @@
 	line-height: 3em;
 }
 
-/* List items */
+/*
+ * Effect Envelopes
+ */
+
 .effect {
 	text-align: center;
 	list-style: none;
@@ -40,12 +46,13 @@
 	padding-bottom: 0.9em;
 }
 
-/* Nested effects (e.g. Layer) */
-.effect .effect {
+.effect .effect { /* nested effects */
 	background: rgba(0, 0, 0, 0.35);
 }
 
-/* Edit modal */
+/*
+ * Effect Edit Modal
+ */
 
 .edit {
 	text-align: center;
@@ -65,4 +72,39 @@
 }
 
 .editField input {
+}
+
+/*
+ * Control Sets
+ */
+
+.effectControls { /* wrapper under .effectEnvelope */
+
+}
+
+.controlSet {
+	padding-bottom: 0.5em;
+}
+
+.controlEnvelope {
+	display: inline-block;
+	max-width: 30%;
+
+	border-radius: 0.5em;
+
+	/* border: 2px solid rgba(0, 0, 0, 0.9); */
+	background-color: rgba(200, 200, 200, 0.5);
+}
+
+.controlEnvelope:-nth-child(3) {
+	clear: right;
+}
+
+.controlType {
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+.controlParams {
+	font-size: 0.8em;
 }

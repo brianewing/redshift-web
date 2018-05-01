@@ -1,8 +1,6 @@
 import { h, Component } from 'preact';
 import linkState from 'linkstate';
 
-import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
-
 import basicContext from 'basiccontext';
 
 import EffectEditModal from './edit-modal';
@@ -18,7 +16,9 @@ import FaLightbulbO from 'react-icons/lib/fa/lightbulb-o';
 import FaSquareO from 'react-icons/lib/fa/square-o';
 
 import MdBrightness5 from 'react-icons/lib/md/brightness-5';
+import MdFlip from 'react-icons/lib/md/flip';
 import MdLooks from 'react-icons/lib/md/looks';
+import MdLinearScale from 'react-icons/lib/md/linear-scale';
 
 import style from './style';
 
@@ -37,11 +37,11 @@ export default class Effects extends Component {
 		const { effects } = this.state
 		this.setState({ effects: [...(effects || []), { Type: "Null" }]})
 		this.send()
-		console.log(this.state.effects)
 	}
 
-	onSortEnd = ({oldIndex, newIndex}) => {
-		this.onChange(arrayMove(this.state.effects, oldIndex, newIndex))
+	clearEffects = () => {
+		this.setState({ effects: [{ Type: "Clear" }] })
+		this.send()
 	}
 
 	onChange = (effects) => {
@@ -52,11 +52,11 @@ export default class Effects extends Component {
 	render({}, { effects }) {
 		return <div class={style.effects}>
 			<h2>Effects</h2>
-			<button onClick={() => this.addNewEffect()}>
-				Add New Effect
-			</button>
 
 			{<List items={effects} onChange={this.onChange} />}
+
+			<button onClick={this.clearEffects}>Reset</button>
+			<button onClick={this.addNewEffect}>Add New Effect</button>
 		</div>
 	}
 }
@@ -123,17 +123,22 @@ class Effect extends Component {
 
 	onFieldChange = (field, newValue) => {
 		const { onFieldChange, effect  } = this.props
-		effect.Params[field] = newValue
+		effect.Effect[field] = newValue
 		onFieldChange(effect)
 	}
 
 	render({ effect }, { edit }) {
-		const params = Object.entries(effect.Params || {})
+		const params = Object.entries(effect.Effect || {})
 
 		return <li class={style.effect} onDblClick={this.showEditModal} onContextMenu={this.showMenu}>
 			<div class={style.effectName}>
 				{this.renderIcon(effect)} <strong>{effect.Type}</strong>
 			</div>
+
+			{ effect.Controls && 
+				<div class={style.effectControls}>
+					{this.renderControls(effect)}
+				</div> }
 
 			{params.length > 0 && <div class={style.effectParams}>
 				{params.map(([key, value]) => this.renderValue(value, key))}
@@ -154,8 +159,10 @@ class Effect extends Component {
 			case 'External': return <FaCode />
 			case 'LarsonEffect': return <FaCab />
 			case 'Layer': return <FaClone />
+			case 'Mirror': return <MdFlip />
 			case 'RainbowEffect': return <MdLooks />
 			case 'Stripe': return <FaEllipsisH />
+			case 'Switch': return <MdLinearScale />
 			default: return <FaSquareO />
 		}
 	}
@@ -165,5 +172,27 @@ class Effect extends Component {
 			return <List items={value} />
 		else
 			return <div><strong> {key}</strong> {JSON.stringify(value)}</div>
+	}
+
+	renderControls(effect) {
+		const { Controls } = effect
+		return <div class={style.controlSet}>
+			{Controls.map((c) => this.renderControl(c))}
+		</div>
+	}
+
+	renderControl(control) {
+		const type = control.Type
+		const params = (control.Control || {})
+		const subControls = (control.Controls)
+		return <div class={style.controlEnvelope}>
+			<span class={style.controlType}>{ type.replace(/Control$/, '') }</span>
+			<ul class={style.controlParams}>
+				{ Object.keys(params).map((key) => <li>
+					{ key }: { JSON.stringify(params[key]) }
+				</li>) }
+			</ul>
+			{ subControls && subControls.length > 0 ? this.renderControls(control) : null }
+		</div>
 	}
 }
