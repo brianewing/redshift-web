@@ -24,8 +24,8 @@ export default class App extends Component {
 	handleRoute = e => { this.setState({currentUrl: e.url}) }
 
 	componentWillMount() {
-		window.addEventListener('blur', this.turnOff)
-		window.addEventListener('focus', this.turnOn)
+		//window.addEventListener('blur', this.turnOff)
+		//window.addEventListener('focus', this.turnOn)
 		window.app = this
 	}
 
