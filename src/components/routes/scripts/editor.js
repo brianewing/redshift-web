@@ -28,7 +28,7 @@ export default class Editor extends Component {
 	}
 
 	state = {
-		fontSize: 1.0,
+		fontSize: 1.2,
 	}
 
 	componentWillMount() {
@@ -118,7 +118,7 @@ export default class Editor extends Component {
 					keyboardHandler={keyboardHandler}
 					showPrintMargin={false}
 					wrapEnabled={false}
-					fontSize="1em"
+					fontSize="1.2em"
 					commands={this.aceCommands()}
 					defaultValue={content}
 					onChange={this.handleChange}

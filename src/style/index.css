@@ -28,7 +28,7 @@ html, body {
 	color: white;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-size: 1.1em;
+	font-size: 1.0em;
 
 	user-select: none;
 	overflow: hidden;
@@ -42,7 +42,7 @@ html, body {
 #main {
 	position: absolute;
 	overflow: auto;
-	top: 2.50em; /* header height */
+	top: 2.55em; /* header height */
 	bottom: 0px;
 	left: 0px;
 	right: 0px;

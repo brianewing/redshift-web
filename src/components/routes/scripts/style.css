@@ -23,6 +23,10 @@
 	background-color: rgba(0,0,0,0.7);
 }
 
+.fileChooser h2 {
+	margin-bottom: 0;
+}
+
 .fileChooser ul {
 	padding: 0;
 	list-style: none;
