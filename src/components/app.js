@@ -54,6 +54,8 @@ export default class App extends Component {
 	turnOn = (e) => { this.setState({off: false}) }
 	turnOff = (e) => { this.setState({off: true}) }
 
+	toggleHeader = () => { this.setState({hideHeader: !this.state.hideHeader}) }
+
 	/* Events */
 
 	onVisibilityChange = (e) => {
@@ -102,7 +104,7 @@ export default class App extends Component {
 		return amps.toFixed(2)
 	}
 
-	render({ }, { currentUrl, connected, buffer, effects, amps, off }) {
+	render({ }, { currentUrl, connected, buffer, effects, amps, off, hideHeader }) {
 		let headerExtra
 		if(false && document.body.clientWidth > 480) headerExtra = `${this.mps} mps // ${amps} amps`
 
@@ -113,7 +115,7 @@ export default class App extends Component {
 				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
 				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}
 
-				<Header buffer={buffer} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
+				<Header hide={hideHeader} buffer={buffer} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
 					<div style="padding-top: 20px; display: inline-block">
 						{headerExtra}
 					</div>
@@ -123,7 +125,7 @@ export default class App extends Component {
 					{ !connected && !off ? <Modal>Connecting...</Modal> : null }
 
 					<Router onChange={this.handleRoute}>
-						<div path="/">{/* Cinema Mode */}</div>
+						<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
 						<Effects path="/effects" effects={effects} onSend={this.sendEffects} />
 						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
 					</Router>
