@@ -5,13 +5,16 @@ import basicContext from 'basiccontext'
 
 import Header from './header'
 import ServerConnection from './server-connection'
+
 import Remote from './routes/remote'
 import Effects from './routes/effects'
 import Scripts from './routes/scripts/index'
 
 import Modal from './modal'
 
-const HOST = location.hostname
+import Config from '../config'
+
+const HOST = Config.host
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
