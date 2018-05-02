@@ -71,17 +71,16 @@ export default class ServerConnection extends Component {
 // [r0, g0, b0, r1, g1, b1] => [[r, g, b], [r, g, b]]
 // todo: refactor this into another file
 function unpack(data, buffer) {
-	data = new Uint8Array(data)
-
-	let length = data.length
+	let source = new Uint8Array(data)
+	let length = source.length
 
 	for(let i=0; i<length; i=i+3) {
 		if(!buffer[i/3])
 			buffer[i/3] = []
 
-		buffer[i/3][0] = data[i]
-		buffer[i/3][1] = data[i+1]
-		buffer[i/3][2] = data[i+2]
+		buffer[i/3][0] = source[i]
+		buffer[i/3][1] = source[i+1]
+		buffer[i/3][2] = source[i+2]
 	}
 
 	if(buffer.length > length/3)
