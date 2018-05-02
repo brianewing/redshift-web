@@ -4,7 +4,7 @@ import Timings from '../../lib/timings'
 
 import style from './style'
 
-let i = 0
+// let i = 0
 
 export default class LEDStrip extends Component {
 	static defaultProps = {
@@ -52,12 +52,11 @@ export default class LEDStrip extends Component {
 	}
 
 	requestNextFrame = () => {
-		let { fps } = this.props
-		this.nextFrame = setTimeout(this._nextFrame, this._nextFrameTimeout(fps))
-		// this.nextFrame = requestAnimationFrame(this._nextFrame)
+		this.nextFrameTimeout = setTimeout(this.nextFrameCallback, this.nextFrameDelta())
+		// this.nextFrameTimeout = requestAnimationFrame(this.nextFrameCallback)
 	}
 
-	_nextFrame = () => {
+	nextFrameCallback = () => {
 		if(this.props.paused || !this.props.buffer)
 			return;
 
@@ -66,21 +65,25 @@ export default class LEDStrip extends Component {
 		this.requestNextFrame()
 	}
 
-	_nextFrameTimeout = (fps) => {
+	nextFrameDelta = () => {
+		let { fps } = this.props
+
 		let target = (1000 / fps)
-		let lastFrame = (this._lastFrame || 0)
+		let lastFrame = (this.lastFrameTime || 0)
 		let now = Date.now()
 
 		let timeout = Math.max(0, target - (now - lastFrame))
-		this._lastFrame = now + timeout
+		this.lastFrameTime = now + timeout
 
 		return timeout
 	}
 
 	cancelNextFrame = () => {
-		if(!this.nextFrame) return;
-		clearTimeout(this.nextFrame)
-		this.nextFrame = null
+		if(!this.nextFrameTimeout)
+			return;
+
+		clearTimeout(this.nextFrameTimeout)
+		this.nextFrameTimeout = null
 	}
 
 	renderFrame = () => {
@@ -89,10 +92,8 @@ export default class LEDStrip extends Component {
 
 		let { ctx, canvas } = this
 		let { buffer, reverse } = this.props
-		let len = buffer.length
 
-		let cWidth = canvas.width
-		let cHeight = canvas.height
+		let len = buffer.length
 
 		let ledWidth = canvas.width / len
 		let ledHeight = canvas.height
