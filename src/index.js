@@ -5,9 +5,8 @@ import FastClick from './lib/fastclick';
 
 FastClick.attach(document.body);
 
-(function setUserScalable(yesOrNo) {
-	const viewportTag = document.querySelector('meta[name=viewport]');
-	viewportTag.content += `,user-scalable=${yesOrNo}`;
-})('no');
+// set user-scalable=no
+const viewportTag = document.querySelector('meta[name=viewport]');
+viewportTag.content += ',user-scalable=no';
 
 export default App;
