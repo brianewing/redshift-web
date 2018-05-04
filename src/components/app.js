@@ -4,7 +4,6 @@ import { Router, route } from 'preact-router'
 import basicContext from 'basiccontext'
 
 import Header from './header'
-import ServerConnection from './server-connection'
 
 import Remote from './routes/remote'
 import Effects from './routes/effects'
@@ -13,6 +12,7 @@ import Scripts from './routes/scripts/index'
 import Modal from './modal'
 
 import Config from '../config'
+import Connection from '../connection'
 
 const HOST = Config.host
 const WS_URL = `ws://${HOST}:9191`
@@ -30,6 +30,7 @@ export default class App extends Component {
 		//window.addEventListener('blur', this.turnOff)
 		//window.addEventListener('focus', this.turnOn)
 		window.app = this
+		this.openConnection()
 	}
 
 	componentWillUnmount() {
@@ -71,29 +72,15 @@ export default class App extends Component {
 
 	/* Server communication */
 
-	setBufferSocket = (ws) => {
-		this.bufferSocket = ws
-	}
+	openConnection() {
+		this.connection = new Connection(WS_URL)
 
-	setEffectsSocket = (ws) => {
-		this.effectsSocket = ws
-	}
+		this.connection.openStream('strip', (id, buffer) => {
+			this.connection.setStreamFps(id, BUFFER_FPS)
+			// this.connection.setEffects(id, definition)
 
-	setBuffer = (buffer) => {
-		this.setState({buffer: buffer})
-	}
-
-	setEffects = (effects) => {
-		this.setState({effects: effects})
-	}
-
-	sendBuffer = (buffer) => {
-		this.bufferSocket && this.bufferSocket.sendBytes(buffer)
-	}
-
-	sendEffects = (effects) => {
-		const json = JSON.stringify(effects)
-		this.effectsSocket && this.effectsSocket.sendMessage(json)
+			this.setState({ buffer: buffer, connected: true })
+		})
 	}
 
 	/* Rendering */
@@ -108,21 +95,9 @@ export default class App extends Component {
 	}
 
 	render({ }, { currentUrl, connected, buffer, effects, amps, off, hideHeader }) {
-		let headerExtra
-		if(false && document.body.clientWidth > 480) headerExtra = `${this.mps} mps // ${amps} amps`
-
 		return (
 			<div id="app">
-				{!off && <ServerConnection refBuffer={this.setBuffer} fps={BUFFER_FPS} url={WS_URL + '/s/strip'} onChange={this.onConnectionChange} />}
-				{!off && <ServerConnection ref={this.setBufferSocket} url={WS_URL + '/strip'} />}
-				{!off && currentUrl == '/effects' && <ServerConnection onMessage={this.setEffects} fps={EFFECTS_FPS} url={WS_URL + '/s/effects'} />}
-				{!off && currentUrl == '/effects' && <ServerConnection ref={this.setEffectsSocket} url={WS_URL + '/effects'} />}
-
-				<Header hide={hideHeader} buffer={buffer} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}>
-					<div style="padding-top: 20px; display: inline-block">
-						{headerExtra}
-					</div>
-				</Header>
+				<Header hide={hideHeader} buffer={buffer} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}></Header>
 
 				<main id="main">
 					{ !connected && !off ? <Modal>Connecting...</Modal> : null }
