@@ -79,7 +79,7 @@ export default class Connection {
 		const { data } = e
 
 		if(data instanceof ArrayBuffer) {
-			console.log('handle binary message', new Uint8Array(data))
+			// console.log('handle binary message', new Uint8Array(data))
 			const msg = parseOpcMessage(data)
 			const stream = this._streams[msg.channel]
 
@@ -128,14 +128,15 @@ class pixelStream extends stream {
 
 const OpcVendorId = 65535
 
+const sharedMsg = Object.create(null)
+
 function parseOpcMessage(buffer) {
 	let view = new DataView(buffer)
-	return {
-		channel: view.getUint8(0),
-		command: view.getUint8(1),
-		length:  view.getUint16(2),
-		data:    new Uint8Array(buffer, 4)
-	}
+	sharedMsg.channel = view.getUint8(0)
+	sharedMsg.command = view.getUint8(1)
+	sharedMsg.length = view.getUint16(2)
+	sharedMsg.data = new Uint8Array(buffer, 4)
+	return sharedMsg
 }
 
 // Creates a binary OPC message, returned as an ArrayBuffer
