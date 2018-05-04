@@ -8,6 +8,8 @@ export default class Connection {
 	CmdSetStreamFps = 2
 	CmdSetEffectsJson = 3
 
+	CmdSetEffectsStreamFps = 4
+
 	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
 	_streams = []
 
@@ -46,19 +48,23 @@ export default class Connection {
 	}
 
 	openStream(desc, cb) {
-		let buffer = []
+		const buffer = []
+		const stream = Object.assign(new pixelStream, {description: desc, buffer: buffer})
 
-		let stream = Object.assign(new pixelStream, {description: desc, buffer: buffer})
 		this._streams.push(stream)
 
 		this.connect().then(() => {
 			this.sendSysEx(this._streams.length-1, this.CmdOpenStream, desc)
-			cb(this._streams.length-1, buffer)
+			cb(this._streams.length-1, stream)
 		})
 	}
 
 	setStreamFps = (channel, fps) => {
 		this.sendSysEx(channel, this.CmdSetStreamFps, [fps])
+	}
+
+	setEffectsStreamFps = (channel, fps) => {
+		this.sendSysEx(channel, this.CmdSetEffectsStreamFps, [fps])
 	}
 
 	sendSysEx(channel, command, data) {
@@ -98,10 +104,19 @@ class stream {
 
 class pixelStream extends stream {
 	buffer = []
+	effects = []
 
 	handle(msg) {
-		this.unpack(msg.data)
+		if(msg.command == 0)
+			this.unpack(msg.data)
+		else if(msg.command == 255) {
+			const jsonBytes = new Uint8Array(msg.data.buffer, msg.data.byteOffset + 3)
+			const jsonString = new TextDecoder("utf-8").decode(jsonBytes)
+			this.onEffects && this.onEffects(JSON.parse(jsonString))
+		}
 	}
+
+	onEffects() {}
 
 	unpack(data) {
 		const { buffer } = this
