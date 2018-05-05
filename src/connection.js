@@ -7,7 +7,6 @@ export default class Connection {
 	CmdCloseStream = 1
 	CmdSetStreamFps = 2
 	CmdSetEffectsJson = 3
-
 	CmdSetEffectsStreamFps = 4
 
 	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
@@ -24,8 +23,8 @@ export default class Connection {
 	connect() {
 		if(!this.connectPromise) {
 			this.connectPromise = new Promise(this._open)
-			/* reconnect whenever connection fails */
 			this.connectPromise.catch((e) => {
+				/* reconnect whenever connection fails */
 				console.error('connect promise ::', 'catch ::', e)
 				setTimeout(() => this.connect(), this.reconnectDelay)
 			})
@@ -48,14 +47,15 @@ export default class Connection {
 	}
 
 	openStream(desc, cb) {
-		const buffer = []
-		const stream = Object.assign(new pixelStream, {description: desc, buffer: buffer})
+		const stream = new Stream(this)
+		stream.channel = this._streams.length
+		stream.description = desc
 
 		this._streams.push(stream)
 
 		this.connect().then(() => {
-			this.sendSysEx(this._streams.length-1, this.CmdOpenStream, desc)
-			cb(this._streams.length-1, stream)
+			this.sendSysEx(stream.channel, this.CmdOpenStream, stream.description)
+			cb(stream)
 		})
 	}
 
@@ -65,6 +65,10 @@ export default class Connection {
 
 	setEffectsStreamFps = (channel, fps) => {
 		this.sendSysEx(channel, this.CmdSetEffectsStreamFps, [fps])
+	}
+
+	setEffectsJson = (channel, json) => {
+		this.sendSysEx(channel, this.CmdSetEffectsJson, json)
 	}
 
 	sendSysEx(channel, command, data) {
@@ -97,67 +101,77 @@ export default class Connection {
 	}
 }
 
-class stream {
+class Stream {
+	channel = 0
 	description = '' // stored so stream can be reopened after connection loss
-	handle(msg) {}   // implemented by stream objects, see below
-}
 
-class pixelStream extends stream {
-	buffer = []
-	effects = []
+	constructor(connection) {
+		this.connection = connection
+		this.pixelBuffer = []
+	}
+
+	setFps(fps) { this.connection.setStreamFps(this.channel, fps) }
+	setEffectsFps(fps) { this.connection.setEffectsStreamFps(this.channel, fps) }
+
+	onEffects() {}
 
 	handle(msg) {
-		if(msg.command == 0)
-			this.unpack(msg.data)
-		else if(msg.command == 255) {
-			const jsonBytes = new Uint8Array(msg.data.buffer, msg.data.byteOffset + 3)
-			const jsonString = new TextDecoder("utf-8").decode(jsonBytes)
-			this.onEffects && this.onEffects(JSON.parse(jsonString))
+		if(msg.command == 0) {
+			this.unpackPixels(msg.data)
+		} else if(msg.command == 255) { // system exclusive command
+			if(msg.data[0] == this.connection.CmdSetEffectsJson) {
+				const jsonBytes = new Uint8Array(msg.data.buffer, msg.data.byteOffset + 3)
+				const jsonString = new TextDecoder("utf-8").decode(jsonBytes)
+				this.onEffects && this.onEffects(JSON.parse(jsonString))
+			} else {
+				console.log('unrecognised sysex message', msg.data[0], msg)
+			}
 		}
 	}
 
 	onEffects() {}
 
-	unpack(data) {
-		const { buffer } = this
-		const dataView = data
-		const length = dataView.length
+	unpackPixels(data) {
+		const { pixelBuffer } = this
+		const length = data.length
 
 		// pixels are sent like [r,g,b,r,g,b,r,g,b]
 		// we want [[r,g,b],[r,g,b],[r,g,b]]
 		for(let i=0; i<length; i=i+3) {
-			if(buffer[i/3] == null)
-				buffer[i/3] = []
+			if(pixelBuffer[i/3] == null)
+				pixelBuffer[i/3] = []
 
-			const led = buffer[i/3]
-			led[0] = dataView[i]
-			led[1] = dataView[i+1]
-			led[2] = dataView[i+2]
+			const led = pixelBuffer[i/3]
+			led[0] = data[i]
+			led[1] = data[i+1]
+			led[2] = data[i+2]
 		}
 
 		// truncate extra pixels
-		if(buffer.length > length/3)
-			buffer.length = length/3
+		if(pixelBuffer.length > length/3)
+			pixelBuffer.length = length/3
 	}
 }
 
 const OpcVendorId = 65535
 
-const sharedMsg = Object.create(null)
+const reusedOpcMessage = {}
 
 function parseOpcMessage(buffer) {
 	let view = new DataView(buffer)
-	sharedMsg.channel = view.getUint8(0)
-	sharedMsg.command = view.getUint8(1)
-	sharedMsg.length = view.getUint16(2)
-	sharedMsg.data = new Uint8Array(buffer, 4)
-	return sharedMsg
+	reusedOpcMessage.channel = view.getUint8(0)
+	reusedOpcMessage.command = view.getUint8(1)
+	reusedOpcMessage.length = view.getUint16(2)
+	reusedOpcMessage.data = new Uint8Array(buffer, 4)
+	return reusedOpcMessage
 }
 
 // Creates a binary OPC message, returned as an ArrayBuffer
+// Data parameter can be an Array, ArrayBuffer or DataView
 // (spec @ openpixelcontrol.org)
 function buildOpcMessage(channel, command, data) {
-	let msg = new ArrayBuffer(4+(data.length || data.byteLength))
+	let dataLength = (data.length || data.byteLength) // can be array, buffer or dataview
+	let msg = new ArrayBuffer(4 + (data.length || data.byteLength))
 	let view = new DataView(msg)
 
 	view.setUint8(0, channel)

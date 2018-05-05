@@ -75,16 +75,24 @@ export default class App extends Component {
 	openConnection() {
 		this.connection = new Connection(WS_URL)
 
-		this.connection.openStream('strip', (id, stream) => {
-			this.connection.setStreamFps(id, BUFFER_FPS)
-			this.connection.setEffectsStreamFps(id, EFFECTS_FPS)
+		this.connection.connect().then(() => {
+			this.setState({ connected: true })
+			this.openStream()
+		})
+	}
+
+	openStream() {
+		this.connection.openStream('strip', (stream) => {
+			stream.setFps(BUFFER_FPS)
+			stream.setEffectsFps(EFFECTS_FPS)
+
+			stream.onBuffer = () => {}
 
 			stream.onEffects = (effects) => {
-				console.log("set state", { effects })
 				this.setState({ effects })
 			}
 
-			this.setState({ buffer: stream.buffer, connected: true })
+			this.setState({ buffer: stream.pixelBuffer })
 		})
 	}
 
