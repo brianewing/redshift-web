@@ -101,7 +101,7 @@ export default class LEDStrip extends Component {
 		for(let i=0; i<len; i++) {
 			let led = (reverse ? buffer[len - i - 1] : buffer[i])
 
-			ctx.fillStyle = `rgb(${led.join(',')})`
+			ctx.fillStyle = `rgb(${led[0]}, ${led[1]}, ${led[2]})`
 			ctx.fillRect(ledWidth*i, 0, ledWidth, ledHeight)
 
 			ctx.fillStyle = '#000000'
