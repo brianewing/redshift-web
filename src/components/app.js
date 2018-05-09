@@ -18,7 +18,6 @@ const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
 const BUFFER_FPS = 60
-const EFFECTS_FPS = 20
 
 let ws2812_ComponentPower = (c) => (c / 255) * 0.02 // 20mA per color channel on full brightness
 

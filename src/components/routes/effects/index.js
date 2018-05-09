@@ -22,6 +22,13 @@ import MdLinearScale from 'react-icons/lib/md/linear-scale';
 
 import style from './style';
 
+const EFFECTS_FPS = 10
+
+/*
+ * Receives effects JSON from stream and allows user
+ * to add, remove and change effects
+ */
+
 export default class Effects extends Component {
 	state = {
 		effects: []
@@ -30,7 +37,7 @@ export default class Effects extends Component {
 	componentWillMount() {
 		const { stream } = this.props
 		if(stream) {
-			stream.setEffectsFps(10)
+			stream.setEffectsFps(EFFECTS_FPS)
 			stream.on('effects', this.receiveEffects)
 		} else {
 			throw new Error("Effects component mounted with null stream")
