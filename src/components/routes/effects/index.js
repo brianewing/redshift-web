@@ -122,14 +122,21 @@ class Effect extends Component {
 	showEditModal = () => this.setState({ edit: true })
 	hideEditModal = () => this.setState({ edit: false })
 
+	toggleControls = () => this.setState({ showControls: !this.state.showControls })
+	toggleParams = () => this.setState({ showParams: !this.state.showParams })
+
 	showMenu = (e) => {
 		const { isFirst, isLast } = this.props
 		basicContext.show([
-			{title: 'Move Up', fn: () => this.props.onMove(-1), disabled: isFirst},
-			{title: 'Move Down', fn: () => this.props.onMove(1), disabled: isLast},
-			{title: 'Remove', fn: () => this.props.onRemove()},
+			{title: 'Move Up', fn: this.moveUp, disabled: isFirst},
+			{title: 'Move Down', fn: this.moveDown, disabled: isLast},
+			{title: 'Remove', fn: this.remove},
 		], e)
 	}
+
+	moveUp = () => this.props.onMove(-1)
+	moveDown = () => this.props.onMove(1)
+	remove = () => this.props.onRemove()
 
 	onTypeChange = (newType) => {
 		const { onTypeChange } = this.props
@@ -142,29 +149,46 @@ class Effect extends Component {
 		onFieldChange(effect)
 	}
 
-	render({ effect }, { edit }) {
+	render({ effect }, { edit, showControls, showParams }) {
 		const params = Object.entries(effect.Effect || {})
 
 		return <li class={style.effect} onDblClick={this.showEditModal} onContextMenu={this.showMenu}>
-			<div class={style.effectName}>
-				{this.renderIcon(effect)} <strong>{effect.Type}</strong>
+			<div class={style.effectToolbar}>
+				<div class={style.effectName}>
+					{this.renderIcon(effect)} <strong>{effect.Type}</strong> {this.renderSummary()}
+				</div>
+
+				<div class={style.toolbarButtons}>
+					<button onClick={this.toggleControls}>{showControls ? 'Hide' : 'Show'} Controls</button>
+					<button onClick={this.toggleParams}>{showParams ? 'Hide' : 'Show'} Params</button>
+					<button onClick={this.moveDown}>&darr;</button>
+					<button onClick={this.moveUp}>&uarr;</button>
+				</div>
 			</div>
 
-			{ effect.Controls && 
+			{ effect.Controls && showControls && 
 				<div class={style.effectControls}>
 					{this.renderControls(effect)}
 				</div> }
 
-			{params.length > 0 && <div class={style.effectParams}>
-				{params.map(([key, value]) => this.renderValue(value, key))}
-			</div>}
+			{ params.length > 0 && showParams &&
+				<div class={style.effectParams}>
+					{params.map(([key, value]) => this.renderValue(value, key))}
+				</div> }
 
 			{ edit ? <EffectEditModal effect={effect}
 				onClose={this.hideEditModal}
 				onFieldChange={this.onFieldChange}
 				onTypeChange={this.onTypeChange}
-			/> : null}
+			/> : null }
 		</li>
+	}
+
+	renderSummary() {
+		const { Type, Effect } = this.props.effect
+
+		if(Type == 'External')
+			return <i>{Effect.Program} {Effect.Args && Effect.Args.join(' ')}</i>
 	}
 
 	renderIcon(effect) {
@@ -185,6 +209,8 @@ class Effect extends Component {
 	renderValue(value, key) {
 		if(key == 'Effects')
 			return <List items={value} />
+		else if(key == 'Color')
+			return <div><strong> {key}</strong> <span class={style.color} style={`background-color: rgb(${value[0]}, ${value[1]}, ${value[2]})`}></span></div>
 		else
 			return <div><strong> {key}</strong> {JSON.stringify(value)}</div>
 	}

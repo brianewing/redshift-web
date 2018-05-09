@@ -10,7 +10,7 @@
 
 .effects ul {
 	list-style: none;
-	padding: 0em 1em;
+	padding: 0em 0.5em;
 }
 
 .effects ul ul {
@@ -20,7 +20,9 @@
 .effects svg {
 	color: yellow;
 	opacity: 0.9;
-	line-height: 3em;
+	line-height: 1em;
+	/* margin-top: -5px; */
+	margin-top: -0.2em;
 }
 
 /*
@@ -30,20 +32,61 @@
 .effect {
 	text-align: center;
 	list-style: none;
-	min-height: 3em;
+	min-height: 2.5em;
 
 	border-radius: 1px;
-	background: rgba(0, 0, 0, 0.70);
+	background: rgba(0, 0, 0, 0.50);
 } .effect:not(:last-child) {
 	margin-bottom: 0.5em;
 }
 
-.effect .effectName {
-	line-height: 3em;
+.effect:hover {
+	border: 1px solid red;
+	background: rgba(0, 0, 0, 0.60);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.effectToolbar {
+	line-height: 2.5em;
+	padding: 0em 1em;
+	background: rgba(0, 0, 0, 0.30);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	position: relative;
+	margin-bottom: 0.5em;
+}
+
+.effectToolbar .effectName {
+	display: inline-block;
+	width: 30%;
+	text-align: left;
+}
+
+.effectToolbar .toolbarButtons {
+	display: inline-block;
+	width: 70%;
+	text-align: right;
+	padding: 0px 0px;
+}
+
+.effectToolbar .toolbarButtons button {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 0.5em;
+	height: 2.5em;
+	margin-right: 0.3em;
 }
 
 .effect .effectParams {
 	padding-bottom: 0.9em;
+}
+
+.effect .effectParams .color {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+
+	border: 1px solid white;
 }
 
 .effect .effect { /* nested effects */
@@ -90,10 +133,8 @@
 	display: inline-block;
 	max-width: 30%;
 
-	border-radius: 0.5em;
-
-	/* border: 2px solid rgba(0, 0, 0, 0.9); */
-	background-color: rgba(200, 200, 200, 0.5);
+	margin-right: 1%;
+	background-color: rgba(255, 0, 0, 0.3);
 }
 
 .controlEnvelope:-nth-child(3) {

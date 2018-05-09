@@ -12,26 +12,33 @@ export default class EditModal extends Component {
 		return true
 	}
 
-	render({ onTypeChange, onFieldChange, effect, onClose, onEdit }) {
+	render({ onTypeChange, effect, onClose, onEdit }) {
 		const params = Object.entries(effect.Effect || {})
 
 		return <Modal onClose={onClose}>
 			<div class={style.edit}>
 				<strong>
-					Edit &nbsp;
 					<select onChange={(e) => onTypeChange(e.target.value)}>
 						{TYPES.map((type) => <option name={type} selected={type == effect.Type}>{type}</option>)}
 					</select>
 				</strong>
 
 				{ params.length > 0 ? <ul class={style.editFields}>
-						{params.map(([name, value]) => <li class={style.editField}>
-							<label for={name}>{name}</label>
-							<EditField name={name} value={value} onChange={onFieldChange.bind(this, name)} />
-						</li>)}
+						{params.map(([name, value]) => this.renderField(name, value))}
 					</ul> : <div>This effect has no parameters!</div> }
 			</div>
 		</Modal>
+	}
+
+	renderField(name, value) {
+		const { onFieldChange } = this.props
+		if(name == 'Effects' || name.startsWith('Blend')) {
+			return null // not shown in edit modal
+		}
+		return <li class={style.editField}>
+			<label for={name}>{name}</label>
+			<EditField name={name} value={value} onChange={onFieldChange.bind(this, name)} />
+		</li>
 	}
 }
 
@@ -47,8 +54,8 @@ class EditField extends Component {
 	render({ name, value }) {
 		// these heuristics will be removed - server should define parameter types
 		if(typeof value == 'number') {
-			const step = (name == 'Speed' ? 0.01 : 1)
-			const max = (name == 'Speed' ? 5 : 255)
+			const step = (name == 'Speed' ? 0.001 : 1)
+			const max = (name == 'Speed' ? 5 : (name == 'Size' ? 500 : 255))
 			return <Slider min={0} max={max} step={step} value={value} onChange={this.onChange} />
 		} else if(typeof value == 'boolean') {
 			return <strong style="display:block" onClick={this.onChange.bind(null, !value)}>{value.toString()}</strong>
