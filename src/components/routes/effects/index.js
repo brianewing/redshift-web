@@ -27,36 +27,44 @@ export default class Effects extends Component {
 		effects: []
 	}
 
-	componentWillReceiveProps(props) {
-		this.setState({ effects: props.effects })
+	componentWillMount() {
+		const { stream } = this.props
+		if(stream) {
+			stream.setEffectsFps(10)
+			stream.on('effects', this.receiveEffects)
+		} else {
+			throw new Error("Effects component mounted with null stream")
+		}
 	}
 
-	send = () => this.props.onSend && this.props.onSend(this.state.effects)
+	componentWillUnmount() {
+		const { stream } = this.props
+		stream.setEffectsFps(0)
+		stream.off('effects', this.receiveEffects)
+	}
+
+	receiveEffects = (effects) => {
+		this.setState({ effects })
+	}
+
+	send = (effects) => {
+		this.props.stream.setEffects(effects)
+	}
 
 	addNewEffect = () => {
 		const { effects } = this.state
-		this.setState({ effects: [...(effects || []), { Type: "Null" }]})
-		this.send()
+		this.send([...(effects || []), { Type: "Null" }])
 	}
 
 	clearEffects = () => {
-		this.setState({ effects: [{ Type: "Clear" }] })
-		this.send()
-	}
-
-	onChange = (effects) => {
-		this.setState({ effects })
-		this.send()
+		this.send([{ Type: "Clear" }])
 	}
 
 	render({}, { effects }) {
 		return <div class={style.effects}>
-			<h2>Effects</h2>
-
-			{<List items={effects} onChange={this.onChange} />}
-
-			<button onClick={this.clearEffects}>Reset</button>
-			<button onClick={this.addNewEffect}>Add New Effect</button>
+			<button onClick={this.clearEffects}>Clear</button>
+			<button onClick={this.addNewEffect}>Add</button>
+			{<List items={effects} onChange={this.send} />}
 		</div>
 	}
 }

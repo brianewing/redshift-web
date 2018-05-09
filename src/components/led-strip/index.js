@@ -1,29 +1,25 @@
 import { Component } from 'preact'
-
-import Timings from '../../lib/timings'
-
 import style from './style'
 
-// let i = 0
-
 export default class LEDStrip extends Component {
-	static defaultProps = {
-		fps: 60
-	}
-
 	componentWillMount() {
-		this.requestNextFrame()
-		// this.timings = new Timings(`LEDStrip[${i++}]`).startLogging()
-	}
-
-	componentDidUpdate() {
-		this.requestNextFrame()
+		const { stream } = this.props
+		if(stream) {
+			stream.on('pixels', this.renderFrame)
+		} else {
+			throw new Error("LEDStrip mounted with null stream")
+		}
+		window.addEventListener('resize', this.adjustCanvas)
 	}
 
 	componentWillUnmount() {
-		this.props.buffer = null
-		this.cancelNextFrame()
-		// this.timings.stopLogging()
+		const { stream } = this.props
+		stream.off('pixels', this.renderFrame)
+		window.removeEventListener('resize', this.adjustCanvas)
+	}
+
+	componentDidMount() {
+		this.adjustCanvas()
 	}
 
 	render() {
@@ -51,47 +47,12 @@ export default class LEDStrip extends Component {
 		}
 	}
 
-	requestNextFrame = () => {
-		this.nextFrameTimeout = setTimeout(this.nextFrameCallback, this.nextFrameDelta())
-		// this.nextFrameTimeout = requestAnimationFrame(this.nextFrameCallback)
-	}
-
-	nextFrameCallback = () => {
-		if(this.props.paused || !this.props.buffer)
-			return;
-
-		this.adjustCanvas()
-		this.renderFrame()
-		this.requestNextFrame()
-	}
-
-	nextFrameDelta = () => {
-		let { fps } = this.props
-
-		let target = (1000 / fps)
-		let lastFrame = (this.lastFrameTime || 0)
-		let now = Date.now()
-
-		let timeout = Math.max(0, target - (now - lastFrame))
-		this.lastFrameTime = now + timeout
-
-		return timeout
-	}
-
-	cancelNextFrame = () => {
-		if(!this.nextFrameTimeout)
-			return;
-
-		clearTimeout(this.nextFrameTimeout)
-		this.nextFrameTimeout = null
-	}
-
-	renderFrame = () => {
+	renderFrame = (buffer) => {
 		if(!this.ctx || !this.ctx.fillRect)
 			return console.error("Context not ready", ctx)
 
 		let { ctx, canvas } = this
-		let { buffer, reverse } = this.props
+		let { reverse } = this.props
 
 		let len = buffer.length
 
@@ -101,7 +62,7 @@ export default class LEDStrip extends Component {
 		for(let i=0; i<len; i++) {
 			let led = (reverse ? buffer[len - i - 1] : buffer[i])
 
-			ctx.fillStyle = `rgb(${led.join(',')})`
+			ctx.fillStyle = `rgb(${led[0]}, ${led[1]}, ${led[2]})`
 			ctx.fillRect(ledWidth*i, 0, ledWidth, ledHeight)
 
 			ctx.fillStyle = '#000000'
