@@ -6,6 +6,7 @@ import basicContext from 'basiccontext'
 import Header from './header'
 import Modal from './modal'
 
+import About from './routes/about'
 import Remote from './routes/remote'
 import Effects from './routes/effects'
 import Scripts from './routes/scripts/index'
@@ -126,6 +127,7 @@ export default class App extends Component {
 					{ !connected && !off ? <Modal>Connecting...</Modal> : null }
 
 					<Router onChange={this.handleRoute}>
+						<About path="/about" />
 						<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
 						<Effects path="/effects" stream={stream} />
 						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />

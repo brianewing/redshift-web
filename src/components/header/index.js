@@ -17,6 +17,7 @@ import FaDesktop from 'react-icons/lib/fa/desktop';
 import FaStar from 'react-icons/lib/fa/star';
 import FaListUl from 'react-icons/lib/fa/list-ul';
 import FaArrowsAlt from 'react-icons/lib/fa/arrows-alt';
+import FaQuestionCircleO from 'react-icons/lib/fa/question-circle-o';
 
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
@@ -29,6 +30,7 @@ export default class Header extends Component {
 				<h1 onClick={onTitleClick}>Redshift</h1>
 				{this.props.children}
 				<nav>
+					<Link activeClassName={style.active} href="/about"><FaQuestionCircleO /></Link>
 					<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
 					<Link activeClassName={style.active} href="/effects"><GoPlug /></Link>
 					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
