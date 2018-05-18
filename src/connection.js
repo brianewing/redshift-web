@@ -1,4 +1,5 @@
 import { parseOpcMessage, buildSysExOpcMessage }  from './lib/redshift-opc';
+
 import Stream from './stream';
 
 /* Sends and receives streams of pixels, effects and commands over a websocket */
@@ -91,6 +92,8 @@ export default class Connection {
 				stream.handle(msg)
 			else
 				console.error("received opc message for unknown channel", msg)
+		} else {
+			console.error("received text message, expecting opc binary")
 		}
 	}
 }
