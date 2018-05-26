@@ -35,14 +35,14 @@ export function parseOpcMessage(buffer) {
 // Creates a binary OPC message, returned as an ArrayBuffer
 // Data parameter must be an Array, ArrayBuffer or DataView (of bytes)
 // (spec @ openpixelcontrol.org)
-export function buildOpcMessage(channel, command, data) {
-	const dataLength = (data.length || data.byteLength) // can be array, buffer or dataview
-	const msg = new ArrayBuffer(4 + (data.length || data.byteLength))
+export function buildOpcMessage(channel, command, data=[]) {
+	const dataLength = (data.length || data.byteLength || 0)
+	const msg = new ArrayBuffer(4 + dataLength)
 	const view = new DataView(msg)
 
 	view.setUint8(0, channel)
 	view.setUint8(1, command)
-	view.setUint16(2, (data.length || data.byteLength))
+	view.setUint16(2, dataLength)
 	new Uint8Array(msg, 4).set(data)
 
 	return msg
@@ -50,8 +50,8 @@ export function buildOpcMessage(channel, command, data) {
 
 // Creates a binary OPC message representing a Redshift sysex command
 // Data parameter must be an Array, ArrayBuffer or DataView (of bytes)
-export function buildSysExOpcMessage(channel, sysExCommand, sysExData) {
-	const sysEx = new ArrayBuffer(3 + (sysExData.length || sysExData.byteLength))
+export function buildSysExOpcMessage(channel, sysExCommand, sysExData=[]) {
+	const sysEx = new ArrayBuffer(3 + (sysExData.length || sysExData.byteLength || 0))
 	const view = new DataView(sysEx)
 
 	view.setUint16(0, systemId)
