@@ -4,6 +4,7 @@
 
 .effects {
 	height: 100%;
+	padding-top: 1em;
 	color: white;
 	text-align: center;
 }
@@ -41,8 +42,10 @@
 }
 
 .effect:hover {
-	border: 1px solid red;
 	background: rgba(0, 0, 0, 0.60);
+}
+
+.effect:hover > .effectToolbar {
 	border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
@@ -72,9 +75,16 @@
 	position: relative;
 	display: inline-block;
 	vertical-align: top;
-	margin-top: 0.5em;
-	height: 2.5em;
-	margin-right: 0.3em;
+	height: 3.0em;
+	line-height: 1em;
+	border: none;
+	border-right: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: none;
+	min-width: 3em;
+}
+
+.toolbarButtons button:last-child {
+	border-right-width: 0px;
 }
 
 .effect .effectParams {
