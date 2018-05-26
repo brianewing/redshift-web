@@ -4,11 +4,13 @@ export default class Stream {
 	channel = 0
 
 	constructor(connection) {
-		addEventMethods(this)
+		addEventMethods(this) // on, off, emit
 
 		this.connection = connection
 		this.pixelBuffer = []
 	}
+
+	close() { this.connection.closeStream(this.channel) }
 
 	setFps(fps) { this.connection.setStreamFps(this.channel, fps) }
 	setEffectsFps(fps) { this.connection.setEffectsStreamFps(this.channel, fps) }

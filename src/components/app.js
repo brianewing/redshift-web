@@ -24,15 +24,11 @@ let ws2812_ComponentPower = (c) => (c / 255) * 0.02 // 20mA per color channel on
 
 export default class App extends Component {
 	componentWillMount() {
-		//window.addEventListener('blur', this.turnOff)
-		//window.addEventListener('focus', this.turnOn)
-		window.app = this
 		this.openConnection()
+		window.app = this
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener('blur', this.turnOff)
-		window.removeEventListener('focus', this.turnOn)
 		this.closeConnection()
 	}
 
@@ -53,8 +49,15 @@ export default class App extends Component {
 		this.state.off ? this.turnOn() : this.turnOff()
 	}
 
-	turnOn = (e) => { this.setState({off: false}) }
-	turnOff = (e) => { this.setState({off: true}) }
+	turnOn = (e) => {
+		this.setState({off: false})
+		this.openConnection()
+	}
+
+	turnOff = (e) => {
+		this.setState({off: true})
+		this.closeConnection()
+	}
 
 	toggleHeader = () => { this.setState({hideHeader: !this.state.hideHeader}) }
 
@@ -68,13 +71,22 @@ export default class App extends Component {
 		this.setState({hide: document.hidden})
 	}
 
+	onConnectionWelcome = (serverWelcome) => {
+		this.setState({ serverWelcome })
+	}
+
 	onConnectionClose = (e) => {
-		this.setState({ connected: false, stream: null })
 		this.connection = null
 		this.connectionPromise = null
 
+		this.setState({
+			// serverWelcome: null,
+			connected: false,
+			stream: null,
+		})
+
 		if(!e.wasClean) {
-			console.log('Connection break', e)
+			console.error('Connection break', e)
 			setTimeout(() => this.openConnection(), this.reconnectDelay)
 		}
 	}
@@ -87,12 +99,18 @@ export default class App extends Component {
 		if(!this.connectionPromise) {
 			this.connection = new Connection(WS_URL)
 			this.connection.onClose = this.onConnectionClose
+			this.connection.onWelcome = this.onConnectionWelcome
 
 			this.connectionPromise = this.connection.connect()
-				.then(() => this.openStream())
 				.then(() => this.setState({ connected: true }))
+				.then(() => this.openStream())
 		}
 		return this.connectionPromise
+	}
+
+	closeConnection() {
+		if(this.connection)
+			this.connection.close()
 	}
 
 	openStream() {
@@ -100,11 +118,6 @@ export default class App extends Component {
 			this.setState({ stream: stream })
 			stream.setFps(BUFFER_FPS)
 		})
-	}
-
-	closeConnection() {
-		if(this.connection)
-			this.connection.close()
 	}
 
 	/* Rendering */
@@ -118,7 +131,7 @@ export default class App extends Component {
 		return amps.toFixed(2)
 	}
 
-	render({ }, { currentUrl, connected, stream, amps, off, hideHeader }) {
+	render({ }, { currentUrl, serverWelcome, connected, off, stream, amps, hideHeader }) {
 		return (
 			<div id="app">
 				<Header hide={hideHeader} stream={stream} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}></Header>
@@ -126,12 +139,19 @@ export default class App extends Component {
 				<main id="main">
 					{ !connected && !off ? <Modal>Connecting...</Modal> : null }
 
+				<main id="main">
+					{ serverWelcome ?
 					<Router onChange={this.handleRoute}>
-						<About path="/about" />
+						<About path="/about/:page?" serverWelcome={serverWelcome} />
 						<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
 						<Effects path="/effects" stream={stream} />
 						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
 					</Router>
+					: <Modal>Connecting...</Modal> }
+
+					{ off && <div>
+						<h3 style="color:white">Connection Closed</h3>
+					</div> }
 				</main>
 			</div>
 		);

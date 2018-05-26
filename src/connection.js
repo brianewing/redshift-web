@@ -7,11 +7,12 @@ import Stream from './stream';
 
 export default class Connection {
 	/* System exclusive commands: */
-	CmdOpenStream = 0
-	CmdCloseStream = 1
-	CmdSetStreamFps = 2
-	CmdSetEffectsJson = 3
-	CmdSetEffectsStreamFps = 4
+	CmdWelcome = 0
+	CmdOpenStream = 1
+	CmdCloseStream = 2
+	CmdSetStreamFps = 3
+	CmdSetEffectsJson = 4
+	CmdSetEffectsStreamFps = 5
 
 	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
 	_streams = []
@@ -34,9 +35,11 @@ export default class Connection {
 	_open = (resolve, reject) => {
 		this.webSocket = new WebSocket(this.url)
 		this.webSocket.binaryType = 'arraybuffer'
-
-		this.webSocket.onopen = resolve
 		this.webSocket.onmessage = this.receiveMessage
+		this.webSocket.onopen = () => {
+			this.sendWelcome()
+			resolve()
+		}
 		this.webSocket.onclose = (e) => {
 			this.onClose(e)
 			reject()
@@ -46,6 +49,8 @@ export default class Connection {
 	close() {
 		this.webSocket && this.webSocket.close()
 	}
+
+	/* Redshift system commands */
 
 	openStream(desc) {
 		const stream = new Stream(this)
@@ -59,13 +64,20 @@ export default class Connection {
 		})
 	}
 
-	/* Redshift system commands */
+	closeStream(channel) { this.sendSysEx(channel, this.CmdCloseStream) }
+
+	// called when server responds to CmdCloseStream
+	_onStreamClosed(channel) { this.streams.splice(channel, 1) }
 
 	setStreamFps = (channel, fps) => this.sendSysEx(channel, this.CmdSetStreamFps, [fps])
 	setEffectsStreamFps = (channel, fps) => this.sendSysEx(channel, this.CmdSetEffectsStreamFps, [fps])
 
 	setEffects = (channel, effects) => this.setEffectsJson(channel, JSON.stringify(effects))
 	setEffectsJson = (channel, json) => this.sendSysEx(channel, this.CmdSetEffectsJson, json)
+
+	sendWelcome() {
+		this.sendSysEx(0, this.CmdWelcome, [])
+	}
 
 	sendSysEx(channel, command, data) {
 		if(typeof data == "string") // must be encoded as utf-8 bytes
@@ -79,7 +91,7 @@ export default class Connection {
 
 	/* Send & receive */
 
-	sendBytes = (bytes) => {
+	sendBytes(bytes) {
 		this.webSocket.send(bytes)
 	}
 
@@ -88,12 +100,27 @@ export default class Connection {
 		if(data instanceof ArrayBuffer) {
 			const msg = parseOpcMessage(data)
 			const stream = this._streams[msg.channel]
-			if(stream)
+
+			if(msg.sysExCommand == this.CmdWelcome) {
+				this.receiveWelcome(msg)
+			} else if(msg.sysExCommand == this.CmdCloseStream) { // stream successfully closed
+				this._onStreamClosed(msg.channel)
+			} else if(stream) {
 				stream.handle(msg)
-			else
+			} else {
 				console.error("received opc message for unknown channel", msg)
+			}
 		} else {
 			console.error("received text message, expecting opc binary")
 		}
+	}
+
+	receiveWelcome = (msg) => {
+		const welcomeJson = new TextDecoder("utf-8").decode(msg.sysExData)
+
+		const serverInfo = JSON.parse(welcomeJson)
+		serverInfo.started = new Date(serverInfo.started)
+
+		this.onWelcome && this.onWelcome(serverInfo)
 	}
 }
