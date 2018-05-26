@@ -6,6 +6,8 @@ import basicContext from 'basiccontext'
 import Header from './header'
 import Modal from './modal'
 
+import LEDStrip from '../components/led-strip'
+
 import About from './routes/about'
 import Remote from './routes/remote'
 import Effects from './routes/effects'
@@ -19,8 +21,6 @@ const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
 const BUFFER_FPS = 60
-
-let ws2812_ComponentPower = (c) => (c / 255) * 0.02 // 20mA per color channel on full brightness
 
 export default class App extends Component {
 	componentWillMount() {
@@ -123,6 +123,7 @@ export default class App extends Component {
 	/* Rendering */
 
 	calculateAmps = (buffer) => {
+		const { ws2812_ComponentPower } = this
 		let amps = 0
 		for(let i=0; i<buffer.length; i++) {
 			let [ r, g, b ] = buffer[i]
@@ -134,10 +135,9 @@ export default class App extends Component {
 	render({ }, { currentUrl, serverWelcome, connected, off, stream, amps, hideHeader }) {
 		return (
 			<div id="app">
-				<Header hide={hideHeader} stream={stream} onTitleClick={this.showMenu} toggleOff={this.toggleOff} off={off}></Header>
+				<Header hide={hideHeader} onTitleClick={this.showMenu} onPowerToggle={this.toggleOff}></Header>
 
-				<main id="main">
-					{ !connected && !off ? <Modal>Connecting...</Modal> : null }
+				{ stream && <LEDStrip stream={stream} paused={off} /> }
 
 				<main id="main">
 					{ serverWelcome ?

@@ -1,8 +1,6 @@
 import { h, Component } from 'preact'
 import { Link } from 'preact-router/match'
 
-import LEDStrip from '../../components/led-strip'
-
 import style from './style'
 
 import FaPaintBrush from 'react-icons/lib/fa/paint-brush';
@@ -22,11 +20,9 @@ import FaQuestionCircleO from 'react-icons/lib/fa/question-circle-o';
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
 export default class Header extends Component {
-	render({ hide, onTitleClick, stream, reverseStrip, toggleOff, off }) {
+	render({ hide, onTitleClick, onPowerToggle }) {
 		return <div>
-			{ stream && <LEDStrip stream={stream} paused={off} class={style.headerStrip} reverse={reverseStrip} /> }
-
-			{ !hide && <header class={style.header + ' '}>
+			{ !hide && <header class={style.header}>
 				<h1 onClick={onTitleClick}>Redshift</h1>
 				{this.props.children}
 				<nav>
@@ -35,7 +31,7 @@ export default class Header extends Component {
 					<Link activeClassName={style.active} href="/effects"><GoPlug /></Link>
 					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
 					{false && <Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>}
-					<Link activeClassName={style.active} href="javascript:;" onClick={toggleOff}><FaPowerOff /></Link>
+					<Link activeClassName={style.active} href="javascript:;" onClick={onPowerToggle}><FaPowerOff /></Link>
 				</nav>
 			</header> }
 		</div>

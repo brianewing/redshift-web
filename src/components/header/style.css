@@ -34,17 +34,6 @@
 	/*opacity: 0.96;*/
 }
 
-.headerStrip {
-	/*display: none;*/
-	height: 3.0em;
-	width: 100%;
-	opacity: 1;
-	/*filter: blur(0px);*/
-	/*z-index: 6;*/
-	position:absolute;
-	height:100%;
-}
-
 .header h1 {
 	font-family: 'Dosis';
 	float: left;
