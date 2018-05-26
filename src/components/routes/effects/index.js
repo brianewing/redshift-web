@@ -149,10 +149,16 @@ class Effect extends Component {
 		onFieldChange(effect)
 	}
 
+	onDisable = () => {
+		const { onFieldChange, effect } = this.props
+		effect.Disabled = !effect.Disabled
+		onFieldChange(effect)
+	}
+
 	render({ effect }, { edit, showControls, showParams }) {
 		const params = Object.entries(effect.Effect || {})
 
-		return <li class={style.effect} onDblClick={this.showEditModal} onContextMenu={this.showMenu}>
+		return <li class={style.effect} onClick={this.onDisable} onDblClick={this.showEditModal} onContextMenu={this.showMenu}>
 			<div class={style.effectToolbar}>
 				<div class={style.effectName}>
 					{this.renderIcon(effect)} <strong>{effect.Type}</strong> {this.renderSummary()}
