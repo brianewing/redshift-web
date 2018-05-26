@@ -2,30 +2,28 @@ import { Component } from 'preact';
 
 import style from './style';
 
-export default class Licenses extends Component {
-	render() {
-		return <div class={style.about}>
-			<h2>Licenses</h2>
+export default function Licenses() {
+	return <div class={style.about}>
+		<h2>Licenses</h2>
 
-			<ul>
-				<li class={style.license}>
-					<h3>Redshift</h3>
-					<pre>
-						&copy; {new Date().getFullYear()} - Brian J Ewing<br/><br/>
-						{AGPL}
-					</pre>
-				</li>
+		<ul>
+			<li class={style.license}>
+				<h3>Redshift</h3>
+				<pre>
+					&copy; {new Date().getFullYear()} - Brian J Ewing<br/><br/>
+					{AGPL}
+				</pre>
+			</li>
 
-				<li class={style.license}>
-					<h3>Preact</h3>
-					<pre>
-						Copyright (c) 2015-present Jason Miller<br/><br/>
-						{MIT}
-					</pre>
-				</li>
-			</ul>
-		</div>
-	}
+			<li class={style.license}>
+				<h3>Preact</h3>
+				<pre>
+					Copyright (c) 2015-present Jason Miller<br/><br/>
+					{MIT}
+				</pre>
+			</li>
+		</ul>
+	</div>
 }
 
 const AGPL = `This program is free software: you can redistribute it and/or modify
