@@ -27,7 +27,7 @@ function Index({ serverWelcome }) {
 		<pre>
 			Server Address: { Config.host }<br/>
 			Server Version: { serverWelcome.version }<br/>
-			Server Uptime: { timeSince(serverWelcome.started) }<br/>
+			Server Uptime: <UptimeClock time={serverWelcome.started} /><br />
 		</pre>
 
 		<ul>
@@ -48,4 +48,18 @@ function Index({ serverWelcome }) {
 			</li>
 		</ul>
 	</div>
+}
+
+class UptimeClock extends Component {
+	componentDidMount() {
+		this.interval = setInterval(() => this.forceUpdate(), 1000)
+	}
+
+	componentWillUnmount() {
+		clearInterval(this.interval)
+	}
+
+	render({ time }) {
+		return <span>{ timeSince(time) }</span>
+	}
 }
