@@ -79,6 +79,7 @@ const TYPES = [
 	"Clear",
 	"External",
 	"Fill",
+	"Greyscale",
 	"Layer",
 	"LarsonEffect",
 	"Mirror",
