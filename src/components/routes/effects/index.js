@@ -31,8 +31,11 @@ const EFFECTS_FPS = 10
 
 export default class Effects extends Component {
 	state = {
-		effects: []
+		effects: [],
+		oscSummary: {},
 	}
+
+	oscSummaryInterval = null
 
 	componentWillMount() {
 		const { stream } = this.props
@@ -42,16 +45,26 @@ export default class Effects extends Component {
 		} else {
 			throw new Error("Effects component mounted with null stream")
 		}
+
+		this.oscSummaryInterval = setInterval(this.requestOscSummary, 50)
 	}
 
 	componentWillUnmount() {
 		const { stream } = this.props
 		stream.setEffectsFps(0)
 		stream.off('effects', this.receiveEffects)
+
+		clearInterval(this.oscSummaryInterval)
 	}
 
 	receiveEffects = (effects) => {
 		this.setState({ effects })
+	}
+
+	requestOscSummary = () => {
+		this.props.connection.requestOscSummary().then((summary) => {
+			this.setState({ oscSummary: summary })
+		})
 	}
 
 	send = (effects) => {
@@ -71,8 +84,20 @@ export default class Effects extends Component {
 		return <div class={style.effects}>
 			<button onClick={this.clearEffects}>Clear</button>
 			<button onClick={this.addNewEffect}>Add</button>
+
+			{this.renderOscSummary()}
 			{<List items={effects} onChange={this.send} />}
 		</div>
+	}
+
+	renderOscSummary() {
+		const { oscSummary } = this.state
+		return <ul>
+			{Object.values(oscSummary).map((oscMsg) => <li>
+				<strong>{oscMsg.Address}</strong>
+				<pre>{JSON.stringify(oscMsg.Arguments)}</pre>
+			</li>)}
+		</ul>
 	}
 }
 

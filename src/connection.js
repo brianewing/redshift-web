@@ -1,4 +1,5 @@
 import { parseOpcMessage, buildSysExOpcMessage }  from './lib/redshift-opc';
+import addEventMethods from './lib/event-methods';
 
 import Stream from './stream';
 
@@ -13,14 +14,21 @@ export default class Connection {
 	CmdSetStreamFps = 3
 	CmdSetEffectsJson = 4
 	CmdSetEffectsStreamFps = 5
+	CmdSetEffectsYaml = 6
+	CmdAppendEffectJson = 7
+	CmdAppendEffectYaml = 8
+	CmdOscSummary = 9
 
 	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
 	_streams = []
+
+	_oscSummaryListeners = []
 
 	url = ''
 
 	constructor(url) {
 		this.url = url
+		addEventMethods(this)
 	}
 
 	onClose(e) {} // override this to receive close events [todo: refactor]
@@ -75,6 +83,19 @@ export default class Connection {
 	setEffects = (channel, effects) => this.setEffectsJson(channel, JSON.stringify(effects))
 	setEffectsJson = (channel, json) => this.sendSysEx(channel, this.CmdSetEffectsJson, json)
 
+	requestOscSummary = () => {
+		this.sendSysEx(0, this.CmdOscSummary)
+
+		return new Promise((resolve, reject) => {
+			const timeout = setTimeout(reject, 5000)
+
+			this._oscSummaryListeners.push((summary) => {
+				clearTimeout(timeout)
+				resolve(summary)
+			})
+		})
+	}
+
 	sendWelcome() {
 		this.sendSysEx(0, this.CmdWelcome, [])
 	}
@@ -105,6 +126,8 @@ export default class Connection {
 				this.receiveWelcome(msg)
 			} else if(msg.sysExCommand == this.CmdCloseStream) { // stream successfully closed
 				this._onStreamClosed(msg.channel)
+			} else if(msg.sysExCommand == this.CmdOscSummary) {
+				this.receiveOscSummary(msg)
 			} else if(stream) {
 				stream.handle(msg)
 			} else {
@@ -117,10 +140,22 @@ export default class Connection {
 
 	receiveWelcome = (msg) => {
 		const welcomeJson = new TextDecoder("utf-8").decode(msg.sysExData)
-
 		const serverInfo = JSON.parse(welcomeJson)
+
 		serverInfo.started = new Date(serverInfo.started)
 
 		this.onWelcome && this.onWelcome(serverInfo)
+	}
+
+	receiveOscSummary = (msg) => {
+		const summaryJson = new TextDecoder("utf-8").decode(msg.sysExData)
+		const summary = JSON.parse(summaryJson)
+
+		for(let i=0; i<this._oscSummaryListeners.length; i++) {
+			const fn = this._oscSummaryListeners[i]
+			fn(summary)
+		}
+
+		this._oscSummaryListeners.length = 0 // truncate
 	}
 }
