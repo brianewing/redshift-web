@@ -102,25 +102,41 @@ export default class Effects extends Component {
 }
 
 class List extends Component {
-	fieldChange = (index, newEffect) => {
+	changeItems = (modificationFn) => {
 		const { items, onChange } = this.props
-		items[index] = newEffect
-		onChange(items)
+		const newItems = modificationFn(items)
+		newItems && onChange(newItems)
+	}
+
+	fieldChange = (index, newEffect) => {
+		this.changeItems((items) => {
+			items[index] = newEffect
+			return items
+		})
 	}
 
 	typeChange = (index, newType) => {
-		const { items, onChange } = this.props
-		items[index] = { Type: newType }
-		onChange(items)
+		this.changeItems((items) => {
+			items[index] = { Type: newType }
+			return items
+		})
 	}
 
 	move = (index, delta) => {
-		const { items, onChange } = this.props
-		const newIndex = index+delta
-		if(newIndex >= 0 && newIndex <= items.length) {
-			items.splice(index+delta, 0, items.splice(index, 1)[0])
-			onChange(items)
-		}
+		this.changeItems((items) => {
+			const newIndex = index+delta
+			if(newIndex >= 0 && newIndex <= items.length) {
+				items.splice(index+delta, 0, items.splice(index, 1)[0])
+				return items
+			}
+		})
+	}
+
+	duplicate = (index) => {
+		this.changeItems((items) => {
+			const copy = JSON.parse(JSON.stringify(items[index]))
+			return [...items.slice(0, index), copy, items.slice(index+1)]
+		})
 	}
 
 	remove = (index) => {
@@ -137,6 +153,7 @@ class List extends Component {
 					onTypeChange={this.typeChange.bind(null, index)}
 					onFieldChange={this.fieldChange.bind(null, index)}
 					onMove={this.move.bind(null, index)}
+					onDuplicate={this.duplicate.bind(null, index)}
 					onRemove={this.remove.bind(null, index)} />
 			)}
 		</ul>
@@ -155,12 +172,15 @@ class Effect extends Component {
 		basicContext.show([
 			{title: 'Move Up', fn: this.moveUp, disabled: isFirst},
 			{title: 'Move Down', fn: this.moveDown, disabled: isLast},
+			{},
+			{title: 'Duplicate', fn: this.duplicate},
 			{title: 'Remove', fn: this.remove},
 		], e)
 	}
 
 	moveUp = () => this.props.onMove(-1)
 	moveDown = () => this.props.onMove(1)
+	duplicate = () => this.props.onDuplicate()
 	remove = () => this.props.onRemove()
 
 	onTypeChange = (newType) => {
@@ -169,7 +189,7 @@ class Effect extends Component {
 	}
 
 	onFieldChange = (field, newValue) => {
-		const { onFieldChange, effect  } = this.props
+		const { onFieldChange, effect } = this.props
 		effect.Effect[field] = newValue
 		onFieldChange(effect)
 	}
@@ -199,7 +219,7 @@ class Effect extends Component {
 				</div>
 			</div>
 
-			{ effect.Controls && showControls && 
+			{ effect.Controls && showControls &&
 				<div class={style.effectControls}>
 					{this.renderControls(effect)}
 				</div> }
