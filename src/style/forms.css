@@ -1,9 +1,13 @@
+button { min-height: 2.9em; min-width: 2.9em; }
+
 button, select {
     padding: 0.5em;
 
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 1px;
+
+    font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
 
     color: white;
     opacity: 0.9;
@@ -13,6 +17,8 @@ button, select {
 
 button:hover {
     opacity: 1;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.7);
 } button:active {
     opacity: 0.7;
     transform: scale(0.97) translate(1px, 1px);

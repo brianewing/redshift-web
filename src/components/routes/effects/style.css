@@ -4,7 +4,7 @@
 
 .effects {
 	height: 100%;
-	padding-top: 1em;
+	/* padding-top: 1em; */
 	color: white;
 	text-align: center;
 }
@@ -26,31 +26,73 @@
 	margin-top: -0.2em;
 }
 
+/* List */
+.leftPane {
+	display: inline-block;
+	width: 30%;
+	height: 100%;
+	overflow: scroll;
+}
+
+/* Editor */
+.rightPane {
+	display: inline-block;
+	height: 100%;
+	width: 70%;
+	vertical-align: top;
+	overflow: scroll;
+}
+
 /*
- * Effect Envelopes
+ * Effect List
  */
 
-.effect {
+.shade {
+	filter: blur(1px);
+}
+
+.effectListHeader {
+	text-align: right;
+	padding-bottom: 0.5em;
+}
+
+.effectListHeader button:not(:first-child) {
+	margin-left: 0.25em;
+}
+
+.effectListHeader button svg {
+	color: white;
+} .effectListHeader button:hover svg {
+	color: rgb(255, 210, 50);
+}
+
+.effectListItem {
 	text-align: center;
 	list-style: none;
 	min-height: 2.5em;
 
 	border-radius: 1px;
 	background: rgba(0, 0, 0, 0.50);
-} .effect:not(:last-child) {
+} .effectListItem:not(:last-child) {
 	margin-bottom: 0.5em;
 }
 
-.effect:hover {
+.effectListItem:hover {
 	background: rgba(0, 0, 0, 0.60);
+} .effectListItem:hover > .effectToolbar {
+	border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-.effect:hover > .effectToolbar {
-	border: 1px solid rgba(255, 255, 255, 0.5);
+.effectListItem.selected {
+	background: rgba(0, 0, 0, 0.8);
+} .effectListItem.selected > .effectToolbar {
+	border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .disabledEffect {
 	opacity: 0.75;
+} .disabledEffect .effectName {
+	text-decoration: line-through;
 }
 
 .effectToolbar {
@@ -64,13 +106,15 @@
 
 .effectToolbar .effectName {
 	display: inline-block;
-	width: 30%;
+	/* width: 30%; */
+	/* width: 70%; */
 	text-align: left;
 }
 
 .effectToolbar .toolbarButtons {
 	display: inline-block;
-	width: 70%;
+	display: none;
+	width: 30%;
 	text-align: right;
 	padding: 0px 0px;
 }
@@ -82,20 +126,47 @@
 	height: 3.0em;
 	line-height: 1em;
 	border: none;
-	border-right: 1px solid rgba(255, 255, 255, 0.3);
+	/* border-right: 1px solid rgba(255, 255, 255, 0.3); */
 	border-radius: none;
 	min-width: 3em;
+
+	background: none;
 }
 
 .toolbarButtons button:last-child {
 	border-right-width: 0px;
 }
 
-.effect .effectParams {
+/*
+ * Effect Detail View
+ */
+
+.effectDetail {
+	padding: 1em;
+}
+
+.effectDetail .effectType {
+	width: 100%;
+	text-align: center;
+	text-align-last: center;
+	/* background: none; */
+	border: none;
+	font-weight: bold;
+	font-size: 1em;
+	margin-bottom: 0.5em;
+}
+
+.effectDetail .effectType option {
+	background: rgba(0, 0, 0, 0.7);
+	color: white;
+}
+
+.effectDetail .effectParams {
+	padding-top: 1em;
 	padding-bottom: 0.9em;
 }
 
-.effect .effectParams .color {
+.effectDetail .effectParams .color {
 	display: inline-block;
 	width: 1em;
 	height: 1em;
@@ -103,7 +174,7 @@
 	border: 1px solid white;
 }
 
-.effect .effect { /* nested effects */
+.effectDetail .effect--fix-me { /* nested effects */
 	background: rgba(0, 0, 0, 0.35);
 }
 

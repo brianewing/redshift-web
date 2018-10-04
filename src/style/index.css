@@ -50,6 +50,10 @@ html, body {
 	right: 0px;
 }
 
+#main.shade {
+    filter: blur(0.5px);
+}
+
 .basicContext {
 	background-color: rgba(15,15,15,.85);
 	border-radius: 1px;

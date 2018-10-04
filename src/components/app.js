@@ -144,7 +144,7 @@ export default class App extends Component {
 					<Router onChange={this.handleRoute}>
 						<About path="/about/:page?" serverWelcome={serverWelcome} />
 						<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
-						<Effects path="/effects" stream={stream} />
+						<Effects path="/effects/:selection?" stream={stream} />
 						<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
 					</Router>
 					: <Modal>Connecting...</Modal> }
