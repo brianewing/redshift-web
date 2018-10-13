@@ -26,10 +26,13 @@ export default class App extends Component {
 	componentWillMount() {
 		this.openConnection()
 		window.app = this
+
+		document.addEventListener('keydown', this.handleKeyDown)
 	}
 
 	componentWillUnmount() {
 		this.closeConnection()
+		document.removeEventListener('keydown', this.handleKeyDown)
 	}
 
 	showMenu = (e) => {
@@ -65,6 +68,19 @@ export default class App extends Component {
 
 	handleRoute = (e) => {
 		this.setState({ currentUrl: e.url })
+	}
+
+	handleKeyDown = (e) => {
+		if(e.altKey) {
+			switch(e.key) {
+				case "§": this.toggleOff();         break;
+				case "1": route('/about');          break;
+				case "2": route('/');               break;
+				case "3": route('/effects');        break;
+				case "4": route('/scripts');        break;
+				case "Escape": this.toggleHeader(); break;
+			}
+		}
 	}
 
 	onVisibilityChange = (e) => {
