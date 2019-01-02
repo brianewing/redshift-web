@@ -36,7 +36,7 @@ export default class ListItem extends Component {
 			this.toggleDisabled()
 		else if(e.shiftKey && e.ctrlKey && e.altKey)
 			this.remove()
-		else
+		else if(this.props.onClick)
 			this.props.onClick()
 	}
 

@@ -3,6 +3,9 @@ import { Link } from 'preact-router/match'
 
 import style from './style'
 
+import FaBars from 'react-icons/lib/fa/bars';
+import FaChainBroken from 'react-icons/lib/fa/chain-broken';
+
 import FaPaintBrush from 'react-icons/lib/fa/paint-brush';
 
 import GoPaintcan from 'react-icons/lib/go/paintcan';
@@ -20,15 +23,25 @@ import FaQuestionCircleO from 'react-icons/lib/fa/question-circle-o';
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
 export default class Header extends Component {
-	render({ hide, onTitleClick, onPowerToggle }) {
+	render({ pageTitle, disconnected, hide, onTitleClick, onPowerToggle }) {
+		console.log('header disconnected', disconnected)
+		const icon = disconnected ? <FaChainBroken /> : <FaBars />
 		return <div>
-			{ !hide && <header class={style.header}>
-				<h1 onClick={onTitleClick}>Redshift</h1>
+			{ !hide && <header class={style.header + ' ' + (disconnected ? style.disconnected : '')}>
+				<h1 onMouseDown={onTitleClick}>
+					{icon}
+
+					{ disconnected
+						? 'Disconnected'
+						: (pageTitle || 'Redshift') }
+				</h1>
+
 				{this.props.children}
+
 				<nav>
 					<Link activeClassName={style.active} href="/about"><FaQuestionCircleO /></Link>
 					<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
-					<Link activeClassName={style.active} href="/effects"><GoPlug /></Link>
+					<Link activeClassName={style.active} href="/effects"><FaStar /></Link>
 					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
 					{false && <Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>}
 					<Link activeClassName={style.active} href="javascript:;" onClick={onPowerToggle}><FaPowerOff /></Link>

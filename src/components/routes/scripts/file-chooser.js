@@ -64,12 +64,12 @@ export default class FileChooser extends Component {
 
 	render({}, { newFileDialogOpen, files }) {
 		return <div class={style.fileChooser}>
-			<h2>Choose a File.. <GoPlus onClick={this.openNewFileDialog} /></h2>
+			<h2>Choose a File.. {/*<button onClick={this.openNewFileDialog}>*/}<GoPlus onClick={this.openNewFileDialog} />{/*</button>*/}</h2>
 
 			{newFileDialogOpen ? <NewFileDialog onClose={this.closeNewFileDialog}
 				onSubmit={this.onNewFileDialogSubmit} /> : null}
 
-			{files == null ? <i>Fetching...</i> : this.renderFileList(files)}
+			{files == null ? <p>Fetching...</p> : this.renderFileList(files)}
 		</div>
 	}
 

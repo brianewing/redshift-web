@@ -25,9 +25,23 @@ export default function About({ page, serverWelcome }) {
 function Index({ serverWelcome }) {
 	return <div class={style.index}>
 		<pre>
-			Server Address: { Config.host }<br/>
-			Server Version: { serverWelcome.version }<br/>
-			Server Uptime: <UptimeClock time={serverWelcome.started} /><br />
+			{ serverWelcome.config.serverName && <div style="margin-bottom:0.5em"><strong>{serverWelcome.config.serverName}</strong></div> }
+			<table style="margin: 0 auto">
+				<tr>
+					<td>Server</td>
+					<td>{ Config.host }</td>
+				</tr>
+
+				<tr>
+					<td>Version</td>
+					<td>{ serverWelcome.version }</td>
+				</tr>
+
+				<tr>
+					<td>Uptime</td>
+					<td><UptimeClock time={serverWelcome.started} /></td>
+				</tr>
+			</table>
 		</pre>
 
 		<ul>

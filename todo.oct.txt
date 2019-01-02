@@ -1,0 +1,36 @@
+[ ] Commit work so far
+
+- Create and play with virtual streams
+
+- Configure multiple persistent strips
+	- Set ws2811 pin
+	- Change number of LEDs
+	- Set start animation on boot
+
+	- Switch between strips on effects pane
+
+- Change editor theme
+
+- Add and remove effects from mirror, layer, etc
+- Edit effects from mirror, layer etc
+
+- Change blend parameters
+
+- Osc controls for parameters
+
+- Button to switch between "effect definition" mode and "remote control" mode
+	- Seamlessly updates controls while looking at an effect
+
+- Add, remove, edit controls
+
+- Sort out disconnection logic
+
+- Remove all border-radii
+
+- Settings
+	- Control panel layout (big grid of buttons with icons)
+		-------------------    -----------------
+		| Server Settings |   |  App Settings   |
+		|                 |   |                 |
+		|                 |   |                 |
+		-------------------   -------------------

@@ -23,7 +23,7 @@
 	padding: 0;
 }
 
-.about li, pre {
+.about li, .about pre {
 	padding: 0.5em 1em;
 	margin-bottom: 1em;
 	background: rgba(0, 0, 0, 0.5);

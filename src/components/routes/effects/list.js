@@ -8,6 +8,7 @@ import FaFolderOpenO from 'react-icons/lib/fa/folder-open-o';
 import basicContext from 'basiccontext';
 
 import Modal from '../../modal';
+import { fetch as fetchEffects, load as loadEffects, save as saveEffects} from '../../../effect-definitions';
 
 import ListItem from './list-item';
 
@@ -50,7 +51,7 @@ export default class List extends Component {
 		})
 	}
 
-	reset = () => this.change(() => [])
+	reset = () => this.change(() => [{"Type": "Clear"}])
 
 	toggleDisabled = (index) => {
 		this.change((items) => {
@@ -61,29 +62,42 @@ export default class List extends Component {
 
 	addClicked = (index) => {
 		this.add(this.props.items.length)
-		route('/effects/' + this.props.items.length)
 	}
 
 	openClicked = (e) => {
-		let a = [
-			{title: "effects.osc.yaml", fn: () => 5},
-			{title: "effects.15.yaml", fn: () => 5},
-			{title: "rainbow.yaml", fn: () => 5},
-			{title: "osc2.yaml", fn: () => 5},
-		]
-		basicContext.show([
-			{title: "New", fn: () => this.reset()},
-			{},
-			...a,...a,...a,...a,...a,...a,
-			...a,...a,...a,...a,...a,...a,
-			...a,...a,...a,...a,...a,...a,
-			...a,...a,...a,...a,...a,...a,
-		], e, () => {
-			basicContext.close()
+		fetchEffects().then((filenames) => {
+			const menu = filenames.map((f) => {
+				return {title: f.name, fn: (e) => this.loadEffectsFile(f.name, e.altKey)}
+			})
+
+			basicContext.show([{title: "New", fn: this.reset}, {}, ...menu], e)
+		})
+	}
+
+	loadEffectsFile = (filename, append=false) => {
+		const { stream } = this.props
+
+		loadEffects('/' + filename).then((data) => {
+			if(filename.endsWith('.json')) {
+				const newEffects = JSON.parse(data)
+
+				this.change((items) => append ? [items, ...newEffects] : newEffects)
+
+				// append ? stream.appendEffectsJson(data) : stream.setEffectsJson(data)
+			} else if(filename.endsWith('.yaml')) {
+				append ? stream.appendEffectsYaml(data) : stream.setEffectsYaml(data)
+			}
 		})
 	}
 
 	saveClicked = () => this.setState({ saving: true })
+	saveSubmitted = (e) => {
+		e.preventDefault()
+
+		const filename = '/' + e.currentTarget.querySelector('input').value + '.json'
+		saveEffects(filename, JSON.stringify(this.props.items))
+		this.setState({ saving: false })
+	}
 
 	render({ items, selection }, { shade, saving }) {
 		return <ul class={shade ? style.shade : ''}>
@@ -95,7 +109,9 @@ export default class List extends Component {
 					<div style="text-align: center">
 						<h1 style="margin:0">Save Effects</h1>
 						<br/>
-						<input placeholder={new Date().toISOString().split('T')[0]} />&nbsp;.yaml
+						<form onSubmit={this.saveSubmitted}>
+							<input placeholder={new Date().toISOString().split('T')[0]} />&nbsp;.json
+						</form>
 					</div>
 				</Modal> }
 			</li>

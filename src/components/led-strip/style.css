@@ -13,6 +13,7 @@
 .strip canvas {
 	/*height: 100%;*/
 	/*width: 100%;*/
+  will-change: transform;
 }
 
 .led {

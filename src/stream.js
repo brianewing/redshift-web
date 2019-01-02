@@ -14,7 +14,14 @@ export default class Stream {
 
 	setFps(fps) { this.connection.setStreamFps(this.channel, fps) }
 	setEffectsFps(fps) { this.connection.setEffectsStreamFps(this.channel, fps) }
+
 	setEffects(effects) { this.connection.setEffects(this.channel, effects) }
+	setEffectsJson(json) { this.connection.setEffectsJson(this.channel, json) }
+	setEffectsYaml(yaml) { this.connection.setEffectsYaml(this.channel, yaml) }
+
+	appendEffects(effects) { this.connection.appendEffects(this.channel, effects) }
+	appendEffectsJson(json) { this.connection.appendEffectsJson(this.channel, json) }
+	appendEffectsYaml(yaml) { this.connection.appendEffectsYaml(this.channel, yaml) }
 
 	handle(msg) {
 		if(msg.command == 0) {

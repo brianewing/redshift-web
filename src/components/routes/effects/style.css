@@ -1,24 +1,28 @@
 /*
- * Effect Sets
+ * Effects Root View
  */
 
 .effects {
 	height: 100%;
-	/* padding-top: 1em; */
 	color: white;
 	text-align: center;
 }
 
-.effects ul {
+/*
+ * Effect Sets (master-detail editor)
+ */
+
+.effectSet ul {
 	list-style: none;
-	padding: 0em 0.5em;
+	/* padding: 0em 0.5em; */
+	padding: 0em 0em;
 }
 
-.effects ul ul {
+.effectSet ul ul {
 	padding-bottom: 0.5em;
 }
 
-.effects svg {
+.effectSet svg {
 	color: yellow;
 	opacity: 0.9;
 	line-height: 1em;
@@ -26,16 +30,14 @@
 	margin-top: -0.2em;
 }
 
-/* List */
-.leftPane {
+.masterView {
 	display: inline-block;
 	width: 30%;
 	height: 100%;
 	overflow: scroll;
 }
 
-/* Editor */
-.rightPane {
+.detailView {
 	display: inline-block;
 	height: 100%;
 	width: 70%;
@@ -43,13 +45,46 @@
 	overflow: scroll;
 }
 
+.detailMobileNav {
+	display: none;
+}
+
+@media(max-width: 640px) {
+	.masterView, .detailView {
+		width: 100%;
+	}
+
+	.effectSet[data-effect-selected] > .masterView {
+		display: none;
+	}
+
+	.effectSet:not([data-effect-selected]) > .detailView {
+		display: none;
+	}
+
+	.detailMobileNav {
+		display: inline-block;
+		vertical-align: middle;
+		text-align: left;
+		width: 10%;
+		cursor: pointer;
+	}
+
+	.detailMobileNav:not(:hover) svg {
+		/* color: white; */
+		filter: drop-shadow(0px 0px 1px black);
+	}
+
+	.detailMobileNav + .effectType {
+		display: inline-block;
+		vertical-align: middle;
+		width: 90% !important;
+	}
+}
+
 /*
  * Effect List
  */
-
-.shade {
-	filter: blur(1px);
-}
 
 .effectListHeader {
 	text-align: right;
@@ -72,13 +107,13 @@
 	min-height: 2.5em;
 
 	border-radius: 1px;
-	background: rgba(0, 0, 0, 0.50);
+	background: rgba(0, 0, 0, 0.60);
 } .effectListItem:not(:last-child) {
 	margin-bottom: 0.5em;
 }
 
 .effectListItem:hover {
-	background: rgba(0, 0, 0, 0.60);
+	background: rgba(0, 0, 0, 0.70);
 } .effectListItem:hover > .effectToolbar {
 	border: 1px solid rgba(255, 255, 255, 0.5);
 }
@@ -89,7 +124,7 @@
 	border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-.disabledEffect {
+.disabledEffect:not(.selected) {
 	opacity: 0.75;
 } .disabledEffect .effectName {
 	text-decoration: line-through;
@@ -153,7 +188,7 @@
 	border: none;
 	font-weight: bold;
 	font-size: 1em;
-	margin-bottom: 0.5em;
+	/* margin-bottom: 0.5em; */
 }
 
 .effectDetail .effectType option {
@@ -162,8 +197,9 @@
 }
 
 .effectDetail .effectParams {
-	padding-top: 1em;
+	/* padding-top: 1em; */
 	padding-bottom: 0.9em;
+	/* background-color: rgba(0, 0, 0, 0.6); */
 }
 
 .effectDetail .effectParams .color {
@@ -179,36 +215,8 @@
 }
 
 /*
- * Effect Edit Modal
- */
-
-.edit {
-	text-align: center;
-}
-
-.edit ul {
-	list-style: none;
-	padding: 0;
-	margin-bottom: 0;
-}
-
-.editFields {
-}
-
-.editField label {
-	margin: 1em;
-}
-
-.editField input {
-}
-
-/*
  * Control Sets
  */
-
-.effectControls { /* wrapper under .effectEnvelope */
-
-}
 
 .controlSet {
 	padding-bottom: 0.5em;
@@ -233,4 +241,13 @@
 
 .controlParams {
 	font-size: 0.8em;
+}
+
+/*
+ * Osc Summary
+ */
+
+.oscSummary ul {
+	list-style: none;
+	padding: 0;
 }

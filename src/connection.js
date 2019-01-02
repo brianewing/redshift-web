@@ -15,20 +15,25 @@ export default class Connection {
 	CmdSetEffectsJson = 4
 	CmdSetEffectsStreamFps = 5
 	CmdSetEffectsYaml = 6
-	CmdAppendEffectJson = 7
-	CmdAppendEffectYaml = 8
+	CmdAppendEffectsJson = 7
+	CmdAppendEffectsYaml = 8
 	CmdOscSummary = 9
+	CmdClearOscSummary = 10
+	CmdErrorOccurred = 11
 
 	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
 	_streams = []
 
+	/* Callbacks waiting on a response to CmdOscSummary */
 	_oscSummaryListeners = []
+
+	clientInfo = {}
 
 	url = ''
 
 	constructor(url) {
 		this.url = url
-		addEventMethods(this)
+		addEventMethods(this) // on, off, emit
 	}
 
 	onClose(e) {} // override this to receive close events [todo: refactor]
@@ -45,7 +50,7 @@ export default class Connection {
 		this.webSocket.binaryType = 'arraybuffer'
 		this.webSocket.onmessage = this.receiveMessage
 		this.webSocket.onopen = () => {
-			this.sendWelcome()
+			this.sendWelcome(this.clientInfo)
 			resolve()
 		}
 		this.webSocket.onclose = (e) => {
@@ -59,6 +64,12 @@ export default class Connection {
 	}
 
 	/* Redshift system commands */
+
+	// tells the server that this is a redshift client
+	// server will respond with information about itself
+	sendWelcome(info) {
+		this.sendSysEx(0, this.CmdWelcome, JSON.stringify(info))
+	}
 
 	openStream(desc) {
 		const stream = new Stream(this)
@@ -82,6 +93,11 @@ export default class Connection {
 
 	setEffects = (channel, effects) => this.setEffectsJson(channel, JSON.stringify(effects))
 	setEffectsJson = (channel, json) => this.sendSysEx(channel, this.CmdSetEffectsJson, json)
+	setEffectsYaml = (channel, yaml) => this.sendSysEx(channel, this.CmdSetEffectsYaml, yaml)
+
+	appendEffects = (channel, effects) => this.appendEffectsJson(channel, JSON.stringify(effects))
+	appendEffectsJson = (channel, json) => this.sendSysEx(channel, this.CmdAppendEffectsJson, json)
+	appendEffectsYaml = (channel, yaml) => this.sendSysEx(channel, this.CmdAppendEffectsYaml, yaml)
 
 	requestOscSummary = () => {
 		this.sendSysEx(0, this.CmdOscSummary)
@@ -96,9 +112,7 @@ export default class Connection {
 		})
 	}
 
-	sendWelcome() {
-		this.sendSysEx(0, this.CmdWelcome, [])
-	}
+	/* Send & receive */
 
 	sendSysEx(channel, command, data) {
 		if(typeof data == "string") // must be encoded as utf-8 bytes
@@ -109,8 +123,6 @@ export default class Connection {
 
 		this.sendBytes(msg)
 	}
-
-	/* Send & receive */
 
 	sendBytes(bytes) {
 		this.webSocket.send(bytes)
@@ -128,6 +140,8 @@ export default class Connection {
 				this._onStreamClosed(msg.channel)
 			} else if(msg.sysExCommand == this.CmdOscSummary) {
 				this.receiveOscSummary(msg)
+			} else if(msg.sysExCommand == this.CmdErrorOccurred) {
+				this.receiveError(msg)
 			} else if(stream) {
 				stream.handle(msg)
 			} else {
@@ -144,6 +158,7 @@ export default class Connection {
 
 		serverInfo.started = new Date(serverInfo.started)
 
+		console.info("Welcome", "to", "version", serverInfo.version, serverInfo)
 		this.onWelcome && this.onWelcome(serverInfo)
 	}
 
@@ -157,5 +172,19 @@ export default class Connection {
 		}
 
 		this._oscSummaryListeners.length = 0 // truncate
+	}
+
+	receiveError = (msg) => {
+		const erroredCmd = msg.sysExData[0] // which command caused the error
+		const errorMsg = new TextDecoder("utf-8").decode(msg.sysExData.slice(1))
+
+		let cmdName // e.g. CmdSetEffectsJson
+
+		try {
+			const cmdNamesAndValues = Object.entries(this).filter(([key]) => key.match(/^Cmd/))
+			cmdName = cmdNamesAndValues.find(([_, value]) => value == erroredCmd)[0]
+		} catch(_) {}
+
+		console.error(cmdName, "error", "|", "channel", msg.channel, "|", errorMsg)
 	}
 }

@@ -12,23 +12,25 @@ import 'brace/keybinding/emacs';
 import 'brace/theme/ambiance';
 import 'brace/theme/merbivore';
 import 'brace/theme/terminal';
+import 'brace/theme/monokai';
 import 'brace/theme/tomorrow_night_bright';
 import 'brace/theme/vibrant_ink';
 
 import style from './style';
 
-import GoArrowLeft from 'react-icons/go/arrow-left';
+// import GoArrowLeft from 'react-icons/go/arrow-left';
+import MdArrowBack from 'react-icons/md/arrow-back';
 
 let THEMES = ['ambiance', 'merbivore', 'terminal', 'vibrant_ink', 'tomorrow_night_bright']
 
 export default class Editor extends Component {
 	static defaultProps = {
 		mode: 'javascript',
-		theme: 'merbivore',
+		theme: 'monokai',
 	}
 
 	state = {
-		fontSize: 1.2,
+		fontSize: 1.1,
 	}
 
 	componentWillMount() {
@@ -105,7 +107,7 @@ export default class Editor extends Component {
 	render({ filename, content, mode, theme, keyboardHandler, onLeave }, { fontSize }) {
 		return <div class={style.editor}>
 			<div class={style.editorHeader}>
-				{onLeave && <a href="javascript:;" style="color:white !important" onClick={onLeave}><GoArrowLeft /></a>}
+				{onLeave && <a href="javascript:;" style="color:white !important" onClick={onLeave}><MdArrowBack /></a>}
 				Editing {filename}
 			</div>
 			<div class={style.ace} onContextMenu={this.showMenu}>
@@ -118,11 +120,11 @@ export default class Editor extends Component {
 					keyboardHandler={keyboardHandler}
 					showPrintMargin={false}
 					wrapEnabled={false}
-					fontSize="1.2em"
+					fontSize="1.1em"
 					commands={this.aceCommands()}
 					defaultValue={content}
 					onChange={this.handleChange}
-					editorProps={{$blockScrolling: false}}
+					editorProps={{$blockScrolling: false, $hasCssTransforms: true}}
 				  />
 			</div>
 		</div>

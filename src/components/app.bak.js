@@ -1,7 +1,5 @@
-import { h, cloneElement, Component } from 'preact'
+import { h, Component } from 'preact'
 import { Router, route } from 'preact-router'
-
-import SimpleViewSlider from 'react-view-slider/lib/simple'
 
 import basicContext from 'basiccontext'
 
@@ -22,26 +20,16 @@ const HOST = Config.host
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
-const BUFFER_FPS = 40
-
-const clientInfo = {
-	AppType: 0, // redshift app
-	AppVersionMajor: 1,
-	AppVersionMinor: 5,
-	DeviceName: "Brian's Laptop",
-}
+const BUFFER_FPS = 30
 
 export default class App extends Component {
 	componentWillMount() {
 		this.openConnection()
 		window.app = this
-
-		document.addEventListener('keydown', this.handleKeyDown)
 	}
 
 	componentWillUnmount() {
 		this.closeConnection()
-		document.removeEventListener('keydown', this.handleKeyDown)
 	}
 
 	showMenu = (e) => {
@@ -79,19 +67,6 @@ export default class App extends Component {
 		this.setState({ currentUrl: e.url })
 	}
 
-	handleKeyDown = (e) => {
-		if(e.altKey) {
-			switch(e.key) {
-				case "§": this.toggleOff();         break;
-				case "1": route('/about');          break;
-				case "2": route('/');               break;
-				case "3": route('/effects');        break;
-				case "4": route('/scripts');        break;
-				case "Escape": this.toggleHeader(); break;
-			}
-		}
-	}
-
 	onVisibilityChange = (e) => {
 		this.setState({hide: document.hidden})
 	}
@@ -107,10 +82,10 @@ export default class App extends Component {
 		this.setState({
 			// serverWelcome: null,
 			connected: false,
-			// stream: null,
+			stream: null,
 		})
 
-		if(!e.wasClean && !this.state.off) {
+		if(!e.wasClean) {
 			console.error('Connection break', e)
 			setTimeout(() => this.openConnection(), this.reconnectDelay)
 		}
@@ -123,12 +98,10 @@ export default class App extends Component {
 	openConnection() {
 		if(!this.connectionPromise) {
 			this.connection = new Connection(WS_URL)
-			this.connection.clientInfo = clientInfo
 			this.connection.onClose = this.onConnectionClose
 			this.connection.onWelcome = this.onConnectionWelcome
 
 			this.connectionPromise = this.connection.connect()
-        .then(() => alert('connected'))
 				.then(() => this.setState({ connected: true }))
 				.then(() => this.openStream())
 		}
@@ -149,56 +122,39 @@ export default class App extends Component {
 
 	/* Rendering */
 
+	calculateAmps = (buffer) => {
+		const { ws2812_ComponentPower } = this
+		let amps = 0
+		for(let i=0; i<buffer.length; i++) {
+			let [ r, g, b ] = buffer[i]
+			amps += (ws2812_ComponentPower(r) + ws2812_ComponentPower(g) + ws2812_ComponentPower(b))
+		}
+		return amps.toFixed(2)
+	}
+
 	pageTitle = () => {
 		const firstSegment = (this.state.currentUrl || '').split('/')[1] || ''
 		return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
 	}
 
 	render({ }, { currentUrl, title, serverWelcome, connected, off, stream, amps, hideHeader }) {
-		// console.log('viewprops', this.viewProps())
 		return (
 			<div id="app">
-				<Header pageTitle={this.pageTitle()} disconnected={serverWelcome && !connected} hide={hideHeader} onTitleClick={this.showMenu} onPowerToggle={this.toggleOff}></Header>
+				<Header pageTitle={this.pageTitle()} hide={hideHeader} onTitleClick={this.showMenu} onPowerToggle={this.toggleOff}></Header>
 
 				{ stream && <LEDStrip stream={stream} paused={off} /> }
 
 				<main id="main">
 					{ serverWelcome
-						? <SlideRouter onChange={this.handleRoute} viewProps={this.viewProps()}>
+						? <Router onChange={this.handleRoute}>
 								<About path="/about/:page?" serverWelcome={serverWelcome} />
 								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
-								<Effects path="/effects/:selection?" availableEffects={serverWelcome && serverWelcome.availableEffects} connection={this.connection} stream={stream} />
+								<Effects path="/effects/:selection?" stream={stream} />
 								<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
-							</SlideRouter>
+							</Router>
 						: <Modal>Connecting...</Modal> }
 				</main>
 			</div>
 		);
 	}
-
-	viewProps = () => {
-		const segments = (this.state.currentUrl || '').split('/').slice(1)
-		switch(segments[0]) {
-			case "about": return {page: segments[1]};
-			case "effects":
-				if(segments[1] == null) {
-					return {selection: this._lastSelection}
-				} else {
-					this._lastSelection = segments[1];
-					return {selection: segments[1]};
-				}
-		}
-	}
-}
-
-const SlideRouter = ({children, ...props}) => {
-	return <Router {...props}>
-		{ children.map( (child, i) =>
-				<SimpleViewSlider {...child.attributes} animateHeight={false} fillParent={true} transitionDuration={300} measureHeight={() => '100%'} keepViewsMounted>
-					<div key={i} style="height:100%">
-						{cloneElement(child, props.viewProps)}
-					</div>
-				</SimpleViewSlider>
-		) }
-	</Router>
 }

@@ -1,12 +1,11 @@
 import { h, Component } from 'preact';
 import { route } from 'preact-router';
 
-import List from './list';
-import Detail from './detail';
+import EffectSetEditor from './effect-set-editor';
 
 import style from './style';
 
-const EFFECTS_FPS = 10
+const EFFECTS_FPS = 1
 
 /*
  * Receives effects JSON from stream and allows user
@@ -24,72 +23,58 @@ export default class Effects extends Component {
 	oscSummaryInterval = null
 
 	componentWillMount() {
-		const { stream } = this.props
-		if(stream) {
-			stream.setEffectsFps(EFFECTS_FPS)
-			stream.on('effects', this.receiveEffects)
-		} else {
-			throw new Error("Effects component mounted with null stream")
-		}
-
 		// this.oscSummaryInterval = setInterval(this.requestOscSummary, 50)
+		this.componentWillReceiveProps(this.props)
 	}
 
 	componentWillUnmount() {
-		const { stream } = this.props
-		stream.setEffectsFps(0)
-		stream.off('effects', this.receiveEffects)
-
 		clearInterval(this.oscSummaryInterval)
+	}
+
+	componentWillReceiveProps(newProps) {
+		console.log('receiveProps', this.props, newProps)
+		if(this.props.stream) {
+			this.props.stream.setEffectsFps(0)
+			this.props.stream.off('effects', this.receiveEffects)
+		}
+		if(newProps.stream) {
+			newProps.stream.setEffectsFps(EFFECTS_FPS)
+			newProps.stream.on('effects', this.receiveEffects)
+		}
 	}
 
 	receiveEffects = (effects) => {
 		this.setState({ effects: effects || [] })
-		return;
-		if(this.props.selection == "" && effects && effects.length)
-			route('/effects/0')
 	}
 
 	requestOscSummary = () => {
-		this.props.connection.requestOscSummary().then((summary) => {
-			this.setState({ oscSummary: summary })
-		})
+		const { connection } = this.props
+		if(connection)
+			connection.requestOscSummary().then((oscSummary) => this.setState({ oscSummary }))
 	}
 
-	send = (effects) => this.props.stream.setEffects(effects)
-
-	selectEffect = (i) => route(`/effects/${i}`)
-
-	updateSelectedEffect = (update) => {
-		const effects = this.state.effects || []
-		const index = parseInt(this.props.selection, 10)
-
-		this.send([...effects.slice(0, index), update, ...effects.slice(index+1)])
+	send = (effects) => {
+		this.props.stream.setEffects(effects)
+		// this.props.stream.setEffectsFps(EFFECTS_FPS)
 	}
 
-	render({ selection }, { effects }) {
-		const chosenEffect = effects && effects[selection]
-
+	render({ availableEffects, stream, active }, { effects, selection }) {
+		// console.log('effects active', active)
 		return <div class={style.effects}>
-			<div class={style.leftPane}>
-				{<List items={effects} selection={selection} onSelection={this.selectEffect} onChange={this.send} />}
-			</div>
-
-			<div class={style.rightPane}>
-				{ chosenEffect
-						? <Detail effect={chosenEffect} onChange={this.updateSelectedEffect} />
-						: <h2>{/*Choose an effect*/}</h2> }
-			</div>
+			<EffectSetEditor effects={effects} availableEffects={availableEffects} stream={stream} onChange={this.send} />
+			{this.renderOscSummary()}
 		</div>
 	}
 
 	renderOscSummary() {
 		const { oscSummary } = this.state
-		return <ul>
-			{Object.values(oscSummary).map((oscMsg) => <li>
-				<strong>{oscMsg.Address}</strong>
-				<pre>{JSON.stringify(oscMsg.Arguments)}</pre>
-			</li>)}
-		</ul>
+		return <div class={style.oscSummary}>
+			<ul>
+				{Object.values(oscSummary).map((oscMsg) => <li>
+					<strong>{oscMsg.Address}</strong>
+					<pre>{JSON.stringify(oscMsg.Arguments)}</pre>
+				</li>)}
+			</ul>
+		</div>
 	}
 }

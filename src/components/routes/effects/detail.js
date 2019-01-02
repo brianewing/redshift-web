@@ -1,9 +1,11 @@
 import { h, Component } from 'preact';
 
-import effectTypes from './effect-types';
+// import effectTypes from './effect-types';
 
-import EditField from './edit-field';
-import List from './list';
+import DetailField from './detail-field';
+import EffectSetEditor from './effect-set-editor';
+
+import MdArrowBack from 'react-icons/md/arrow-back';
 
 import style from './style';
 
@@ -18,41 +20,58 @@ export default class Detail extends Component {
 
 	updateParam = (key, newValue) => {
 		this.props.effect.Effect[key] = newValue
-		console.log("updateParam", key, newValue)
 		this.props.onChange(this.props.effect)
 	}
 
-	render({ effect }) {
+	render({ availableEffects, effect, onBackButton }) {
 		const params = Object.entries(effect.Effect || {})
 
 		return <div class={style.effectDetail}>
+			<div onClick={onBackButton} class={style.detailMobileNav}>
+				<MdArrowBack />
+			</div>
+
 			<select class={style.effectType} value={effect.Type} onChange={(e) => this.updateType(e.target.value)}>
-				{ effectTypes.map((type) => <option value={type}>{type}</option>) }
+				{ availableEffects.map((type) => <option value={type}>{type}</option>) }
 			</select>
 
-			{ effect.Controls &&
-				<div class={style.effectControls}>
-					{this.renderControls(effect)}
-				</div> }
+			<p><i>{this.renderEffectDescription()}</i></p>
 
-			{ params.length > 0 &&
-				<div class={style.effectParams}>
-					{params.map(([key, value]) => this.renderValue(value, key))}
-				</div> }
+			{ effect.Controls && this.renderControls(effect) }
+
+			<div class={style.effectParams}>
+				{ params.length > 0
+						? params.map(([key, value]) => this.renderValue(value, key))
+						: <p>This effect has no parameters</p> }
+			</div>
 		</div>
 	}
 
+	renderEffectDescription() {
+		switch(this.props.effect.Type) {
+			case "Clear": return "Resets the buffer";
+			case "RainbowEffect": return "A smooth moving rainbow pattern";
+			case "LarsonEffect": return "A bar that moves back and forth across the strip";
+		}
+	}
+
 	renderValue(value, key) {
-		if(key == 'Effects')
-			return <div>{this.renderParamName(key)}<br/><List items={value || []} onChange={(effects) => this.updateParams({Effects: effects})} /></div>
-		else if(key == 'Color')
-			return <div>{this.renderParamName(key)}<br/><span class={style.color} style={value && `background-color: rgb(${value[0]}, ${value[1]}, ${value[2]})`}></span></div>
+		if(key == 'Blend')
+			return
+		else if(key == 'Effects')
+			return <div>
+				{this.renderParamName(key)}<br/>
+				<EffectSetEditor effects={value || []} availableEffects={this.props.availableEffects} stream={null} onChange={this.updateParam.bind(null, key)} />
+			</div>
 		else
-			return <div>{this.renderParamName(key)}<br/><EditField name={key} value={value} onChange={this.updateParam.bind(null, key)} /></div>
+			return <div>
+				{this.renderParamName(key)}<br/>
+				<DetailField name={key} value={value} onChange={this.updateParam.bind(null, key)} />
+			</div>
 	}
 
 	renderParamName(key) {
-		return <p style="text-align:left;font-size:1.2em;font-weight:bold;padding:0;margin:1em 0em 0em 0em">{key}</p>
+		return <p style="text-align:left;font-size:1.1em;font-weight:bold;padding:0;margin:1em 0em 0em 0em">{key}</p>
 	}
 
 	renderControls(effect) {

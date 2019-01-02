@@ -16,10 +16,10 @@ class EventEmitter {
 	}
 
 	/* Call listeners for eventName, passing value as first parameter */
-	emit = (eventName, value) => {
+	emit = (eventName, ...args) => {
 		this.listeners[eventName] = (this.listeners[eventName] || [])
 		for(let i=0; i<this.listeners[eventName].length; i++)
-			this.listeners[eventName][i](value)
+			this.listeners[eventName][i](...args)
 	}
 }
 

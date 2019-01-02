@@ -1,7 +1,8 @@
 import { h, cloneElement, Component } from 'preact'
 import { Router, route } from 'preact-router'
 
-import SimpleViewSlider from 'react-view-slider/lib/simple'
+import ViewSlider from 'react-view-slider/lib';
+import { createSimpleViewSlider } from 'react-view-slider/lib/simple';
 
 import basicContext from 'basiccontext'
 
@@ -22,7 +23,7 @@ const HOST = Config.host
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
-const BUFFER_FPS = 40
+const BUFFER_FPS = 25
 
 const clientInfo = {
 	AppType: 0, // redshift app
@@ -128,7 +129,6 @@ export default class App extends Component {
 			this.connection.onWelcome = this.onConnectionWelcome
 
 			this.connectionPromise = this.connection.connect()
-        .then(() => alert('connected'))
 				.then(() => this.setState({ connected: true }))
 				.then(() => this.openStream())
 		}
@@ -149,6 +149,16 @@ export default class App extends Component {
 
 	/* Rendering */
 
+	calculateAmps = (buffer) => {
+		const { ws2812_ComponentPower } = this
+		let amps = 0
+		for(let i=0; i<buffer.length; i++) {
+			let [ r, g, b ] = buffer[i]
+			amps += (ws2812_ComponentPower(r) + ws2812_ComponentPower(g) + ws2812_ComponentPower(b))
+		}
+		return amps.toFixed(2)
+	}
+
 	pageTitle = () => {
 		const firstSegment = (this.state.currentUrl || '').split('/')[1] || ''
 		return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
@@ -156,6 +166,8 @@ export default class App extends Component {
 
 	render({ }, { currentUrl, title, serverWelcome, connected, off, stream, amps, hideHeader }) {
 		// console.log('viewprops', this.viewProps())
+		const availableEffects = serverWelcome && serverWelcome.availableEffects
+
 		return (
 			<div id="app">
 				<Header pageTitle={this.pageTitle()} disconnected={serverWelcome && !connected} hide={hideHeader} onTitleClick={this.showMenu} onPowerToggle={this.toggleOff}></Header>
@@ -164,10 +176,10 @@ export default class App extends Component {
 
 				<main id="main">
 					{ serverWelcome
-						? <SlideRouter onChange={this.handleRoute} viewProps={this.viewProps()}>
-								<About path="/about/:page?" serverWelcome={serverWelcome} />
+						? <SlideRouter onChange={this.handleRoute}>
+								<About path="/about" serverWelcome={serverWelcome} />
 								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
-								<Effects path="/effects/:selection?" availableEffects={serverWelcome && serverWelcome.availableEffects} connection={this.connection} stream={stream} />
+								<Effects path="/effects" active={location.pathname == '/effects'} availableEffects={serverWelcome && serverWelcome.availableEffects} connection={this.connection} stream={stream} />
 								<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
 							</SlideRouter>
 						: <Modal>Connecting...</Modal> }
@@ -176,29 +188,33 @@ export default class App extends Component {
 		);
 	}
 
-	viewProps = () => {
-		const segments = (this.state.currentUrl || '').split('/').slice(1)
-		switch(segments[0]) {
-			case "about": return {page: segments[1]};
-			case "effects":
-				if(segments[1] == null) {
-					return {selection: this._lastSelection}
-				} else {
-					this._lastSelection = segments[1];
-					return {selection: segments[1]};
-				}
-		}
-	}
+	// viewProps = () => {
+	// 	const segments = (this.state.currentUrl || '').split('/').slice(1)
+	// 	switch(segments[0]) {
+	// 		case "about": return {page: segments[1]};
+	// 		case "effects": return {stream: this.state.stream};
+	// 	}
+	// }
 }
+
+const SimpleViewSlider = createSimpleViewSlider(ViewSlider, slideRenderView)
 
 const SlideRouter = ({children, ...props}) => {
 	return <Router {...props}>
 		{ children.map( (child, i) =>
 				<SimpleViewSlider {...child.attributes} animateHeight={false} fillParent={true} transitionDuration={300} measureHeight={() => '100%'} keepViewsMounted>
-					<div key={i} style="height:100%">
-						{cloneElement(child, props.viewProps)}
-					</div>
+					<div key={i} style="height:100%">{ child }</div>
 				</SimpleViewSlider>
 		) }
 	</Router>
+}
+
+function slideRenderView({index, key, active, style, ref}) {
+	console.log(arguments)
+  return (
+    <div key={key} style={style} ref={ref}>
+    	active: {JSON.stringify(active)}
+      {this.state.views[index]}
+    </div>
+  )
 }

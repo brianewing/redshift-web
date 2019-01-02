@@ -5,6 +5,7 @@
 	bottom: 0em;
 	width: 100%;
 }
+
 .pane {
 	flex: 1;
 	height: 100%;
@@ -20,12 +21,27 @@
 	height: 100%;
 	overflow: auto;
 	text-shadow: 1px 1px 7px black;
-	background-color: rgba(0,0,0,0.7);
+	background-color: rgba(0,0,0,0.65);
 }
 
 .fileChooser h2 {
 	margin-bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
+
+.fileChooser h2 button {
+	margin-left: 1em;
+}
+
+.fileChooser h2 svg {
+	margin-left: 0.45em;
+}
+
+/* .fileChooser svg { */
+/* 	margin-left: 0.3em; */
+/* } */
 
 .fileChooser ul {
 	padding: 0;
