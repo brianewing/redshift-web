@@ -25,11 +25,8 @@ export default class Modal extends Component {
 	render({ children }) {
 		return <Portal into="body">
 			<div>
-				<div class={style.modalBg} onClick={this.close}></div>
-
-				<div class={style.modalBody}>
-					{children}
-				</div>
+				<div class={style.background} onClick={this.close}></div>
+				<div class={style.body}>{children}</div>
 			</div>
 		</Portal>
 	}

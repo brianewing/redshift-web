@@ -1,8 +1,6 @@
 import { h, cloneElement, Component } from 'preact'
 import { Router, route } from 'preact-router'
 
-import SimpleViewSlider from 'react-view-slider/lib/simple'
-
 import basicContext from 'basiccontext'
 
 import Header from './header'
@@ -11,9 +9,11 @@ import Modal from './modal'
 import LEDStrip from '../components/led-strip'
 
 import About from './routes/about'
-import Remote from './routes/remote'
 import Effects from './routes/effects'
+import Modes from './routes/modes'
 import Scripts from './routes/scripts/index'
+import Repl from './routes/repl/index'
+import Settings from './routes/settings/index'
 
 import Config from '../config'
 import Connection from '../connection'
@@ -22,7 +22,7 @@ const HOST = Config.host
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
-const BUFFER_FPS = 40
+const BUFFER_FPS = 60
 
 const clientInfo = {
 	AppType: 0, // redshift app
@@ -33,9 +33,8 @@ const clientInfo = {
 
 export default class App extends Component {
 	componentWillMount() {
-		this.openConnection()
 		window.app = this
-
+		this.openConnection()
 		document.addEventListener('keydown', this.handleKeyDown)
 	}
 
@@ -51,7 +50,7 @@ export default class App extends Component {
 			{title: 'Effects', fn: go('/effects')},
 			{title: 'Script Editor', fn: go('/scripts')},
 			{},
-			{title: 'Change Server', fn: () => alert('Not implemented yet')},
+			{title: 'Settings', fn: go('/settings')},
 			{title: (this.state.off ? 'Connect' : 'Disconnect'), fn: this.toggleOff},
 			{title: 'Refresh', fn: () => window.location = window.location},
 		], e)
@@ -80,14 +79,17 @@ export default class App extends Component {
 	}
 
 	handleKeyDown = (e) => {
-		if(e.altKey) {
-			switch(e.key) {
-				case "§": this.toggleOff();         break;
-				case "1": route('/about');          break;
-				case "2": route('/');               break;
-				case "3": route('/effects');        break;
-				case "4": route('/scripts');        break;
-				case "Escape": this.toggleHeader(); break;
+		if(e.code == "Escape") {
+			this.toggleHeader()
+		} else if(e.altKey) {
+			switch(e.code) {
+				case "Backquote": this.toggleOff();    break;
+				case "Escape":    this.toggleHeader(); break;
+				// 
+				case "Digit1":    route('/about');     break;
+				case "Digit2":    route('/');          break;
+				case "Digit3":    route('/effects');   break;
+				case "Digit4":    route('/scripts');   break;
 			}
 		}
 	}
@@ -105,13 +107,13 @@ export default class App extends Component {
 		this.connectionPromise = null
 
 		this.setState({
-			// serverWelcome: null,
 			connected: false,
+			// serverWelcome: null,
 			// stream: null,
 		})
 
 		if(!e.wasClean && !this.state.off) {
-			console.error('Connection break', e)
+			console.error('Connection broke', '| Reconnecting', '|', e)
 			setTimeout(() => this.openConnection(), this.reconnectDelay)
 		}
 	}
@@ -128,7 +130,6 @@ export default class App extends Component {
 			this.connection.onWelcome = this.onConnectionWelcome
 
 			this.connectionPromise = this.connection.connect()
-        .then(() => alert('connected'))
 				.then(() => this.setState({ connected: true }))
 				.then(() => this.openStream())
 		}
@@ -155,50 +156,30 @@ export default class App extends Component {
 	}
 
 	render({ }, { currentUrl, title, serverWelcome, connected, off, stream, amps, hideHeader }) {
-		// console.log('viewprops', this.viewProps())
 		return (
 			<div id="app">
 				<Header pageTitle={this.pageTitle()} disconnected={serverWelcome && !connected} hide={hideHeader} onTitleClick={this.showMenu} onPowerToggle={this.toggleOff}></Header>
 
+				{ /* the background LED strip */ }
 				{ stream && <LEDStrip stream={stream} paused={off} /> }
 
-				<main id="main">
+				<div class="back" data-flip={currentUrl == '/settings'}>
+					<Settings visible={currentUrl == '/settings'} />
+				</div>
+
+				<main id="main" data-flip={currentUrl == '/settings'} class="front">
 					{ serverWelcome
-						? <SlideRouter onChange={this.handleRoute} viewProps={this.viewProps()}>
+						? <Router onChange={this.handleRoute}>
 								<About path="/about/:page?" serverWelcome={serverWelcome} />
 								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
 								<Effects path="/effects/:selection?" availableEffects={serverWelcome && serverWelcome.availableEffects} connection={this.connection} stream={stream} />
 								<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
-							</SlideRouter>
+								<Repl path="/repl" />
+								<Modes path="/spongebob" />
+							</Router>
 						: <Modal>Connecting...</Modal> }
 				</main>
 			</div>
 		);
 	}
-
-	viewProps = () => {
-		const segments = (this.state.currentUrl || '').split('/').slice(1)
-		switch(segments[0]) {
-			case "about": return {page: segments[1]};
-			case "effects":
-				if(segments[1] == null) {
-					return {selection: this._lastSelection}
-				} else {
-					this._lastSelection = segments[1];
-					return {selection: segments[1]};
-				}
-		}
-	}
-}
-
-const SlideRouter = ({children, ...props}) => {
-	return <Router {...props}>
-		{ children.map( (child, i) =>
-				<SimpleViewSlider {...child.attributes} animateHeight={false} fillParent={true} transitionDuration={300} measureHeight={() => '100%'} keepViewsMounted>
-					<div key={i} style="height:100%">
-						{cloneElement(child, props.viewProps)}
-					</div>
-				</SimpleViewSlider>
-		) }
-	</Router>
 }

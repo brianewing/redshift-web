@@ -14,6 +14,9 @@ export default class ListItem extends Component {
 			{title: 'Move Up', fn: this.moveUp, disabled: isFirst},
 			{title: 'Move Down', fn: this.moveDown, disabled: isLast},
 			{},
+			{title: 'Wrap in...', fn: this.showWrapInMenu},
+			{title: 'Change type...', fn: this.showChangeTypeMenu},
+			{},
 			{title: (isDisabled ? 'Enable' : 'Disable'), fn: this.toggleDisabled},
 			{},
 			{title: 'Duplicate', fn: this.duplicate},
@@ -21,11 +24,41 @@ export default class ListItem extends Component {
 		], e)
 	}
 
+	showWrapInMenu = (e) => {
+		basicContext.close()
+		basicContext.show([
+			{title: 'Layer', fn: () => this.wrapIn('Layer')},
+			{title: 'Mirror', fn: () => this.wrapIn('Mirror')},
+			{title: 'Switch', fn: () => this.wrapIn('Switch')},
+			{title: 'Toggle', fn: () => this.wrapIn('Toggle')},
+		], e)
+	}
+
+	showChangeTypeMenu = (e) => {
+		basicContext.close()
+		basicContext.show(this.props.availableEffects.map((name) => {
+			return {title: name, fn: () => this.changeType(name)}
+		}), e)
+	}
+
 	moveUp = () => this.props.onMove(-1)
 	moveDown = () => this.props.onMove(1)
 	duplicate = () => this.props.onDuplicate()
 	remove = () => this.props.onRemove()
 	toggleDisabled = () => this.props.onToggleDisabled()
+
+	wrapIn = (effectType) => {
+		this.props.onReplace({
+			Type: effectType,
+			Effect: {
+				Effects: [this.props.effect]
+			}
+		})
+	}
+
+	changeType = (newType) => {
+		this.props.onReplace(Object.assign(this.props.effect, { Type: newType }))
+	}
 
 	onClick = (e) => {
 		if(e.ctrlKey && !e.shiftKey)
@@ -47,7 +80,7 @@ export default class ListItem extends Component {
 			style.effectListItem
 		].join(' ')
 
-		return <li class={classes} onClick={this.onClick} onDblClick={this.showEditModal} onContextMenu={this.showMenu}>
+		return <li class={classes} onClick={this.onClick} onDblClick={this.toggleDisabled} onContextMenu={this.showMenu}>
 			<div class={style.effectToolbar}>
 				<div class={style.effectName}>
 					{renderIcon(effect.Type)} <strong>{effect.Type}</strong> {this.renderSummary()}
@@ -67,5 +100,9 @@ export default class ListItem extends Component {
 
 		if(Type == 'External')
 			return <i>{Effect.Program} {Effect.Args && Effect.Args.join(' ')}</i>
+		else if(Type == 'Script')
+			return <i>{Effect.Name} {Effect.Args && Effect.Args.join(' ')}</i>
+		else if(Array.isArray(Effect.Effects))
+			return <i>&rarr; {Effect.Effects.map(({ Type }) => Type).join(', ')}</i>
 	}
 }

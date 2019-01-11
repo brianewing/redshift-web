@@ -15,12 +15,14 @@ export default class DetailField extends Component {
 	}
 
 	render({ name, value }) {
-		// these heuristics will be removed - server should define parameter types
+		// todo: send field constraint info from server
+
 		if(typeof value == 'number') {
-			const step = (name == 'Speed' ? 0.001 : 1)
+			const step = (name == 'Speed' ? 0.01 : 1)
 			const max = {
-				Speed: 5,
-				Size: 500,
+				Speed: 3,
+				Size: 1500,
+				Depth: 20,
 				R: 2, G: 2, B: 2,
 			}[name] || 255
 
@@ -28,12 +30,11 @@ export default class DetailField extends Component {
 		} else if(typeof value == 'boolean') {
 			return <strong style="display:block" onClick={this.onChange.bind(null, !value)}>{value.toString()}</strong>
 		} else if(name == 'Color') {
-			const toArray = ({ rgb }) => {
-				console.log('color change', rgb)
-				return [rgb.r, rgb.g, rgb.b]
-			}
-			const currentValue = (value ? `rgb(${value.join(',')})` : null)
+			const toArray = ({ rgb }) => [rgb.r, rgb.g, rgb.b]
+			const currentValue = value ? `rgb(${value.join(',')})` : null
 			return <div><ColorPicker style="width:100%;height:100px;position:relative" color={currentValue} onChange={(c) => this.onChange(toArray(c))} /></div>
+		} else if(name.startsWith('Blend')) {
+			return 
 		} else {
 			return <input name={name} value={value} onInput={this.onInput} />
 		}

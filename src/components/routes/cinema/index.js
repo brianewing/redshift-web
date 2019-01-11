@@ -10,16 +10,11 @@ export default class Cinema extends Component {
 		const noop = () => {}
 
 		basicContext.show([
-			{title: 'Save as PNG', fn: onSavePng || noop},
+			{title: 'Save as PNG', fn: onSavePng || noop, disabled: !onSavePng},
 		], e)
 	}
 
-	onKeyPress = (e) => {
-		window.colorString = e.target.value
-	}
-
 	render({ onClick }) {
-		return <div class={style.cinema} onClick={onClick} onContextMenu={this.showMenu}>
-		</div>
+		return <div class={style.cinema} onClick={onClick} onContextMenu={this.showMenu}></div>
 	}
 }

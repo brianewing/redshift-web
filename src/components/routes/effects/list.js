@@ -15,15 +15,15 @@ import ListItem from './list-item';
 import style from './style';
 
 export default class List extends Component {
-	change = (modificationFn) => {
+	change = (modificationFn) => {h
 		const { items, onChange } = this.props
 		const newItems = modificationFn(items)
 		newItems && onChange(newItems)
 	}
 
-	add = (index=0) => {
+	add = (index=0, type='Null') => {
 		this.change((items) => {
-			const newEffect = {Type: "Null"}
+			const newEffect = {Type: type}
 			return [...items.slice(0, index), newEffect, ...items.slice(index)]
 		})
 	}
@@ -60,14 +60,28 @@ export default class List extends Component {
 		})
 	}
 
-	addClicked = (index) => {
-		this.add(this.props.items.length)
+	replace = (index, replacement) => {
+		this.change((items) => {
+			items[index] = replacement
+			return items
+		})
+	}
+
+	addClicked = (e) => {
+		if(this.props.availableEffects) {
+			const menu = this.props.availableEffects.map((name) => {
+				return {title: name, fn: () => this.add(this.props.items.length, name)}
+			})
+			basicContext.show(menu, e)
+		} else {
+			this.add(this.props.items.length)
+		}
 	}
 
 	openClicked = (e) => {
 		fetchEffects().then((filenames) => {
 			const menu = filenames.map((f) => {
-				return {title: f.name, fn: (e) => this.loadEffectsFile(f.name, e.altKey)}
+				return {title: decodeURIComponent(f.name), fn: (e) => this.loadEffectsFile(f.name, e.altKey)}
 			})
 
 			basicContext.show([{title: "New", fn: this.reset}, {}, ...menu], e)
@@ -80,10 +94,7 @@ export default class List extends Component {
 		loadEffects('/' + filename).then((data) => {
 			if(filename.endsWith('.json')) {
 				const newEffects = JSON.parse(data)
-
 				this.change((items) => append ? [items, ...newEffects] : newEffects)
-
-				// append ? stream.appendEffectsJson(data) : stream.setEffectsJson(data)
 			} else if(filename.endsWith('.yaml')) {
 				append ? stream.appendEffectsYaml(data) : stream.setEffectsYaml(data)
 			}
@@ -99,32 +110,46 @@ export default class List extends Component {
 		this.setState({ saving: false })
 	}
 
-	render({ items, selection }, { shade, saving }) {
+	render({ items, selection, availableEffects }, { shade, saving }) {
 		return <ul class={shade ? style.shade : ''}>
 			<li class={style.effectListHeader}>
+				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} /> }
+
 				<button style="float:left" onClick={this.openClicked}><FaFolderOpenO /></button>
 				<button style="float:left" onClick={this.saveClicked}><FaFloppyO /></button>
+
 				<button onClick={this.addClicked}><FaPlusSquareO /></button>
-				{ saving && <Modal onClose={() => this.setState({saving: false})}>
-					<div style="text-align: center">
-						<h1 style="margin:0">Save Effects</h1>
-						<br/>
-						<form onSubmit={this.saveSubmitted}>
-							<input placeholder={new Date().toISOString().split('T')[0]} />&nbsp;.json
-						</form>
-					</div>
-				</Modal> }
 			</li>
 
-			{items && items.map((value, index) =>
+			{ items && items.map((value, index) =>
 				<ListItem effect={value}
 					isFirst={index==0} isLast={index==items.length-1} isSelected={index==selection}
+					availableEffects={availableEffects}
 					onClick={this.props.onSelection && this.props.onSelection.bind(null, index)}
 					onToggleDisabled={this.toggleDisabled.bind(null, index)}
 					onMove={this.move.bind(null, index)}
 					onDuplicate={this.duplicate.bind(null, index)}
-					onRemove={this.remove.bind(null, index)} />
-			)}
+					onReplace={this.replace.bind(null, index)}
+					onRemove={this.remove.bind(null, index)} />) }
 		</ul>
+	}
+}
+
+class SaveDialog extends Component {
+	componentDidUpdate() {
+		this.inputEl.focus()
+	}
+
+	render({ onClose }) {
+		return <Modal onClose={onClose}>
+		<div style="text-align: center">
+			<h1 style="margin: 0em 0em 0.5em 0em">Save Effect Set</h1>
+			<br/>
+			<form onSubmit={this.saveSubmitted}>
+				<input ref={(el) => this.inputEl = el} placeholder={new Date().toISOString().split('T')[0]} />
+				&nbsp;.json
+			</form>
+		</div>
+	</Modal>
 	}
 }

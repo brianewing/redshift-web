@@ -36,7 +36,7 @@
 }
 
 .header.disconnected:before {
-	animation: reconnecting 0.9s ease-out 0s infinite alternate;
+	animation: reconnecting 1.5s ease-out 0s infinite alternate;
 	/* transition: 0.5s background-color; */
 }
 
@@ -46,7 +46,7 @@
 		/* background: inherit; */
 	}
 	to {
-		background: rgba(235, 0, 0, 0.7);
+		background: rgba(180, 20, 20, 0.5);
 	}
 }
 

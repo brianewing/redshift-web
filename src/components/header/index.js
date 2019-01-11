@@ -24,7 +24,6 @@ import FaPowerOff from 'react-icons/lib/fa/power-off'
 
 export default class Header extends Component {
 	render({ pageTitle, disconnected, hide, onTitleClick, onPowerToggle }) {
-		console.log('header disconnected', disconnected)
 		const icon = disconnected ? <FaChainBroken /> : <FaBars />
 		return <div>
 			{ !hide && <header class={style.header + ' ' + (disconnected ? style.disconnected : '')}>
@@ -33,18 +32,18 @@ export default class Header extends Component {
 
 					{ disconnected
 						? 'Disconnected'
-						: (pageTitle || 'Redshift') }
+						: pageTitle || 'Redshift' }
 				</h1>
 
 				{this.props.children}
 
 				<nav>
-					<Link activeClassName={style.active} href="/about"><FaQuestionCircleO /></Link>
 					<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
 					<Link activeClassName={style.active} href="/effects"><FaStar /></Link>
 					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
-					{false && <Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>}
+					<Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>
 					<Link activeClassName={style.active} href="javascript:;" onClick={onPowerToggle}><FaPowerOff /></Link>
+					<Link activeClassName={style.active} href="/about"><FaQuestionCircleO /></Link>
 				</nav>
 			</header> }
 		</div>

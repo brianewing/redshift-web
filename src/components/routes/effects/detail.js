@@ -1,26 +1,30 @@
 import { h, Component } from 'preact';
 
-// import effectTypes from './effect-types';
-
 import DetailField from './detail-field';
 import EffectSetEditor from './effect-set-editor';
 
 import MdArrowBack from 'react-icons/md/arrow-back';
 
+import ControlSetEditor from './control-set-editor';
+
 import style from './style';
 
 export default class Detail extends Component {
 	updateType = (newType) => {
-		this.props.onChange({"Type": newType})
+		this.props.onChange({ Type: newType })
 	}
 
 	updateParams = (newParams) => {
-		this.props.onChange(Object.assign(this.props.effect, {Effect: newParams}))
+		this.props.onChange(Object.assign(this.props.effect, { Effect: newParams }))
 	}
 
 	updateParam = (key, newValue) => {
 		this.props.effect.Effect[key] = newValue
 		this.props.onChange(this.props.effect)
+	}
+
+	updateControls = (newControls) => {
+		this.props.onChange(Object.assign(this.props.effect, { Controls: newControls }))
 	}
 
 	render({ availableEffects, effect, onBackButton }) {
@@ -35,9 +39,11 @@ export default class Detail extends Component {
 				{ availableEffects.map((type) => <option value={type}>{type}</option>) }
 			</select>
 
-			<p><i>{this.renderEffectDescription()}</i></p>
+			<br />
 
-			{ effect.Controls && this.renderControls(effect) }
+			<ControlSetEditor controls={effect.Controls} effectParams={effect.Effect} onChange={this.updateControls} />
+
+			<p>{this.renderEffectDescription()}</p>
 
 			<div class={style.effectParams}>
 				{ params.length > 0
@@ -58,9 +64,9 @@ export default class Detail extends Component {
 	renderValue(value, key) {
 		if(key == 'Blend')
 			return
-		else if(key == 'Effects')
+		else if(key.endsWith('Effect') || key.endsWith('Effects'))
 			return <div>
-				{this.renderParamName(key)}<br/>
+				{/* {this.renderParamName(key)}<br/> */}
 				<EffectSetEditor effects={value || []} availableEffects={this.props.availableEffects} stream={null} onChange={this.updateParam.bind(null, key)} />
 			</div>
 		else
@@ -71,28 +77,6 @@ export default class Detail extends Component {
 	}
 
 	renderParamName(key) {
-		return <p style="text-align:left;font-size:1.1em;font-weight:bold;padding:0;margin:1em 0em 0em 0em">{key}</p>
-	}
-
-	renderControls(effect) {
-		const { Controls } = effect
-		return <div class={style.controlSet}>
-			{Controls.map((c) => this.renderControl(c))}
-		</div>
-	}
-
-	renderControl(control) {
-		const type = control.Type
-		const params = (control.Control || {})
-		const subControls = (control.Controls)
-		return <div class={style.controlEnvelope}>
-			<span class={style.controlType}>{ type.replace(/Control$/, '') }</span>
-			<ul class={style.controlParams}>
-				{ Object.keys(params).map((key) => <li>
-					{ key }: { JSON.stringify(params[key]) }
-				</li>) }
-			</ul>
-			{ subControls && subControls.length > 0 ? this.renderControls(control) : null }
-		</div>
+		return <p style="text-align:center;font-size:1.1em;font-weight:bold;padding:0;margin:1em 0em 0em 0em">{key}</p>
 	}
 }

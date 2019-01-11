@@ -30,15 +30,20 @@ export default class EffectSetEditor extends Component {
 
 		return <div class={style.effectSet} data-effect-selected={chosenEffect != null}>
 			<div class={style.masterView}>
-				{<List items={effects} stream={stream} selection={selection} onSelection={this.selectEffect} onChange={this.send} />}
+				{ <List items={effects}
+						stream={stream}
+						availableEffects={availableEffects}
+						selection={selection}
+						onSelection={this.selectEffect}
+						onChange={this.send} /> }
 			</div>
 
 			<div class={style.detailView}>
 				{ chosenEffect
 					? <Detail effect={chosenEffect}
-						availableEffects={availableEffects}
-						onChange={this.updateSelectedEffect}
-						onBackButton={() => this.selectEffect(null)} />
+										availableEffects={availableEffects}
+										onChange={this.updateSelectedEffect}
+										onBackButton={() => this.selectEffect(null)} />
 					: <h2>{/*Choose an effect*/}</h2> }
 			</div>
 		</div>

@@ -19,11 +19,8 @@ export default class LEDStrip extends Component {
 	}
 
 	componentWillReceiveProps(newProps) {
-		const oldStream = this.props.stream
-		if(oldStream) {
-			console.log('disconnecting from old stream', this.props, newProps)
-			oldStream.off('pixels', this.renderFrame)
-		}
+		if(this.props.stream)
+			this.props.stream.off('pixels', this.renderFrame)
 
 		newProps.stream.on('pixels', this.renderFrame)
 	}
@@ -48,7 +45,7 @@ export default class LEDStrip extends Component {
 		let canvas = this.canvas
 		let parentNode = canvas.parentNode
 		let pixelRatio = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1)
-    pixelRatio = 1
+    // pixelRatio = 1
 
 		if(canvas.width != parentNode.clientWidth * pixelRatio || canvas.height != parentNode.clientHeight * pixelRatio) {
 			canvas.width = (parentNode.clientWidth * pixelRatio)
@@ -73,26 +70,59 @@ export default class LEDStrip extends Component {
 		let ledWidth = canvas.width / len
 		let ledHeight = canvas.height
 
-		let gapWidth = Math.floor(ledWidth / 15)
-		// gapWidth = 1
+    ledWidth *= len / Math.sqrt(len)
+    ledHeight /= Math.sqrt(len)
+
+		let gapWidth = Math.floor(ledWidth / 40)
+		gapWidth = 1
 
 		for(let i=0; i<len; i++) {
 			let led = (reverse ? buffer[len - i - 1] : buffer[i])
 
+      let x = Math.floor(i % Math.sqrt(len))
+      let y = Math.floor(i / Math.sqrt(len))
+
 			// led
 			ctx.fillStyle = `rgb(${led[0]}, ${led[1]}, ${led[2]})`
-			ctx.fillRect(ledWidth*i, 0, ledWidth, ledHeight)
+			ctx.fillRect(ledWidth*x, ledHeight*y, ledWidth, ledHeight)
 
 			// gap
 			ctx.fillStyle = '#000000'
-			ctx.fillRect(ledWidth*i - gapWidth, 0, gapWidth, ledHeight)
+			ctx.fillRect(ledWidth*x - gapWidth, ledHeight*y, gapWidth, ledHeight)
+			ctx.fillRect(ledWidth*x, ledHeight*y - gapWidth, ledWidth, gapWidth)
+
+      continue // skip stroke
 
 			// stroke
 			ctx.fillStyle = 'rgba(255,255,255,0.38)'
-			ctx.fillRect(ledWidth*i + 1, 1, 1, ledHeight) // left
-			ctx.fillRect(ledWidth*i + ledWidth - 2 - gapWidth, 0, 1, ledHeight) // right
-			ctx.fillRect(ledWidth*i + 1, 0, ledWidth - 2, 1) // top
-			ctx.fillRect(ledWidth*i, ledHeight - 1, ledWidth, 1) // bottom
+
+      // left
+      ctx.fillRect(
+        ledWidth*x + 1,
+        ledHeight*y + 1,
+        1,
+        ledHeight)
+
+      // right
+      ctx.fillRect(
+        ledWidth*x + ledWidth - 1 - gapWidth,
+        ledHeight*y,
+        1,
+        ledHeight)
+
+      // top
+      ctx.fillRect(
+        ledWidth*x,
+        ledHeight*y,
+        ledWidth - 2,
+        1)
+
+      // bottom
+      ctx.fillRect(
+        ledWidth*x,
+        ledHeight*y - 1,
+        ledWidth,
+        1)
 		}
 	}
 }

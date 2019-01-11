@@ -148,7 +148,7 @@ export default class Connection {
 				console.error("received opc message for unknown channel", msg)
 			}
 		} else {
-			console.error("received text message, expecting opc binary")
+			console.error(this, "received text, expecting binary opc message:", data)
 		}
 	}
 
@@ -158,7 +158,7 @@ export default class Connection {
 
 		serverInfo.started = new Date(serverInfo.started)
 
-		console.info("Welcome", "to", "version", serverInfo.version, serverInfo)
+		console.info("Welcome to Redshift", serverInfo.version, serverInfo)
 		this.onWelcome && this.onWelcome(serverInfo)
 	}
 
@@ -175,14 +175,12 @@ export default class Connection {
 	}
 
 	receiveError = (msg) => {
-		const erroredCmd = msg.sysExData[0] // which command caused the error
+		const errorCmd = msg.sysExData[0] // which command caused the error
 		const errorMsg = new TextDecoder("utf-8").decode(msg.sysExData.slice(1))
 
 		let cmdName // e.g. CmdSetEffectsJson
-
 		try {
-			const cmdNamesAndValues = Object.entries(this).filter(([key]) => key.match(/^Cmd/))
-			cmdName = cmdNamesAndValues.find(([_, value]) => value == erroredCmd)[0]
+			cmdName = Object.entries(this).filter(([_, val]) => errorCmd == val)[0][0]
 		} catch(_) {}
 
 		console.error(cmdName, "error", "|", "channel", msg.channel, "|", errorMsg)

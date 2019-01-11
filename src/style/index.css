@@ -1,5 +1,5 @@
 @import '../../node_modules/basiccontext/dist/basicContext.min.css';
-/*@import '../../node_modules/basiccontext/dist/themes/bright.min.css';*/
+/* @import '../../node_modules/basiccontext/dist/themes/bright.min.css'; */
 @import '../../node_modules/basiccontext/dist/themes/dark.min.css';
 @import '../../node_modules/basiccontext/dist/addons/popin.min.css';
 
@@ -7,13 +7,22 @@
 
 @import '../../node_modules/preact-range-slider/assets/index.css';
 
+@import "../../node_modules/rc-collapse/assets/index.css";
+
 @import './forms';
 
 @import url('https://fonts.googleapis.com/css?family=Dosis');
 
 ::-webkit-scrollbar { display: none; }
 
-* { box-sizing: border-box; border-radius: 0; }
+* {
+  box-sizing: border-box;
+  /* border-radius: 0 !important; */
+  /* text-shadow: none !important; */
+  /* box-shadow: none !important; */
+}
+
+/* canvas { will-change: transform; } */
 
 html, body {
 	height: 100%;
@@ -39,7 +48,8 @@ html, body {
 
 #app {
 	height: 100%;
-	zoom: 1.2;
+	font-size: 1.1em;
+	/* zoom: 1.2; */
 }
 
 #main {
@@ -72,4 +82,28 @@ html, body {
 
 .ace_active-line {
     background: rgba(0, 0, 0, 0.55) !important;
+}
+
+.rc-collapse {
+	background: rgba(0, 0, 0, 0.7);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	text-align: left;
+}
+
+.rc-collapse > .rc-collapse-item {
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.rc-collapse-header {
+	color: rgba(255, 255, 255, 0.85) !important;
+	outline: none;
+}
+
+.rc-collapse-content {
+	background: transparent;
+	color: white;
+}
+
+.rc-collapse .arrow {
+	border-left: 4px solid white;
 }

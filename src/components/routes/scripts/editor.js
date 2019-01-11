@@ -3,18 +3,18 @@ import { h, Component } from 'preact';
 import AceEditor from 'react-ace';
 import basicContext from 'basiccontext';
 
-import 'brace/mode/javascript';
-import 'brace/mode/python';
+import 'react-ace/node_modules/brace/mode/javascript';
+import 'react-ace/node_modules/brace/mode/python';
 
-import 'brace/keybinding/vim';
-import 'brace/keybinding/emacs';
+import 'react-ace/node_modules/brace/keybinding/vim';
+import 'react-ace/node_modules/brace/keybinding/emacs';
 
-import 'brace/theme/ambiance';
-import 'brace/theme/merbivore';
-import 'brace/theme/terminal';
-import 'brace/theme/monokai';
-import 'brace/theme/tomorrow_night_bright';
-import 'brace/theme/vibrant_ink';
+import 'react-ace/node_modules/brace/theme/ambiance';
+import 'react-ace/node_modules/brace/theme/merbivore';
+import 'react-ace/node_modules/brace/theme/terminal';
+import 'react-ace/node_modules/brace/theme/monokai';
+import 'react-ace/node_modules/brace/theme/tomorrow_night_bright';
+import 'react-ace/node_modules/brace/theme/vibrant_ink';
 
 import style from './style';
 

@@ -10,8 +10,8 @@ import Licenses from './licenses';
 import style from './style';
 
 const pages = {
-	licenses: Licenses,
-	help: Component,
+	"licenses": Licenses,
+	"help":     () => <div />,
 }
 
 export default function About({ page, serverWelcome }) {

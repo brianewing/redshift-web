@@ -1,12 +1,12 @@
-.modalBg {
+.background {
 	position: absolute;
 	top: 0; right: 0; bottom: 0; left: 0;
 	z-index: 9999;
 
-	background: rgba(50, 50, 50, 0.85);
+	background: rgba(0, 0, 0, 0.40);
 }
 
-.modalBody {
+.body {
 	position: fixed;
 	z-index: 10000;
 
@@ -14,15 +14,18 @@
 	left: 50%;
 
 	/* http://lynn.io/2014/02/22/modalin/ */
-	transform: translate(-50%, -50%);
+	transform: translate(-50%, -60%);
 	max-height: calc(100vh - 100px);
 
-	width: 75vw;
+	width: auto;
+	max-width: 85vw;
 
-	background: rgba(0, 0, 0, 0.65);
+	background: rgba(0, 0, 0, 0.80);
 
-	border: 1px solid rgba(255, 255, 255, 0.3);
-	border-radius: 1px;
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	/* border-radius: 3px; */
 
-	padding: 1.5em 3em;
+	padding: 2em 4em;
+
+	text-align: center;
 }
