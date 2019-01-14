@@ -13,7 +13,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=Dosis');
 
-::-webkit-scrollbar { display: none; }
+/* ::-webkit-scrollbar { display: none; } */
 
 * {
   box-sizing: border-box;
@@ -32,7 +32,6 @@ html, body {
 	margin: 0;
 
 	font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
-	/* font-size: 1.1em; */
 
 	background: #111;
 	color: white;
@@ -44,30 +43,81 @@ html, body {
 	user-select: none;
 	overflow: hidden;
 	cursor: default;
+
+	background: transparent;
+
+	border-radius: 5px;
 }
 
 #app {
 	height: 100%;
+	width: 100%;
+	position: absolute;
 	font-size: 1.1em;
-	/* zoom: 1.2; */
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+a {
+	font-weight: normal !important;
 }
 
 #main {
 	position: absolute;
-	overflow: auto;
-	top: 3em; /* header height */
-	bottom: 0px;
+	overflow: scroll;
+	top: 3.1em; /* header height */
+	top: 2.85em;
+	bottom: 1px;
 	left: 0px;
 	right: 0px;
+
+	margin-top: 1px;
+	/* margin-top: 10px; */
+
+	border-radius: 4px;
+
+	width: 100%;
+	padding: 0em 0.08em;
+	/* margin: 0.2em; */
+
+	/* border: 1px solid white; */
+	transition: 0.2s transform, 0.5s margin-bottom;
+
+	will-change: transform;
 }
 
-#main.shade {
-    filter: blur(0.5px);
+/* @media(max-width: 640px) {
+	#main {
+		padding: 0.5em !important;
+		right: 0.5em;
+	}
 }
+ */
+#main.headerHidden {
+	transform: translateY(-2.81em);
+	/* margin-top: 10px; */
+	margin-bottom: calc(-2.81em);
+	/* top: 0em; */
+}
+
+@keyframes fade-in {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+#main > * {
+	/* padding: 0.05em; */
+	animation: fade-in 0.2s ease-in-out;
+	/* text-align: center; */
+}
+
+/* Third party overrides */
 
 .basicContext {
 	background-color: rgba(15,15,15,.85);
-	border-radius: 1px;
+	border-radius: 8px;
 }
 
 .ace_editor, .ace_print-margin {

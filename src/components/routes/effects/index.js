@@ -5,7 +5,7 @@ import EffectSetEditor from './effect-set-editor';
 
 import style from './style';
 
-const EFFECTS_FPS = 20
+const EFFECTS_FPS = 10
 
 /*
  * Receives effects JSON from stream and allows user
@@ -23,7 +23,7 @@ export default class Effects extends Component {
 	oscSummaryInterval = null
 
 	componentWillMount() {
-		// this.oscSummaryInterval = setInterval(this.requestOscSummary, 500)
+		// this.oscSummaryInterval = setInterval(this.requestOscSummary, 50)
 		this.componentWillReceiveProps(this.props)
 	}
 
@@ -60,7 +60,7 @@ export default class Effects extends Component {
 	render({ availableEffects, stream, active }, { effects, selection }) {
 		return <div class={style.effects}>
 			<EffectSetEditor effects={effects} availableEffects={availableEffects} stream={stream} onChange={this.send} />
-			{this.renderOscSummary()}
+			{/* {this.renderOscSummary()} */}
 		</div>
 	}
 

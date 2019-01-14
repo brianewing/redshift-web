@@ -1,13 +1,7 @@
-.strip:first-child {
-	/*margin-top: 10px;*/
-}
-
 .strip {
 	height: 100%;
 	padding: 0px;
-	/*filter: blur(7px);*/
-	/*border: 3px solid green;*/
-	/*opacity: 0.9;*/
+	/* opacity: 0.5; */
 }
 
 .strip canvas {

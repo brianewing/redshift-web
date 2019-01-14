@@ -30,6 +30,7 @@
     "basicgrid": "^3.0.0",
     "basicmodal": "^3.3.9",
     "coloreact": "^0.2.4",
+    "es6-shim": "^0.35.4",
     "linkstate": "^1.1.0",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",

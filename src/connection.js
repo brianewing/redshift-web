@@ -20,6 +20,7 @@ export default class Connection {
 	CmdOscSummary = 9
 	CmdClearOscSummary = 10
 	CmdErrorOccurred = 11
+	CmdRepl = 12
 
 	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
 	_streams = []
@@ -110,6 +111,10 @@ export default class Connection {
 				resolve(summary)
 			})
 		})
+	}
+
+	sendReplCommand = (channel, cmd) => {
+		this.sendSysEx(channel, this.CmdRepl, cmd)
 	}
 
 	/* Send & receive */

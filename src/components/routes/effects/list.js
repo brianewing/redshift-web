@@ -78,10 +78,22 @@ export default class List extends Component {
 		}
 	}
 
+	openMouseEnter = (e) => {
+		// preload effects filenames
+		this.openFilenamesPromise = fetchEffects().then((filenames) => {
+			return filenames.map((f) => decodeURIComponent(f.name))
+		})
+	}
+
+	openMouseLeave = () => this.openFilenamesPromise = null
+
 	openClicked = (e) => {
-		fetchEffects().then((filenames) => {
+		if(!this.openFilenamesPromise)
+			this.openMouseIn()
+
+		this.openFilenamesPromise.then((filenames) => {
 			const menu = filenames.map((f) => {
-				return {title: decodeURIComponent(f.name), fn: (e) => this.loadEffectsFile(f.name, e.altKey)}
+				return {title: f, fn: (e) => this.loadEffectsFile(f, e.altKey)}
 			})
 
 			basicContext.show([{title: "New", fn: this.reset}, {}, ...menu], e)
@@ -102,10 +114,7 @@ export default class List extends Component {
 	}
 
 	saveClicked = () => this.setState({ saving: true })
-	saveSubmitted = (e) => {
-		e.preventDefault()
-
-		const filename = '/' + e.currentTarget.querySelector('input').value + '.json'
+	saveSubmitted = (filename) => {
 		saveEffects(filename, JSON.stringify(this.props.items))
 		this.setState({ saving: false })
 	}
@@ -113,9 +122,9 @@ export default class List extends Component {
 	render({ items, selection, availableEffects }, { shade, saving }) {
 		return <ul class={shade ? style.shade : ''}>
 			<li class={style.effectListHeader}>
-				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} /> }
+				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} onSave={this.saveSubmitted} /> }
 
-				<button style="float:left" onClick={this.openClicked}><FaFolderOpenO /></button>
+				<button style="float:left" onMouseEnter={this.openMouseEnter} onMouseLeave={this.openMouseLeave} onClick={this.openClicked}><FaFolderOpenO /></button>
 				<button style="float:left" onClick={this.saveClicked}><FaFloppyO /></button>
 
 				<button onClick={this.addClicked}><FaPlusSquareO /></button>
@@ -140,16 +149,24 @@ class SaveDialog extends Component {
 		this.inputEl.focus()
 	}
 
+	onSubmit = (e) => {
+		e.preventDefault()
+		const filename = '/' + e.currentTarget.querySelector('input').value + '.json'
+
+		this.props.onSave(filename)
+		this.props.onClose()
+	}
+
 	render({ onClose }) {
 		return <Modal onClose={onClose}>
-		<div style="text-align: center">
-			<h1 style="margin: 0em 0em 0.5em 0em">Save Effect Set</h1>
-			<br/>
-			<form onSubmit={this.saveSubmitted}>
-				<input ref={(el) => this.inputEl = el} placeholder={new Date().toISOString().split('T')[0]} />
-				&nbsp;.json
-			</form>
-		</div>
-	</Modal>
+			<div style="text-align: center">
+				<h2>Save Effect Set</h2>
+				<p><em>Choose a filename</em></p>
+				<form onSubmit={this.onSubmit}>
+					<input style="width: 15em" ref={(el) => this.inputEl = el} placeholder={new Date().toISOString().split('T')[0]} />
+					{/* &nbsp;.json */}
+				</form>
+			</div>
+		</Modal>
 	}
 }

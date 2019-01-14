@@ -2,42 +2,60 @@
 	position: fixed;
 	left: 0;
 	top: 0;
-	/*top: 0.5px;*/
+	z-index: 50;
+
+	-webkit-app-region: drag;
+	app-region: drag;
+
+	/* top: 0.5em; */
+
 	width: 100%;
+	margin: 0.10em 0 0em 0em;
+
+	padding: 0 0.5em;
+
 	height: 3.5em;
-	font-size: 0.85em;
-	padding: 0;
+
+	font-size: 0.85em; /* affects height! */
+	font-size: 0.8em;
+	/* padding: 0; */
+
 	/*background: #673AB7;*/
 	/*background: #111;*/
 	/*box-shadow: 0 0 1px rgba(255, 255, 255, 0.4);*/
-	background: rgba(0,0,0,0);
+
+	background: transparent;
 	text-shadow: 1px 1px 0px black;
-	z-index: 50;
+
+	transition: 0.4s transform;
 } .header:before {
 	position: absolute;
 	display: block;
 	content: '';
 	z-index: -1;
-	top: 1px;
+	top: 0px;
 	left: 1px;
 	right: 1px;
-	/*left: 0; right: 0;*/
 	bottom: 1px;
 	/*width: 100%;*/
 	/*height: 100%;*/
 	background: rgba(0,0,0,0.50); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
+	border-radius: 4px;
 	/* background: none; */
-	transition: 1.0s background-color;
+	transition: 0.3s opacity;
+	opacity: 0.5;
 } .header:hover:before {
-	background: rgba(0,0,0,0.70);
-} .header:hover {
-	transition-duration: 0.7s;
-	/*opacity: 0.96;*/
+	background: rgba(0,0,0,0.50);
+	opacity: 1.0;
 }
 
 .header.disconnected:before {
 	animation: reconnecting 1.5s ease-out 0s infinite alternate;
 	/* transition: 0.5s background-color; */
+}
+
+.header.hidden {
+	transform: translateY(-5em);
 }
 
 @keyframes reconnecting {
@@ -53,13 +71,12 @@
 .header h1 {
 	font-family: 'Dosis';
 	float: left;
-	margin: 0;
-	padding: 0 15px;
+	margin: 0 0.5em;
+	padding: 0;
 	font-size: 1.4em;
 	line-height: 2.5em;
 	/* font-weight: 400; */
 	font-weight: bold;
-	color: #FFF;
 	color: #fff;
 	/*text-shadow: 1px 1px 15px #fff;*/
 
@@ -73,7 +90,7 @@
 	margin-right: 0.6em;
 }
 
-@media(max-width: 310px) {
+@media(max-width: 320px) {
 	.header nav { display: none; }
 }
 
@@ -83,9 +100,10 @@
 
 .header nav a {
 	display: inline-block;
-	height: 3.3em;
+	/* height: 3.45em; */
+	height: 3.5em;
 	font-size: 1.0em;
-	margin-top: 1px;
+	margin-top: 0px;
 	/* line-height: 100%; */
 	line-height: 3.2em;
 	padding: 0 0.1em;
@@ -95,9 +113,13 @@
 	color: #FFF;
 	outline: 0;
 	will-change: background-color;
+	border-radius: 4px;
+	cursor: default;
 } .header nav a.active {
 	/*background: rgba(255,255,255,0.15);*/
-	background: rgba(0,0,0,0.6);
+	/* background: rgba(0,0,0,0.5); */
+	background: rgba(255,255,255,0.25);
+	border-radius: 0px;
 	/*border-left: 1px solid rgba(255,255,255,0.30);*/
 	/*border-right: 1px solid rgba(255,255,255,0.30);*/
 }
@@ -108,14 +130,17 @@
 }
 
 .header nav a:hover, .header nav a:active {
-	background: rgba(255,255,255, 0.9);
+	/* background: rgba(255,255,255, 0.9); */
+	/* background: rgba(255,255,255,0.15); */
+	background: rgba(0,0,0,0.5);
 }
 
 .header nav a:hover svg,
 .header nav a:active svg {
-	color: black;
+	/* color: black; */
+	color: white;
 }
 
-.header nav a:last-child:hover {
+.header nav .offButton:hover {
 	background: rgba(255, 0, 0, 0.85);
 }

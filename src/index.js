@@ -1,4 +1,7 @@
 import './style';
+
+// import 'es6-shim';
+
 import App from './components/app';
 
 import basicContext from 'basiccontext';

@@ -20,7 +20,8 @@ export default class DetailField extends Component {
 		if(typeof value == 'number') {
 			const step = (name == 'Speed' ? 0.01 : 1)
 			const max = {
-				Speed: 3,
+				Argument: 16,
+				Speed: 5,
 				Size: 1500,
 				Depth: 20,
 				R: 2, G: 2, B: 2,
@@ -35,6 +36,8 @@ export default class DetailField extends Component {
 			return <div><ColorPicker style="width:100%;height:100px;position:relative" color={currentValue} onChange={(c) => this.onChange(toArray(c))} /></div>
 		} else if(name.startsWith('Blend')) {
 			return 
+		} else if(name == 'Transform') {
+			return <textarea name={name} onInput={this.onInput}>{value}</textarea>
 		} else {
 			return <input name={name} value={value} onInput={this.onInput} />
 		}

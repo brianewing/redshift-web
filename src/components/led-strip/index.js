@@ -3,18 +3,14 @@ import style from './style'
 
 export default class LEDStrip extends Component {
 	componentWillMount() {
-		const { stream } = this.props
-		if(stream) {
-			// stream.on('pixels', this.renderFrame)
-		} else {
+		if(!this.props.stream)
 			throw new Error("LEDStrip mounted with null stream")
-		}
+
 		window.addEventListener('resize', this.adjustCanvas)
 	}
 
 	componentWillUnmount() {
-		const { stream } = this.props
-		stream.off('pixels', this.renderFrame)
+		this.props.stream.off('pixels', this.renderFrame)
 		window.removeEventListener('resize', this.adjustCanvas)
 	}
 

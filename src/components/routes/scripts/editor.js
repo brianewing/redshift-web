@@ -26,23 +26,29 @@ let THEMES = ['ambiance', 'merbivore', 'terminal', 'vibrant_ink', 'tomorrow_nigh
 export default class Editor extends Component {
 	static defaultProps = {
 		mode: 'javascript',
-		theme: 'monokai',
+		theme: 'terminal',
 	}
 
 	state = {
-		fontSize: 1.1,
+		fontSize: 0.9,
 	}
 
 	componentWillMount() {
 		if(!this.props.content) {
+			/* When a new file is opened (contents is blank), fill it with a sample script
+			 *
+			 * This achieves two things - it allows the user to get started quickly, and
+			 * also creates the file on the server, as the file chooser currently doesn't do this
+			 * when using the "New File" option */
 			const mode = this.props.mode
-			this.props.content = SAMPLE_SCRIPTS[mode]
-			this.save() // CREATES NEW FILES, TODO: REFACTOR INTO FILE CHOOSER
+			this.handleChange(SAMPLE_SCRIPTS[mode]) 
 		}
 	}
 
 	shouldComponentUpdate() {
-		return false; // AceEditor can't handle prop changes, resets instance
+		/* AceEditor can't handle prop changes, it resets the Ace instance
+		 * So instead we render once, then update using the Ace API */
+		return false;
 	}
 
 	aceCommands() {
@@ -88,6 +94,10 @@ export default class Editor extends Component {
 		], e)
 	}
 
+	setAceComponent = (component) => {
+		this.aceComponent = component;
+	}
+
 	save = () => {
 		const { onSave } = this.props
 		onSave && onSave(this.state.newContent)
@@ -95,13 +105,7 @@ export default class Editor extends Component {
 
 	handleChange = (newText) => {
 		this.setState({ newContent: newText })
-
-		if(this.props.onChange)
-			this.props.onChange(newText)
-	}
-
-	setAceComponent = (component) => {
-		this.aceComponent = component;
+		this.save()
 	}
 
 	render({ filename, content, mode, theme, keyboardHandler, onLeave }, { fontSize }) {
@@ -119,8 +123,8 @@ export default class Editor extends Component {
 					theme={theme}
 					keyboardHandler={keyboardHandler}
 					showPrintMargin={false}
-					wrapEnabled={false}
-					fontSize="1.1em"
+					wrapEnabled={true}
+					fontSize="0.9em"
 					commands={this.aceCommands()}
 					defaultValue={content}
 					onChange={this.handleChange}

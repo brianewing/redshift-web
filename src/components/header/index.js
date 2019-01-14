@@ -26,11 +26,12 @@ export default class Header extends Component {
 	render({ pageTitle, disconnected, hide, onTitleClick, onPowerToggle }) {
 		const icon = disconnected ? <FaChainBroken /> : <FaBars />
 		return <div>
-			{ !hide && <header class={style.header + ' ' + (disconnected ? style.disconnected : '')}>
+			{/* { <header class={style.header + ' ' + (hide ? style.hidden : '') + (disconnected ? style.disconnected : '')}> */}
+			{ <header class={style.header + ' ' + (hide ? style.hidden : '')}>
 				<h1 onMouseDown={onTitleClick}>
 					{icon}
 
-					{ disconnected
+					{ disconnected && false
 						? 'Disconnected'
 						: pageTitle || 'Redshift' }
 				</h1>
@@ -42,8 +43,8 @@ export default class Header extends Component {
 					<Link activeClassName={style.active} href="/effects"><FaStar /></Link>
 					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
 					<Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>
-					<Link activeClassName={style.active} href="javascript:;" onClick={onPowerToggle}><FaPowerOff /></Link>
 					<Link activeClassName={style.active} href="/about"><FaQuestionCircleO /></Link>
+					<Link activeClassName={style.active} href="javascript:;" class={style.offButton} onClick={onPowerToggle}><FaPowerOff /></Link>
 				</nav>
 			</header> }
 		</div>

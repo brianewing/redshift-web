@@ -64,7 +64,7 @@ export default class FileChooser extends Component {
 
 	render({}, { newFileDialogOpen, files }) {
 		return <div class={style.fileChooser}>
-			<h2>Choose a File.. {/*<button onClick={this.openNewFileDialog}>*/}<GoPlus onClick={this.openNewFileDialog} />{/*</button>*/}</h2>
+			<h2 style="font-size: 1.4em">Choose a File.. {/*<button onClick={this.openNewFileDialog}>*/}<GoPlus onClick={this.openNewFileDialog} />{/*</button>*/}</h2>
 
 			{newFileDialogOpen ? <NewFileDialog onClose={this.closeNewFileDialog}
 				onSubmit={this.onNewFileDialogSubmit} /> : null}

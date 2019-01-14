@@ -22,25 +22,28 @@ const HOST = Config.host
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
-const BUFFER_FPS = 60
+const BUFFER_FPS = (HOST=='localhost' ? 60 : 30)
 
 const clientInfo = {
 	AppType: 0, // redshift app
 	AppVersionMajor: 1,
 	AppVersionMinor: 5,
-	DeviceName: "Brian's Laptop",
+	DeviceName: "",
 }
 
 export default class App extends Component {
 	componentWillMount() {
 		window.app = this
 		this.openConnection()
+
 		document.addEventListener('keydown', this.handleKeyDown)
+		document.addEventListener('visibilitychange', this.handleVisibilityChange, false)
 	}
 
 	componentWillUnmount() {
 		this.closeConnection()
 		document.removeEventListener('keydown', this.handleKeyDown)
+		document.removeEventListener('visibilitychange', this.handleVisibilityChange)
 	}
 
 	showMenu = (e) => {
@@ -49,10 +52,13 @@ export default class App extends Component {
 			{title: 'Cinema', fn: go('/')},
 			{title: 'Effects', fn: go('/effects')},
 			{title: 'Script Editor', fn: go('/scripts')},
+			{title: 'Help', fn: go('/about')},
 			{},
 			{title: 'Settings', fn: go('/settings')},
 			{title: (this.state.off ? 'Connect' : 'Disconnect'), fn: this.toggleOff},
+			{},
 			{title: 'Refresh', fn: () => window.location = window.location},
+			{title: 'Fullscreen', fn: document.fullscreenEnabled && this.toggleFullscreen}
 		], e)
 	}
 
@@ -72,6 +78,13 @@ export default class App extends Component {
 
 	toggleHeader = () => { this.setState({hideHeader: !this.state.hideHeader}) }
 
+	toggleFullscreen = () => {
+		if(document.fullscreenElement)
+			document.exitFullscreen()
+		else
+			document.body.requestFullscreen()
+	}
+
 	/* Events */
 
 	handleRoute = (e) => {
@@ -79,23 +92,40 @@ export default class App extends Component {
 	}
 
 	handleKeyDown = (e) => {
+		console.log(e)
 		if(e.code == "Escape") {
 			this.toggleHeader()
+		} else if(e.code == "IntlBackslash") {
+			if(this.state.currentUrl == '/repl')
+				window.history.go(-1)
+			else
+				route('/repl')
+			e.preventDefault()
 		} else if(e.altKey) {
+			let match = false
 			switch(e.code) {
-				case "Backquote": this.toggleOff();    break;
-				case "Escape":    this.toggleHeader(); break;
+				case "Backquote": route('/settings');  match = true; break
+				case "Escape":    this.toggleHeader(); match = true; break
 				// 
-				case "Digit1":    route('/about');     break;
-				case "Digit2":    route('/');          break;
-				case "Digit3":    route('/effects');   break;
-				case "Digit4":    route('/scripts');   break;
+				case "Digit1":    route('/');          match = true; break
+				case "Digit2":    route('/effects');   match = true; break
+				case "Digit3":    route('/scripts');   match = true; break
+				case "Digit4":    route('/repl');      match = true; break
+				case "Digit5":    route('/about');     match = true; break
+				case "Digit6":    this.toggleOff();    match = true; break
 			}
+			if(match) e.preventDefault()
 		}
 	}
 
-	onVisibilityChange = (e) => {
-		this.setState({hide: document.hidden})
+	handleVisibilityChange = (e) => {
+		console.log('visibility change', document.hidden)
+		const { stream } = this.state
+		if(document.hidden) {
+			stream && stream.setFps(0)
+		} else {
+			stream && stream.setFps(BUFFER_FPS)
+		}
 	}
 
 	onConnectionWelcome = (serverWelcome) => {
@@ -152,6 +182,8 @@ export default class App extends Component {
 
 	pageTitle = () => {
 		const firstSegment = (this.state.currentUrl || '').split('/')[1] || ''
+		if(firstSegment == 'repl')
+			return 'Console';
 		return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
 	}
 
@@ -163,18 +195,19 @@ export default class App extends Component {
 				{ /* the background LED strip */ }
 				{ stream && <LEDStrip stream={stream} paused={off} /> }
 
+
 				<div class="back" data-flip={currentUrl == '/settings'}>
 					<Settings visible={currentUrl == '/settings'} />
 				</div>
 
-				<main id="main" data-flip={currentUrl == '/settings'} class="front">
+				<main id="main" data-flip={currentUrl == '/settings'} class={'front ' + (hideHeader ? 'headerHidden' : '')}>
 					{ serverWelcome
 						? <Router onChange={this.handleRoute}>
 								<About path="/about/:page?" serverWelcome={serverWelcome} />
 								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
 								<Effects path="/effects/:selection?" availableEffects={serverWelcome && serverWelcome.availableEffects} connection={this.connection} stream={stream} />
 								<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
-								<Repl path="/repl" />
+								<Repl path="/repl" stream={stream} />
 								<Modes path="/spongebob" />
 							</Router>
 						: <Modal>Connecting...</Modal> }

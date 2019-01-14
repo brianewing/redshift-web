@@ -5,7 +5,7 @@ button, select {
 
     background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 1px;
+    border-radius: 4px;
 
     font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
 
@@ -26,15 +26,20 @@ button:hover {
 
 input::placeholder {
     font-style: italic;
+    /* text-shadow: 0px 0px 0px #fff; */
+    text-shadow: none;
+    color: rgba(255, 255, 255, 0.6);
 }
 
-input:not([type="file"]) {
+input:not([type="file"]), textarea {
     text-shadow: none;
 
     padding: 0.5em;
 
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 1px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* border-radius: 6px; */
+    border-radius: 0px;
+
 
     color: white;
 
@@ -47,7 +52,15 @@ input:not([type="file"]) {
     font-family: 'Dosis';
 
     font-size: 1em;
-} input:not([type="file"]):focus {
-    background: rgba(100, 100, 100, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+} input:not([type="file"]):focus, textarea:focus {
+    background: rgba(100, 100, 100, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+textarea {
+    text-align: left;
+}
+
+ul {
+    list-style: none;
 }

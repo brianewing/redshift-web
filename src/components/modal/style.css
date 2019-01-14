@@ -3,7 +3,7 @@
 	top: 0; right: 0; bottom: 0; left: 0;
 	z-index: 9999;
 
-	background: rgba(0, 0, 0, 0.40);
+	background: rgba(0, 0, 0, 0.50);
 }
 
 .body {
@@ -22,10 +22,12 @@
 
 	background: rgba(0, 0, 0, 0.80);
 
-	border: 1px solid rgba(255, 255, 255, 0.7);
-	/* border-radius: 3px; */
+	border: 1px solid rgba(255, 255, 255, 0.8);
+	border-radius: 4px;
 
-	padding: 2em 4em;
+	/* box-shadow: 0px 0px 5px #000; */
+
+	padding: 2em 2em;
 
 	text-align: center;
 }

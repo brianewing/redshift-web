@@ -5,6 +5,8 @@ import Collapse from 'rc-collapse';
 
 import FaPlusSquareO from 'react-icons/lib/fa/plus-square-o';
 
+import Modal from '../../modal';
+
 import DetailField from './detail-field';
 
 import style from './style';
@@ -59,10 +61,25 @@ export default class ControlSetEditor extends Component {
 		], e)
     }
     
-    render({ controls }) {
+    render({ controls, actions = {}, effectIsDisabled }, { selectedControl }) {
 		return <div class={style.controlSet}>
+            <div class={style.actions}>
+                <button onClick={actions.back} class={style.backButton}>&larr; Back</button>
+                <button onClick={actions.toggleEffect}>{ effectIsDisabled ? 'Enable' : 'Disable' }</button>
+                <button onClick={this.showAddControlMenu}>Add a Control</button>
+            </div>
+
+            {/* { controls && controls.map((c) => {
+                return <button style="width:100%" onClick={() => this.setState({ selectedControl: c })}>{ this.renderControlDescription(c) }</button>
+            }) }
+
+            { selectedControl && <Modal onClose={() => this.setState({ selectedControl: null })}>
+                { this.renderControl(selectedControl) }
+            </Modal> }
+ */}
 			<Collapse accordion={true}>
-				<Collapse.Panel header={'Controls' + ((controls||[]).length > 0 ? ` (${controls.length})` : '')}>
+                <Collapse.Panel header={'Controls' + ((controls||[]).length > 0 ? ` (${controls.length})` : '')}>
+
 					{ controls && <Collapse accordion={true}>
                             {controls.map((c) => {
                                 return <Collapse.Panel header={this.renderControlDescription(c)}>
@@ -71,7 +88,6 @@ export default class ControlSetEditor extends Component {
                             })}
                         </Collapse> }
 
-					<button style='width:100%' onClick={this.showAddControlMenu}>Add</button>
 				</Collapse.Panel>
 			</Collapse>
 		</div>
@@ -83,7 +99,7 @@ export default class ControlSetEditor extends Component {
 		return <div class={style.controlEnvelope}>
 			<ul class={style.controlParams}>
 				{ Object.keys(params).map((key) => <li class={style.controlParam}>
-                    <strong>{ key }</strong>
+                    <strong class={style.controlParamName}>{ key }</strong>
                     <DetailField name={key} value={params[key]} onChange={this.updateParam.bind(null, control, key)} />
 				</li>) }
 			</ul>
@@ -96,6 +112,6 @@ export default class ControlSetEditor extends Component {
 
 	renderControlDescription(control) {
         const type = {OscControl: "OSC", MidiControl: "MIDI", TweenControl: "Tween", TimeControl: "Time"}[control.Type] || "Unknown"
-		return type + (control.Control.Field ? ` - ${control.Control.Field}` : '')
+		return type + (control.Control.Field ? ` Control - ${control.Control.Field}` : '')
 	}
 }

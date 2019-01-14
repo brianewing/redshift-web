@@ -95,7 +95,6 @@ class Pane extends Component {
 				content={contents}
 				mode={this.getLanguageFromFilename(name)}
 				onSave={save}
-				onChange={save}
 				onLeave={this.returnToFileList} />
 		} else {
 			return <FileChooser webDavFs={webDavFs} onChoose={this.loadFile} />

@@ -2,3 +2,6 @@ build/
 node_modules/
 dev/
 todo.txt
+
+Redshift.app/
+electron-quick-start/

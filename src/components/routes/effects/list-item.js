@@ -28,6 +28,7 @@ export default class ListItem extends Component {
 		basicContext.close()
 		basicContext.show([
 			{title: 'Layer', fn: () => this.wrapIn('Layer')},
+			{title: 'Layout', fn: () => this.wrapIn('Layout')},
 			{title: 'Mirror', fn: () => this.wrapIn('Mirror')},
 			{title: 'Switch', fn: () => this.wrapIn('Switch')},
 			{title: 'Toggle', fn: () => this.wrapIn('Toggle')},
@@ -98,11 +99,13 @@ export default class ListItem extends Component {
 	renderSummary() {
 		const { Type, Effect } = this.props.effect
 
-		if(Type == 'External')
+		if(Type == 'External') {
 			return <i>{Effect.Program} {Effect.Args && Effect.Args.join(' ')}</i>
-		else if(Type == 'Script')
-			return <i>{Effect.Name} {Effect.Args && Effect.Args.join(' ')}</i>
-		else if(Array.isArray(Effect.Effects))
-			return <i>&rarr; {Effect.Effects.map(({ Type }) => Type).join(', ')}</i>
+		} else if(Type == 'Script') {
+			return <i>&rarr;{Effect.Name} {Effect.Args && Effect.Args.join(' ')}</i>
+		} else if(Array.isArray(Effect.Effects)) {
+			const enabledSubEffects = Effect.Effects.filter((e) => !e.Disabled)
+			return <i>&rarr;{enabledSubEffects.map(({ Type }) => Type).join(', ')}</i>
+		}
 	}
 }

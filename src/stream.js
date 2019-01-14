@@ -23,10 +23,15 @@ export default class Stream {
 	appendEffectsJson(json) { this.connection.appendEffectsJson(this.channel, json) }
 	appendEffectsYaml(yaml) { this.connection.appendEffectsYaml(this.channel, yaml) }
 
+	repl(cmd) {
+		this.connection.sendReplCommand(this.channel, cmd)
+	}
+
 	handle(msg) {
 		if(msg.command == 0) {
 			this.unpackPixels(msg.data)
 			this.emit('pixels', this.pixelBuffer)
+			// this.setFps(0)
 		} else if(msg.command == 255) { // system exclusive command
 			this.handleSysEx(msg)
 		}
@@ -34,9 +39,11 @@ export default class Stream {
 
 	handleSysEx(msg) {
 		if(msg.sysExCommand == this.connection.CmdSetEffectsJson) {
-			const jsonBytes = msg.sysExData
-			const jsonString = new TextDecoder("utf-8").decode(jsonBytes)
+			const jsonString = new TextDecoder("utf-8").decode(msg.sysExData)
 			this.emit('effects', JSON.parse(jsonString))
+		} else if(msg.sysExCommand == this.connection.CmdRepl) {
+			const response = new TextDecoder("utf-8").decode(msg.sysExData)
+			this.emit('repl', response)
 		} else {
 			console.error('unrecognised sysex command', msg.sysExCommand, msg)
 		}

@@ -4,6 +4,7 @@ import DetailField from './detail-field';
 import EffectSetEditor from './effect-set-editor';
 
 import MdArrowBack from 'react-icons/md/arrow-back';
+import FaArrowCircleOLeft from 'react-icons/fa/arrow-circle-o-left';
 
 import ControlSetEditor from './control-set-editor';
 
@@ -11,7 +12,8 @@ import style from './style';
 
 export default class Detail extends Component {
 	updateType = (newType) => {
-		this.props.onChange({ Type: newType })
+		// this.props.onChange({ Type: newType })
+		this.props.onChange(Object.assign({}, this.props.effect, { Type: newType }))
 	}
 
 	updateParams = (newParams) => {
@@ -24,16 +26,27 @@ export default class Detail extends Component {
 	}
 
 	updateControls = (newControls) => {
-		this.props.onChange(Object.assign(this.props.effect, { Controls: newControls }))
+		this.props.onChange(Object.assign({}, this.props.effect, { Controls: newControls }))
+	}
+
+	toggleDisabled = () => {
+		this.props.onChange(Object.assign({}, this.props.effect, { Disabled: !this.props.effect.Disabled }))
 	}
 
 	render({ availableEffects, effect, onBackButton }) {
 		const params = Object.entries(effect.Effect || {})
+		const description = this.renderEffectDescription()
+
+		const actions = {
+			back: onBackButton,
+			toggleEffect: this.toggleDisabled
+		}
 
 		return <div class={style.effectDetail}>
-			<div onClick={onBackButton} class={style.detailMobileNav}>
-				<MdArrowBack />
-			</div>
+			<button onClick={onBackButton} class={style.detailMobileNav}>
+				{/* <MdArrowBack /> */}
+				<FaArrowCircleOLeft />
+			</button>
 
 			<select class={style.effectType} value={effect.Type} onChange={(e) => this.updateType(e.target.value)}>
 				{ availableEffects.map((type) => <option value={type}>{type}</option>) }
@@ -41,9 +54,14 @@ export default class Detail extends Component {
 
 			<br />
 
-			<ControlSetEditor controls={effect.Controls} effectParams={effect.Effect} onChange={this.updateControls} />
+			{ Object.keys(effect.Effect).length > 0
+				? <ControlSetEditor controls={effect.Controls} effectParams={effect.Effect} onChange={this.updateControls}
+					effectIsDisabled={effect.Disabled}
+					actions={actions}
+					 />
+				: null }
 
-			<p>{this.renderEffectDescription()}</p>
+			{ description && <p>{ description }</p> }
 
 			<div class={style.effectParams}>
 				{ params.length > 0
