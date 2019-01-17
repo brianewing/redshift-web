@@ -166,6 +166,7 @@ export default class App extends Component {
 	}
 
 	closeConnection() {
+		this.setState({ off: true })
 		if(this.connection)
 			this.connection.close()
 	}
