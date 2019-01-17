@@ -92,7 +92,6 @@ export default class App extends Component {
 	}
 
 	handleKeyDown = (e) => {
-		console.log(e)
 		if(e.code == "Escape") {
 			this.toggleHeader()
 		} else if(e.code == "IntlBackslash") {
@@ -124,7 +123,7 @@ export default class App extends Component {
 		if(document.hidden) {
 			stream && stream.setFps(0)
 		} else {
-			stream && stream.setFps(BUFFER_FPS)
+			stream && stream.setFps(Config.bufferFps)
 		}
 	}
 
@@ -174,7 +173,7 @@ export default class App extends Component {
 	openStream() {
 		return this.connection.openStream('strip').then((stream) => {
 			this.setState({ stream: stream })
-			stream.setFps(BUFFER_FPS)
+			stream.setFps(Config.bufferFps)
 		})
 	}
 
@@ -196,13 +195,10 @@ export default class App extends Component {
 				{ stream && <LEDStrip stream={stream} paused={off} /> }
 
 
-				<div class="back" data-flip={currentUrl == '/settings'}>
-					<Settings visible={currentUrl == '/settings'} />
-				</div>
-
-				<main id="main" data-flip={currentUrl == '/settings'} class={'front ' + (hideHeader ? 'headerHidden' : '')}>
+				<main id="main" class={(hideHeader ? 'headerHidden' : '')}>
 					{ serverWelcome
 						? <Router onChange={this.handleRoute}>
+								<Settings path="/settings" />
 								<About path="/about/:page?" serverWelcome={serverWelcome} />
 								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%">{/* Cinema Mode */}</div>
 								<Effects path="/effects/:selection?" availableEffects={serverWelcome && serverWelcome.availableEffects} connection={this.connection} stream={stream} />

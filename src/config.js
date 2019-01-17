@@ -1,11 +1,21 @@
+import addEventMethods from "./lib/event-methods";
+
 class Config {
-	get host() {
-		return localStorage.getItem('redshift.host') || location.hostname
+	constructor() {
+		addEventMethods(this)
 	}
 
-	set host(ip) {
-		return localStorage.setItem('redshift.host', ip)
+	get = (key) => localStorage.getItem(key)
+	set = (key, value) => {
+		localStorage.setItem(key, value)
+		this.emit(key, value)
 	}
+
+	get host() { return this.get('host') || location.hostname }
+	set host(host) { return this.set('host', host) }
+
+	get bufferFps() { return +(this.get('bufferFps') || 25) }
+	set bufferFps(fps) { return this.set('bufferFps', fps) }
 }
 
 export default new Config
