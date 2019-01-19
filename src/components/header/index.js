@@ -39,11 +39,11 @@ export default class Header extends Component {
 				{this.props.children}
 
 				<nav>
-					<Link activeClassName={style.active} href="/"><GoScreenFull /></Link>
-					<Link activeClassName={style.active} href="/effects"><FaStar /></Link>
-					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /></Link>
-					<Link activeClassName={style.active} href="/repl"><GoTerminal /></Link>
-					<Link activeClassName={style.active} href="/about"><FaQuestionCircleO /></Link>
+					<Link activeClassName={style.active} href="/"><GoScreenFull /><span>Cinema</span></Link>
+					<Link activeClassName={style.active} href="/effects"><FaStar /><span>Effects</span></Link>
+					<Link activeClassName={style.active} href="/scripts"><FaPaintBrush /><span>Scripts</span></Link>
+					<Link activeClassName={style.active} href="/repl"><GoTerminal /><span>Console</span></Link>
+					<Link activeClassName={style.active} href="/about"><FaQuestionCircleO /><span>Help</span></Link>
 					<Link activeClassName={style.active} href="javascript:;" class={style.offButton} onClick={onPowerToggle}><FaPowerOff /></Link>
 				</nav>
 			</header> }

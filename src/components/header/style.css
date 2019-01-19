@@ -1,8 +1,8 @@
 .header {
-	position: fixed;
+	position: absolute;
 	left: 0;
 	top: 0;
-	z-index: 50;
+	z-index: 500;
 
 	-webkit-app-region: drag;
 	app-region: drag;
@@ -12,7 +12,7 @@
 	width: 100%;
 	margin: 0.10em 0 0em 0em;
 
-	padding: 0 0.5em;
+	/* padding: 0 0.5em; */
 
 	height: 3.5em;
 
@@ -39,13 +39,12 @@
 	bottom: 1px;
 	/*width: 100%;*/
 	/*height: 100%;*/
-	background: rgba(0,0,0,0.50); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
+	background: rgba(0,0,0,0.55); /* 0.75 nice with blur */ /* 0.87 nice on iPhone */
 	border-radius: 4px;
 	/* background: none; */
-	transition: 0.3s opacity;
-	opacity: 0.5;
+	transition: 0.25s opacity;
+	opacity: 0.6;
 } .header:hover:before {
-	background: rgba(0,0,0,0.50);
 	opacity: 1.0;
 }
 
@@ -90,10 +89,6 @@
 	margin-right: 0.6em;
 }
 
-@media(max-width: 320px) {
-	.header nav { display: none; }
-}
-
 .header nav {
 	float: right;
 }
@@ -101,38 +96,50 @@
 .header nav a {
 	display: inline-block;
 	/* height: 3.45em; */
-	height: 3.5em;
+	height: 3.3em;
 	font-size: 1.0em;
-	margin-top: 0px;
+	margin-top: 0.1em;
 	/* line-height: 100%; */
-	line-height: 3.2em;
-	padding: 0 0.1em;
+	line-height: 3.0em;
+	/* padding: 0 0.1em; */
+	padding: 0 0.5em;
 	min-width: 2.5em;
 	text-align: center;
 	text-decoration: none;
 	color: #FFF;
 	outline: 0;
 	will-change: background-color;
-	border-radius: 4px;
+	border-radius: 6px;
 	cursor: default;
+	display: inline-flex;
+	align-items: center;
 } .header nav a.active {
 	/*background: rgba(255,255,255,0.15);*/
 	/* background: rgba(0,0,0,0.5); */
 	background: rgba(255,255,255,0.25);
-	border-radius: 0px;
+	/* border-radius: 0px; */
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 	/*border-left: 1px solid rgba(255,255,255,0.30);*/
 	/*border-right: 1px solid rgba(255,255,255,0.30);*/
 }
 
 .header nav a svg {
-	vertical-align: middle;
-	/* line-height: 3em; */
+	margin: 0 0.2em;
+	padding: 0;
 }
 
-.header nav a:hover, .header nav a:active {
-	/* background: rgba(255,255,255, 0.9); */
-	/* background: rgba(255,255,255,0.15); */
-	background: rgba(0,0,0,0.5);
+.header nav a span {
+	margin: 0 0.2em;
+	font-size: 1.1em;
+}
+
+@media(hover: hover) {
+	.header nav a:hover {
+		/* background: rgba(255,255,255, 0.9); */
+		/* background: rgba(255,255,255,0.15); */
+		background: rgba(0,0,0,0.3);
+	}
 }
 
 .header nav a:hover svg,
@@ -142,5 +149,19 @@
 }
 
 .header nav .offButton:hover {
-	background: rgba(255, 0, 0, 0.85);
+	background: rgba(255, 40, 40, 0.40);
 }
+
+@media(max-width: 320px) {
+	.header nav a:not(.offButton) { display: none; }
+}
+
+@media(max-width: 550px) {
+	.header nav a span {
+		display: none;
+	}
+}
+
+/* .header nav {
+	display: none !important;
+} */

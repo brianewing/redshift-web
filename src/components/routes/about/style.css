@@ -4,7 +4,10 @@
 }
 
 .about {
-	/* padding: 0.5em; */
+	display: flex;
+	flex: 1;
+
+	padding: 0.5em;
 	/* animation: fade-in 0.2s; */
 	text-align: center;
 }
