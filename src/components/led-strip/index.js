@@ -38,87 +38,54 @@ export default class LEDStrip extends Component {
 	}
 
 	adjustCanvas = () => {
-		let canvas = this.canvas
-		let parentNode = canvas.parentNode
-		let pixelRatio = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1)
-    // pixelRatio = 1
+		const canvas = this.canvas
+		const parentNode = canvas.parentNode
+		const pixelRatio = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1)
+		// const pixelRatio = 1
 
 		if(canvas.width != parentNode.clientWidth * pixelRatio || canvas.height != parentNode.clientHeight * pixelRatio) {
 			canvas.width = (parentNode.clientWidth * pixelRatio)
 			canvas.height = (parentNode.clientHeight * pixelRatio)
-			canvas.style.width = `${parentNode.clientWidth}px`
-			canvas.style.height = `${parentNode.clientHeight}px`
-		}
 
-		if(this.props.stream.pixelBuffer)
-			this.renderFrame(this.props.stream.pixelBuffer)
+			// re-render the last frame after adjusting the canvas size
+			const { pixelBuffer } = this.props.stream
+			if(pixelBuffer)
+				this.renderFrame(pixelBuffer)
+		}
 	}
 
 	renderFrame = (buffer) => {
 		if(!this.ctx || !this.ctx.fillRect)
-			return console.error("Context not ready", ctx)
+			return console.error("Context not ready", this, this.ctx)
 
-		let { ctx, canvas } = this
-		let { reverse } = this.props
+		const { ctx, canvas } = this
+		const { reverse } = this.props
 
-		let len = buffer.length
+		const len = buffer.length
 
-		let ledWidth = canvas.width / len
-		let ledHeight = canvas.height
+		const ledWidth = canvas.width / Math.sqrt(len)
+		const ledHeight = canvas.height / Math.sqrt(len)
 
-    ledWidth *= len / Math.sqrt(len)
-    ledHeight /= Math.sqrt(len)
-
-		let gapWidth = Math.floor(ledWidth / 40)
-		gapWidth = 1
+		// const gapWidth = Math.floor(ledWidth / 40)
+		const gapWidth = 0.5
 
 		for(let i=0; i<len; i++) {
-			let led = (reverse ? buffer[len - i - 1] : buffer[i])
-
-      let x = Math.floor(i % Math.sqrt(len))
-      let y = Math.floor(i / Math.sqrt(len))
+			const led = (reverse ? buffer[len - i - 1] : buffer[i])
+			
+			const x = Math.floor(i % Math.sqrt(len))
+			const y = Math.floor(i / Math.sqrt(len))
 
 			// led
 			ctx.fillStyle = `rgb(${led[0]}, ${led[1]}, ${led[2]})`
 			ctx.fillRect(ledWidth*x, ledHeight*y, ledWidth, ledHeight)
 
-			// gap
-			ctx.fillStyle = '#000000'
-			ctx.fillRect(ledWidth*x - gapWidth, ledHeight*y, gapWidth, ledHeight)
-			ctx.fillRect(ledWidth*x, ledHeight*y - gapWidth, ledWidth, gapWidth)
+			// continue
 
-      continue // skip stroke
-
-			// stroke
-			ctx.fillStyle = 'rgba(255,255,255,0.38)'
-
-      // left
-      ctx.fillRect(
-        ledWidth*x + 1,
-        ledHeight*y + 1,
-        1,
-        ledHeight)
-
-      // right
-      ctx.fillRect(
-        ledWidth*x + ledWidth - 1 - gapWidth,
-        ledHeight*y,
-        1,
-        ledHeight)
-
-      // top
-      ctx.fillRect(
-        ledWidth*x,
-        ledHeight*y,
-        ledWidth - 2,
-        1)
-
-      // bottom
-      ctx.fillRect(
-        ledWidth*x,
-        ledHeight*y - 1,
-        ledWidth,
-        1)
+			// // stroke
+			ctx.lineWidth = gapWidth
+			// ctx.strokeStyle = 'rgba(0,0,0,0.55)'
+			ctx.strokeStyle = 'rgba(0,0,0,0.55)'
+			ctx.strokeRect(ledWidth*x, ledHeight*y, ledWidth, ledHeight)
 		}
 	}
 }
