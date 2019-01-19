@@ -22,8 +22,6 @@ const HOST = Config.host
 const WS_URL = `ws://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
-const BUFFER_FPS = (HOST=='localhost' ? 60 : 30)
-
 const clientInfo = {
 	AppType: 0, // redshift app
 	AppVersionMajor: 1,
