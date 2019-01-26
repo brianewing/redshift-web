@@ -142,7 +142,7 @@ export default class List extends Component {
 	}
 
 	render({ items, selection, availableEffects }, { shade, saving }) {
-		return <ul class={shade ? style.shade : ''} onDrop={this.handleDrop} onDragOver={this.handleDragOver}>
+		return <ul class={shade ? style.shade : ''}>
 			<li class={style.effectListHeader}>
 				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} onSave={this.saveSubmitted} /> }
 

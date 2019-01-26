@@ -10,7 +10,7 @@ import FastClick from './lib/fastclick';
 import preventDragClickEvents from './lib/prevent-drag-click-events';
 
 FastClick.attach(document.body);
-preventDragClickEvents(document.body);
+// preventDragClickEvents(document.body);
 
 // set user-scalable=no
 const viewportTag = document.querySelector('meta[name=viewport]');

@@ -33,7 +33,7 @@ export default class Header extends Component {
 				<h1 onMouseDown={onTitleClick}>
 					{icon}
 
-					{ disconnected
+					{ disconnected && false
 						? 'Disconnected'
 						: pageTitle || 'Redshift' }
 				</h1>

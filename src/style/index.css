@@ -48,7 +48,7 @@ html, body {
 	height: 100%;
 	width: 100%;
 	position: absolute;
-	font-size: 1.0em;
+	font-size: 1.05em;
 }
 
 h1, h2, h3 {
@@ -69,14 +69,14 @@ a {
 	/* margin-top: 1px; */
 	/* position: absolute; */
 	margin: 0em;
-	top: 3.55em;
+	top: 2.80em;
 	/* bottom: 1em; */
 
 	border: 1px solid rgba(255, 255, 255, 0);
 	border-radius: 4px;
 
 	width: 100%;
-	height: calc(100% - 2.9em);
+	height: calc(100% - 2.8em);
 
 	/* height: 100vh; */
 	/* margin: 0em 1.8em; */
@@ -90,8 +90,9 @@ a {
 }
 
 #main.headerHidden {
-	transform: translateY(-3.55em);
-	height: 100%;
+	transform: translateY(-2.80em);
+	height: calc(100% - 0.1em);
+	opacity: 0.6;
 }
 
 #main .route-inactive, #main .route-active {
