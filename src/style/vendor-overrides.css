@@ -1,0 +1,59 @@
+/* ace editor */
+
+.ace_editor, .ace_print-margin {
+    /*background: rgba(0, 0, 0, 0.20) !important;*/
+    background: rgba(0, 0, 0, 0.0) !important;
+}
+
+.ace_gutter {
+    /*background: rgba(0, 0, 50, 0.4) !important;*/
+	background: rgba(0, 0, 50, 0.0) !important;
+}
+
+.ace_active-line {
+    background: rgba(0, 0, 0, 0.55) !important;
+}
+
+/* basic-context context menus */
+
+.basicContext {
+	background-color: rgba(15,15,15,.85);
+	border-radius: 8px;
+}
+
+.basicContext__item:not(.basicContext__item--disabled):hover .basicContext__data {
+	background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* react collapse component */
+
+.rc-collapse {
+	background: rgba(0, 0, 0, 0.7);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	text-align: left;
+}
+
+.rc-collapse > .rc-collapse-item {
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.rc-collapse-header {
+	color: rgba(255, 255, 255, 0.85) !important;
+	outline: none;
+}
+
+.rc-collapse-content {
+	background: transparent;
+	color: white;
+}
+
+.rc-collapse .arrow {
+	border-left: 4px solid white;
+}
+
+/* react-range-slider */
+
+div.range-slider {
+	padding-top: 1.35em;
+	padding-bottom: 1.50em;
+}

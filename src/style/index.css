@@ -10,6 +10,7 @@
 @import "../../node_modules/rc-collapse/assets/index.css";
 
 @import './forms';
+@import './vendor-overrides';
 
 @import url('https://fonts.googleapis.com/css?family=Dosis');
 
@@ -21,8 +22,6 @@
   /* text-shadow: none !important; */
   /* box-shadow: none !important; */
 }
-
-/* canvas { will-change: transform; } */
 
 html, body {
 	height: 100%;
@@ -43,17 +42,13 @@ html, body {
 	user-select: none;
 	overflow: hidden;
 	cursor: default;
-
-	background: transparent;
-
-	border-radius: 5px;
 }
 
 #app {
 	height: 100%;
 	width: 100%;
 	position: absolute;
-	font-size: 1.1em;
+	font-size: 1.0em;
 }
 
 h1, h2, h3 {
@@ -66,94 +61,49 @@ a {
 
 #main {
 	position: absolute;
-	overflow: scroll;
-	top: 3.1em; /* header height */
-	top: 2.85em;
-	bottom: 1px;
+	z-index: 100;
+
 	left: 0px;
 	right: 0px;
 
-	margin-top: 1px;
-	/* margin-top: 10px; */
+	/* margin-top: 1px; */
+	/* position: absolute; */
+	margin: 0em;
+	top: 3.55em;
+	/* bottom: 1em; */
 
+	border: 1px solid rgba(255, 255, 255, 0);
 	border-radius: 4px;
 
 	width: 100%;
-	padding: 0em 0.08em;
+	height: calc(100% - 2.9em);
+
+	/* height: 100vh; */
+	/* margin: 0em 1.8em; */
 	/* margin: 0.2em; */
 
 	/* border: 1px solid white; */
-	transition: 0.2s transform, 0.5s margin-bottom;
+	transition: 0.2s transform, 0.3s height;
 
-	will-change: transform;
+	will-change: transform, height;
+	/* perspective: 600px; */
 }
 
-/* @media(max-width: 640px) {
-	#main {
-		padding: 0.5em !important;
-		right: 0.5em;
-	}
-}
- */
 #main.headerHidden {
-	transform: translateY(-2.81em);
-	/* margin-top: 10px; */
-	margin-bottom: calc(-2.81em);
-	/* top: 0em; */
+	transform: translateY(-3.55em);
+	height: 100%;
 }
 
-@keyframes fade-in {
-	from { opacity: 0; }
-	to   { opacity: 1; }
+#main .route-inactive, #main .route-active {
+	transition: 0.1s opacity, 0s visibility;
+	overflow: scroll;
 }
 
-#main > * {
-	/* padding: 0.05em; */
-	animation: fade-in 0.2s ease-in-out;
-	/* text-align: center; */
+#main .route-inactive {
+	opacity: 0;
+	visibility: hidden;
 }
 
-/* Third party overrides */
-
-.basicContext {
-	background-color: rgba(15,15,15,.85);
-	border-radius: 8px;
-}
-
-.ace_editor, .ace_print-margin {
-    /*background: rgba(0, 0, 0, 0.20) !important;*/
-    background: rgba(0, 0, 0, 0.0) !important;
-}
-
-.ace_gutter {
-    /*background: rgba(0, 0, 50, 0.4) !important;*/
-	background: rgba(0, 0, 50, 0.0) !important;
-}
-
-.ace_active-line {
-    background: rgba(0, 0, 0, 0.55) !important;
-}
-
-.rc-collapse {
-	background: rgba(0, 0, 0, 0.7);
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	text-align: left;
-}
-
-.rc-collapse > .rc-collapse-item {
-	border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.rc-collapse-header {
-	color: rgba(255, 255, 255, 0.85) !important;
-	outline: none;
-}
-
-.rc-collapse-content {
-	background: transparent;
-	color: white;
-}
-
-.rc-collapse .arrow {
-	border-left: 4px solid white;
+#main .route-active {
+	opacity: 1;
 }

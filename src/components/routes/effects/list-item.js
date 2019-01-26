@@ -74,6 +74,17 @@ export default class ListItem extends Component {
 			this.props.onClick()
 	}
 
+	onDragStart = (e) => {
+		const effectData = JSON.stringify(this.props.effect)
+		e.dataTransfer.dropEffect = 'none'
+		e.dataTransfer.setData('application/x-redshift-effect-envelope', effectData)
+	}
+
+	onDragEnd = (e) => {
+		if(e.dataTransfer.dropEffect == 'move')
+			this.remove()
+	}
+
 	render({ effect, isSelected }, { }) {
 		const classes = [
 			(isSelected ? style.selected : ''),
@@ -81,7 +92,7 @@ export default class ListItem extends Component {
 			style.effectListItem
 		].join(' ')
 
-		return <li class={classes} onClick={this.onClick} onDblClick={this.toggleDisabled} onContextMenu={this.showMenu}>
+		return <li class={classes} draggable={false} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd} onClick={this.onClick} onDblClick={this.toggleDisabled} onContextMenu={this.showMenu}>
 			<div class={style.effectToolbar}>
 				<div class={style.effectName}>
 					{renderIcon(effect.Type)} <strong>{effect.Type}</strong> {this.renderSummary()}

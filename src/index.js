@@ -5,9 +5,12 @@ import './style';
 import App from './components/app';
 
 import basicContext from 'basiccontext';
+
 import FastClick from './lib/fastclick';
+import preventDragClickEvents from './lib/prevent-drag-click-events';
 
 FastClick.attach(document.body);
+preventDragClickEvents(document.body);
 
 // set user-scalable=no
 const viewportTag = document.querySelector('meta[name=viewport]');
@@ -15,6 +18,7 @@ viewportTag.content += ',user-scalable=no';
 
 const _basicContextShow = basicContext.show
 
+// patch basicContext to vibrate when a context menu is shown
 basicContext.show = (...args) => {
 	// document.getElementById("main").classList.add("shade")
 	navigator.vibrate && navigator.vibrate(20)

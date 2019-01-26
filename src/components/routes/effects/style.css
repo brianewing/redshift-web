@@ -3,10 +3,12 @@
  */
 
 .effects {
+	width: 100%;
 	height: 100%;
 	padding: 0.5em;
 	color: white;
 	text-align: center;
+	/* background-color: rgba(0, 0, 0, 0.5); */
 }
 
 /*
@@ -164,7 +166,7 @@
 }
 
 .effectToolbar .toolbarButtons {
-	display: inline-block;
+	/* display: inline-block; */
 	display: none;
 	width: 30%;
 	text-align: right;
@@ -227,6 +229,16 @@
 	/* background-color: rgba(0, 0, 0, 0.6); */
 }
 
+.effectDetail .effectParamName {
+	text-align: left;
+
+	font-size: 1.1em;
+	font-weight: bold;
+
+	padding: 0;
+	margin: 1em 0em 0em 0em;
+}
+
 .effectDetail .effectParams .color {
 	display: inline-block;
 	width: 1em;
@@ -283,18 +295,27 @@
 }
 
 .controlParams {
-	font-size: 0.8em;
-	display: flex;
-	flex-wrap: wrap;
-	vertical-align: middle;
+	/* font-size: 0.8em; */
+	width: 100%;
+	height: 100%;
+
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
 	align-items: center;
-	overflow: scroll;
 }
 
 .controlParam {
+	display: flex;
+	flex-wrap: wrap;
 	flex-grow: 1;
+	flex-direction: column;
+	flex-basis: 10em;
+
+	font-size: 0.8em;
+
+	margin: 1em;
+
 	text-align: center;
-	padding: 0.5em;
 }
 
 .controlParamName {
@@ -309,7 +330,48 @@
  * Osc Summary
  */
 
+.oscSummary button {
+	width: 100%;
+	min-height: 0.5em;
+}
+
 .oscSummary ul {
 	list-style: none;
 	padding: 0;
+	margin: 0;
+
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(6em, 1fr));
+}
+
+.oscSummary li {
+	display: flex;
+
+	flex-direction: column;
+	flex-wrap: wrap;
+	flex-grow: 1;
+
+	flex-basis: 6em;
+	min-width: 6em;
+
+	background: rgba(255, 255, 255, 0.2);
+	/* border: 1px solid rgba(255, 255, 255, 0.2); */
+	border: 1px solid rgba(0, 0, 0, 0.4);
+	border-radius: 4px;
+
+	padding: 0.5em;
+	text-align: center;
+}
+
+.oscSummary li:hover {
+	background: rgba(255, 255, 255, 0.4);
+}
+
+.oscSummary li strong {
+	font-size: 0.9em;
+	flex: 1;
+}
+
+.oscSummary li pre {
+	flex: 1;
 }

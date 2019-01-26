@@ -16,6 +16,9 @@ class Config {
 
 	get bufferFps() { return +(this.get('bufferFps') || 25) }
 	set bufferFps(fps) { return this.set('bufferFps', fps) }
+
+	get autoHideHeader() { return Boolean(this.get('autoHideHeader')) }
+	set autoHideHeader(autoHide) { this.set('autoHideHeader', (autoHide ? 'true' : '')) }
 }
 
 export default new Config

@@ -23,6 +23,7 @@ export default class DetailField extends Component {
 				Argument: 16,
 				Speed: 5,
 				Size: 1500,
+				Offset: 1500,
 				Depth: 20,
 				R: 2, G: 2, B: 2,
 			}[name] || 255

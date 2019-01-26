@@ -1,29 +1,34 @@
 import { h, Component } from 'preact';
-import { route } from 'preact-router';
 
+import FaAsterisk from 'react-icons/lib/fa/asterisk';
 import FaFloppyO from 'react-icons/lib/fa/floppy-o';
 import FaPlusSquareO from 'react-icons/lib/fa/plus-square-o';
 import FaFolderOpenO from 'react-icons/lib/fa/folder-open-o';
+import FaRefresh from 'react-icons/lib/fa/repeat';
+import MdAutorenew from 'react-icons/lib/md/autorenew';
+import MdCached from 'react-icons/lib/md/cached';
 
 import basicContext from 'basiccontext';
 
 import Modal from '../../modal';
-import { fetch as fetchEffects, load as loadEffects, save as saveEffects} from '../../../effect-definitions';
+import { fetch as fetchEffects, load as loadEffects, save as saveEffects } from '../../../effect-definitions';
 
 import ListItem from './list-item';
 
 import style from './style';
 
 export default class List extends Component {
-	change = (modificationFn) => {h
+	change = (modificationFn) => {
 		const { items, onChange } = this.props
 		const newItems = modificationFn(items)
 		newItems && onChange(newItems)
 	}
 
-	add = (index=0, type='Null') => {
+	add = (newEffect, index=null) => {
+		if(index == null) {
+			index = this.props.items.length
+		}
 		this.change((items) => {
-			const newEffect = {Type: type}
 			return [...items.slice(0, index), newEffect, ...items.slice(index)]
 		})
 	}
@@ -70,7 +75,7 @@ export default class List extends Component {
 	addClicked = (e) => {
 		if(this.props.availableEffects) {
 			const menu = this.props.availableEffects.map((name) => {
-				return {title: name, fn: () => this.add(this.props.items.length, name)}
+				return {title: name, fn: () => this.add({"Type": name})}
 			})
 			basicContext.show(menu, e)
 		} else {
@@ -119,19 +124,38 @@ export default class List extends Component {
 		this.setState({ saving: false })
 	}
 
+	restartClicked = () => this.change((items) => items)
+
+	handleDragStart = (e) => {
+
+	}
+
+	handleDragOver = (e) => {
+		console.log('Drag over!', e)
+		e.preventDefault()
+		e.dataTransfer.dropEffect = 'move'
+	}
+
+	handleDrop = (e) => {
+		console.log('Drop!', e)
+		console.log(e.getData())
+	}
+
 	render({ items, selection, availableEffects }, { shade, saving }) {
-		return <ul class={shade ? style.shade : ''}>
+		return <ul class={shade ? style.shade : ''} onDrop={this.handleDrop} onDragOver={this.handleDragOver}>
 			<li class={style.effectListHeader}>
 				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} onSave={this.saveSubmitted} /> }
 
+				<button style="float:left" onClick={this.reset}>New</button>
 				<button style="float:left" onMouseEnter={this.openMouseEnter} onMouseLeave={this.openMouseLeave} onClick={this.openClicked}><FaFolderOpenO /></button>
 				<button style="float:left" onClick={this.saveClicked}><FaFloppyO /></button>
 
+				<button onClick={this.restartClicked}><MdCached /></button>
 				<button onClick={this.addClicked}><FaPlusSquareO /></button>
 			</li>
 
 			{ items && items.map((value, index) =>
-				<ListItem effect={value}
+				<ListItem effect={value} index={index}
 					isFirst={index==0} isLast={index==items.length-1} isSelected={index==selection}
 					availableEffects={availableEffects}
 					onClick={this.props.onSelection && this.props.onSelection.bind(null, index)}

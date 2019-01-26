@@ -9,6 +9,7 @@ import Stream from './stream';
 export default class Connection {
 	/* System exclusive commands: */
 	CmdWelcome = 0
+
 	CmdOpenStream = 1
 	CmdCloseStream = 2
 	CmdSetStreamFps = 3
@@ -17,16 +18,26 @@ export default class Connection {
 	CmdSetEffectsYaml = 6
 	CmdAppendEffectsJson = 7
 	CmdAppendEffectsYaml = 8
+
 	CmdOscSummary = 9
 	CmdClearOscSummary = 10
+
 	CmdErrorOccurred = 11
+
 	CmdRepl = 12
+
+	CmdPing = 13
+	CmdPong = 14
+
+	CmdClose = 15
 
 	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
 	_streams = []
 
-	/* Callbacks waiting on a response to CmdOscSummary */
-	_oscSummaryListeners = []
+	_pongListeners = {} // callbacks waiting on response to CmdPing, indexed by ping msg
+	_oscSummaryListeners = [] // callbacks waiting on response to CmdOscSummary
+
+	_pingNumber = 0
 
 	clientInfo = {}
 
@@ -72,6 +83,20 @@ export default class Connection {
 		this.sendSysEx(0, this.CmdWelcome, JSON.stringify(info))
 	}
 
+	sendPing(timeoutMs=5000) {
+		const msg = (this._pingNumber++).toString()
+		this.sendSysEx(0, this.CmdPing, msg)
+
+		return new Promise((resolve, reject) => {
+			const timeout = setTimeout(reject, timeoutMs)
+			const sendTime = new Date
+			this._pongListeners[msg] = () => {
+				clearTimeout(timeout)
+				resolve(new Date() - sendTime)
+			}
+		})
+	}
+
 	openStream(desc) {
 		const stream = new Stream(this)
 		stream.channel = this._streams.length
@@ -113,6 +138,10 @@ export default class Connection {
 		})
 	}
 
+	clearOscSummary = () => {
+		this.sendSysEx(0, this.CmdClearOscSummary)
+	}
+
 	sendReplCommand = (channel, cmd) => {
 		this.sendSysEx(channel, this.CmdRepl, cmd)
 	}
@@ -124,8 +153,6 @@ export default class Connection {
 			data = new TextEncoder("utf-8").encode(data)
 
 		const msg = buildSysExOpcMessage(channel, command, data)
-		console.debug("send sys ex", new Uint8Array(msg))
-
 		this.sendBytes(msg)
 	}
 
@@ -141,6 +168,8 @@ export default class Connection {
 
 			if(msg.sysExCommand == this.CmdWelcome) {
 				this.receiveWelcome(msg)
+			} else if(msg.sysExCommand == this.CmdPong) {
+				this.receivePong(msg)
 			} else if(msg.sysExCommand == this.CmdCloseStream) { // stream successfully closed
 				this._onStreamClosed(msg.channel)
 			} else if(msg.sysExCommand == this.CmdOscSummary) {
@@ -165,6 +194,14 @@ export default class Connection {
 
 		console.info("Welcome to Redshift", serverInfo.version, serverInfo)
 		this.onWelcome && this.onWelcome(serverInfo)
+	}
+
+	receivePong = (msg) => {
+		const pongMsg = new TextDecoder("utf-8").decode(msg.sysExData)
+		if(this._pongListeners.hasOwnProperty(pongMsg)) {
+			this._pongListeners[pongMsg]()
+			delete this._pongListeners[pongMsg]
+		}
 	}
 
 	receiveOscSummary = (msg) => {

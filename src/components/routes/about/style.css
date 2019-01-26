@@ -4,8 +4,8 @@
 }
 
 .about {
-	display: flex;
-	flex: 1;
+	/* display: flex; */
+	/* flex: 1; */
 
 	padding: 0.5em;
 	/* animation: fade-in 0.2s; */

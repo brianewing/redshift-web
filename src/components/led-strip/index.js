@@ -67,7 +67,7 @@ export default class LEDStrip extends Component {
 		const ledHeight = canvas.height / Math.sqrt(len)
 
 		// const gapWidth = Math.floor(ledWidth / 40)
-		const gapWidth = 0.5
+		const gapWidth =  (window.devicePixelRatio == 1) ? 1 : 0.5
 
 		for(let i=0; i<len; i++) {
 			const led = (reverse ? buffer[len - i - 1] : buffer[i])

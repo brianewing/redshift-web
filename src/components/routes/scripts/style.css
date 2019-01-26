@@ -80,6 +80,7 @@
 
 	width: 100%;
 	height: calc(100% - calc(2em/0.8));
+
 	font-size: 0.8em;
 	overflow: hidden;
 }

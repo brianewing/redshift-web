@@ -22,6 +22,8 @@ import FaQuestionCircleO from 'react-icons/lib/fa/question-circle-o';
 
 import FaPowerOff from 'react-icons/lib/fa/power-off'
 
+// try MdGamepad for remote control
+
 export default class Header extends Component {
 	render({ pageTitle, disconnected, hide, onTitleClick, onPowerToggle }) {
 		const icon = disconnected ? <FaChainBroken /> : <FaBars />
@@ -31,7 +33,7 @@ export default class Header extends Component {
 				<h1 onMouseDown={onTitleClick}>
 					{icon}
 
-					{ disconnected && false
+					{ disconnected
 						? 'Disconnected'
 						: pageTitle || 'Redshift' }
 				</h1>

@@ -25,34 +25,26 @@
 }
 
 .repl pre {
+    display: block;
+    overflow: scroll;
+
     text-align: left;
     white-space: pre-wrap;
     word-wrap: break-word;
+
     width: 95vw;
+    height: calc(100% - 4em);
 
-    /* font-size: 0.9em; */
-
-    /* margin: 0em 0em; */
+    font-size: 1rem;
+    font-weight: 400;
 
     padding: 0 1em;
-    height: calc(100% - 4em);
     margin-bottom: 0em;
-    display: block;
-    overflow: scroll;
-    /* height: calc(100%-2em); */
-
-    /* padding-bottom: 5em; */
-
-    /* border: 1px solid red; */
 }
 
 .repl input {
     height: 2em;
-    /* width: 90vw; */
     width: 100%;
-
-    position: relative;
-    top: 0em;
 
     border-radius: 0px;
 }

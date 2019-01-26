@@ -66,10 +66,7 @@ class Pane extends Component {
 	}
 
 	writeFile = ({ url, contents }) => {
-		console.log("Write", url)
-		this.props.webDavFs.file(url).write(contents, (resp) => {
-			console.log("Written")
-		})
+		this.props.webDavFs.file(url).write(contents, () => null)
 	}
 
 	getLanguageFromFilename = (filename) => {

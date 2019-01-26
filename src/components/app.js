@@ -30,18 +30,26 @@ const clientInfo = {
 }
 
 export default class App extends Component {
+	state = {
+		ping: 0,
+	}
+
 	componentWillMount() {
 		window.app = this
 		this.openConnection()
 
-		document.addEventListener('keydown', this.handleKeyDown)
+		document.body.addEventListener('keydown', this.handleKeyDown)
 		document.addEventListener('visibilitychange', this.handleVisibilityChange, false)
+		document.addEventListener('mouseenter', this.handleMouseEnter)
+		document.addEventListener('mouseleave', this.handleMouseLeave)
 	}
 
 	componentWillUnmount() {
 		this.closeConnection()
 		document.removeEventListener('keydown', this.handleKeyDown)
 		document.removeEventListener('visibilitychange', this.handleVisibilityChange)
+		document.removeEventListener('mouseenter', this.handleMouseEnter)
+		document.removeEventListener('mouseleave', this.handleMouseLeave)
 	}
 
 	showMenu = (e) => {
@@ -55,6 +63,7 @@ export default class App extends Component {
 			{title: 'Settings', fn: go('/settings')},
 			{title: (this.state.off ? 'Connect' : 'Disconnect'), fn: this.toggleOff},
 			{},
+			// {title: 'Test Ping', fn: () => this.pingTest(true)},
 			{title: 'Refresh', fn: () => window.location = window.location},
 			{title: 'Fullscreen', fn: document.fullscreenEnabled && this.toggleFullscreen}
 		], e)
@@ -83,10 +92,32 @@ export default class App extends Component {
 			document.body.requestFullscreen()
 	}
 
+	pingTest = (begin=false) => {
+		if(!this._pings) this._pings = []
+		if(begin) this.setState({ ping: "Calculating" })
+		this.connection.sendPing().then((ms) => {
+			if(this.state.ping == null)
+				return
+
+			this.setState({ ping: ms })
+			this._pings.push(ms)
+			setTimeout(this.pingTest, 100)
+		})
+	}
+
 	/* Events */
 
 	handleRoute = (e) => {
 		this.setState({ currentUrl: e.url })
+	}
+
+	handleVisibilityChange = (e) => {
+		const { stream } = this.state
+		if(document.hidden) {
+			stream && stream.setFps(0)
+		} else {
+			stream && stream.setFps(Config.bufferFps)
+		}
 	}
 
 	handleKeyDown = (e) => {
@@ -115,14 +146,14 @@ export default class App extends Component {
 		}
 	}
 
-	handleVisibilityChange = (e) => {
-		console.log('visibility change', document.hidden)
-		const { stream } = this.state
-		if(document.hidden) {
-			stream && stream.setFps(0)
-		} else {
-			stream && stream.setFps(Config.bufferFps)
-		}
+	handleMouseEnter = (e) => {
+		if(Config.autoHideHeader)
+			this.setState({ hideHeader: false })
+	}
+
+	handleMouseLeave = (e) => {
+		if(Config.autoHideHeader)
+			this.setState({ hideHeader: true })
 	}
 
 	onConnectionWelcome = (serverWelcome) => {
@@ -182,10 +213,11 @@ export default class App extends Component {
 		const firstSegment = (this.state.currentUrl || '').split('/')[1] || ''
 		if(firstSegment == 'repl')
 			return 'Console';
-		return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
+		else
+			return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
 	}
 
-	render({ }, { currentUrl, title, serverWelcome, connected, off, stream, amps, hideHeader }) {
+	render({ }, { serverWelcome, connected, off, stream, hideHeader, ping }) {
 		return (
 			<div id="app">
 				<Header pageTitle={this.pageTitle()} disconnected={serverWelcome && !connected} hide={hideHeader} onTitleClick={this.showMenu} onPowerToggle={this.toggleOff}></Header>
@@ -193,6 +225,10 @@ export default class App extends Component {
 				{ /* the background LED strip */ }
 				{ stream && <LEDStrip stream={stream} paused={off} /> }
 
+				{ ping ? <Modal onClose={() => this.setState({ ping: null })}>
+					<h2>Ping { ping }ms</h2>
+					Average { (this._pings.reduce((a,b) => a+b, 0) / this._pings.length).toFixed(2) }
+				</Modal> : null }
 
 				<main id="main" class={(hideHeader ? 'headerHidden' : '')}>
 					{ serverWelcome
@@ -205,7 +241,7 @@ export default class App extends Component {
 								<Repl path="/repl" stream={stream} />
 								<Modes path="/spongebob" />
 							</Router>
-						: <Modal>Connecting...</Modal> }
+						: <Modal><input onInput={(e) => Config.host = e.currentTarget.value} value={Config.host} />Connecting...</Modal> }
 				</main>
 			</div>
 		);

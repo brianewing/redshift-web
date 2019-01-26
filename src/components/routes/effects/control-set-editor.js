@@ -1,14 +1,10 @@
 import { h, Component } from 'preact';
 
-import basicContext from 'basiccontext';
 import Collapse from 'rc-collapse';
-
-import FaPlusSquareO from 'react-icons/lib/fa/plus-square-o';
-
-import Modal from '../../modal';
 
 import DetailField from './detail-field';
 
+import FaPlusSquareO from 'react-icons/lib/fa/plus-square-o';
 import style from './style';
 
 export default class ControlSetEditor extends Component {
@@ -29,57 +25,11 @@ export default class ControlSetEditor extends Component {
     removeControl = (control) => {
         this.props.onChange(this.props.controls.filter((c) => c != control))
     }
-
-    addNewControl = (type, field) => {
-        this.send([
-            ...(this.props.controls || []),
-            { Type: type, Control: { Field: field } }
-        ])
-	}
-
-	showAddControlMenu = (e) => {
-        const chooseField = (controlType, e2) => {
-            const fieldNames = Object.keys(this.props.effectParams).filter((name) => {
-                return ['Effects'].indexOf(name) == -1
-            })
-            basicContext.close()
-            basicContext.show([
-                { title: "Field:", disabled: true },
-                ...fieldNames.map((field) => {
-                    return { title: field, fn: () => this.addNewControl(controlType, field) }
-                })
-            ], e2)
-        }
-
-		basicContext.show([
-			{ title: "Add:", disabled: true },
-			{ title: "OSC Control", fn: (e) => chooseField('OscControl', e) },
-			{ title: "MIDI Control", fn: (e) => chooseField('MidiControl', e) },
-			{ title: "Time Control", fn: (e) => chooseField('TimeControl', e) },
-			{ title: "Tween Control", fn: (e) => chooseField('TweenControl', e) },
-			{ title: "Fixed Value Control", fn: (e) => chooseField('FixedValueControl', e) },
-		], e)
-    }
-    
-    render({ controls, actions = {}, effectIsDisabled }, { selectedControl }) {
+   
+    render({ controls }) {
 		return <div class={style.controlSet}>
-            <div class={style.actions}>
-                <button onClick={actions.back} class={style.backButton}>&larr; Back</button>
-                <button onClick={actions.toggleEffect}>{ effectIsDisabled ? 'Enable' : 'Disable' }</button>
-                <button onClick={this.showAddControlMenu}>Add a Control</button>
-            </div>
-
-            {/* { controls && controls.map((c) => {
-                return <button style="width:100%" onClick={() => this.setState({ selectedControl: c })}>{ this.renderControlDescription(c) }</button>
-            }) }
-
-            { selectedControl && <Modal onClose={() => this.setState({ selectedControl: null })}>
-                { this.renderControl(selectedControl) }
-            </Modal> }
- */}
-			<Collapse accordion={true}>
-                <Collapse.Panel header={'Controls' + ((controls||[]).length > 0 ? ` (${controls.length})` : '')}>
-
+			{/* <Collapse accordion={true}> */}
+                {/* <Collapse.Panel header={'Controls' + ((controls||[]).length > 0 ? ` (${controls.length})` : '')}> */}
 					{ controls && <Collapse accordion={true}>
                             {controls.map((c) => {
                                 return <Collapse.Panel header={this.renderControlDescription(c)}>
@@ -87,9 +37,8 @@ export default class ControlSetEditor extends Component {
                                 </Collapse.Panel>
                             })}
                         </Collapse> }
-
-				</Collapse.Panel>
-			</Collapse>
+				{/* </Collapse.Panel> */}
+			{/* </Collapse> */}
 		</div>
 	}
 
@@ -111,7 +60,14 @@ export default class ControlSetEditor extends Component {
 	}
 
 	renderControlDescription(control) {
-        const type = {OscControl: "OSC", MidiControl: "MIDI", TweenControl: "Tween", TimeControl: "Time"}[control.Type] || "Unknown"
-		return type + (control.Control.Field ? ` Control - ${control.Control.Field}` : '')
+        const { Field, Address } = control.Control
+        const type = {
+            OscControl: "OSC",
+            MidiControl: "MIDI",
+            TweenControl: "Tween",
+            TimeControl: "Time",
+            FixedValueControl: "Fixed Value",
+        }[control.Type] || control.Type
+		return type + (Field ? ` Control - ${Field}` : '') + (Address ? ` (${Address})` : '')
 	}
 }
