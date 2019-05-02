@@ -21,7 +21,7 @@
     "eslint-config-synacor": "^1.1.1",
     "if-env": "^1.0.0",
     "preact": "^8.2.7",
-    "preact-cli": "^1.4.1",
+    "preact-cli": "^2.2.1",
     "preact-range-slider": "^0.2.0",
     "tslib": "^1.9.0"
   },
@@ -30,16 +30,19 @@
     "basicgrid": "^3.0.0",
     "basicmodal": "^3.3.9",
     "coloreact": "^0.2.4",
+    "decko": "^1.2.0",
     "es6-shim": "^0.35.4",
     "linkstate": "^1.1.0",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",
     "preact-portal": "^1.1.2",
     "preact-router": "^2.5.7",
+    "prismjs": "^1.15.0",
     "rc-collapse": "^1.10.2",
     "react-ace": "^6.2.0",
     "react-color": "^2.13.8",
     "react-icons": "^2.2.5",
+    "react-simple-code-editor": "^0.9.3",
     "react-sortable-hoc": "^0.6.8",
     "react-view-slider": "^3.0.6"
   }

@@ -41,6 +41,7 @@ export default class LEDStrip extends Component {
 		const canvas = this.canvas
 		const parentNode = canvas.parentNode
 		const pixelRatio = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1)
+		// alert(pixelRatio)
 		// const pixelRatio = 1
 
 		if(canvas.width != parentNode.clientWidth * pixelRatio || canvas.height != parentNode.clientHeight * pixelRatio) {
@@ -67,7 +68,9 @@ export default class LEDStrip extends Component {
 		const ledHeight = canvas.height / Math.sqrt(len)
 
 		// const gapWidth = Math.floor(ledWidth / 40)
-		const gapWidth =  (window.devicePixelRatio == 1) ? 1 : 0.5
+		// const gapWidth =  (window.devicePixelRatio == 1) ? 1 : 0.5
+		// const gapWidth = 2.8
+		const gapWidth = 1
 
 		for(let i=0; i<len; i++) {
 			const led = (reverse ? buffer[len - i - 1] : buffer[i])
@@ -84,7 +87,8 @@ export default class LEDStrip extends Component {
 			// // stroke
 			ctx.lineWidth = gapWidth
 			// ctx.strokeStyle = 'rgba(0,0,0,0.55)'
-			ctx.strokeStyle = 'rgba(0,0,0,0.55)'
+			ctx.strokeStyle = 'rgba(0,0,0,0.35)'
+			// ctx.strokeStyle = 'rgba(255,255,255,0.25)'
 			ctx.strokeRect(ledWidth*x, ledHeight*y, ledWidth, ledHeight)
 		}
 	}

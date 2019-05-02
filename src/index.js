@@ -32,4 +32,6 @@ basicContext.show = (...args) => {
 // 	}, 0)
 // })
 
+if(!window.parent) window.open(window.location.href);
+
 export default App;

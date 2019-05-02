@@ -43,7 +43,9 @@ export default class FileChooser extends Component {
 	fetchFiles = () => {
 		const { webDavFs } = this.props
 		const { currentPath } = this.state
+
 		this.setState({ files: null })
+
 		webDavFs.dir(currentPath).children((files) => {
 			if(String.prototype.localeCompare) {
 				files.sort((a, b) => a.name.localeCompare(b.name))
@@ -62,24 +64,43 @@ export default class FileChooser extends Component {
 		}
 	}
 
-	render({}, { newFileDialogOpen, files }) {
+	render({ currentFileUrl }, { newFileDialogOpen, files }) {
 		return <div class={style.fileChooser}>
-			<h2 style="font-size: 1.4em">Choose a File.. {/*<button onClick={this.openNewFileDialog}>*/}<GoPlus onClick={this.openNewFileDialog} />{/*</button>*/}</h2>
+			<button onClick={this.openNewFileDialog}>
+				New Script <GoPlus />
+			</button>
 
 			{newFileDialogOpen ? <NewFileDialog onClose={this.closeNewFileDialog}
 				onSubmit={this.onNewFileDialogSubmit} /> : null}
 
-			{files == null ? <p>Fetching...</p> : this.renderFileList(files)}
+			{files == null ? <p>Fetching...</p> : this.renderFileList(files, currentFileUrl)}
 		</div>
 	}
 
-	renderFileList(files) {
-		return (files.length == 0
-			? <i>Nothing to show</i>
-			: <ul>
-				{files.map((f) => <li onClick={() => this.chooseFile(f)} onContextMenu={(e) => this.showMenu(e, f)}>
+	renderFileList(files, currentFileUrl) {
+		const ignorePatterns = [
+			/^__pycache__$/, /\.pyc$/,
+			/^.DS_Store$/,
+		]
+
+		const isIgnored = (name) => ignorePatterns.find(p => name.match(p))
+
+		const fileFilter = (f) => {
+			return f.type != 'dir' && !isIgnored(f.name)
+		}
+
+		if(files.length == 0) {
+			return <i>Nothing to show</i>
+		} else {
+			return <ul>
+				{ files.filter(fileFilter).map(f => {
+					return <li data-selected={f.url == currentFileUrl}
+							onClick={() => this.chooseFile(f)}
+							onContextMenu={(e) => this.showMenu(e, f)}>
 						{f.name}
-					</li>)}
-				</ul>)
+					</li>
+				}) }
+			</ul>
+		}
 	}
 }

@@ -30,6 +30,7 @@ export default class ListItem extends Component {
 			{title: 'Layer', fn: () => this.wrapIn('Layer')},
 			{title: 'Layout', fn: () => this.wrapIn('Layout')},
 			{title: 'Mirror', fn: () => this.wrapIn('Mirror')},
+			{title: 'Resettable', fn: () => this.wrapIn('Resettable')},
 			{title: 'Switch', fn: () => this.wrapIn('Switch')},
 			{title: 'Toggle', fn: () => this.wrapIn('Toggle')},
 		], e)

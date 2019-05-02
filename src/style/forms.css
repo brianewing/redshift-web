@@ -4,8 +4,9 @@ button, select {
     padding: 0.5em;
 
     background: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+    border: none;
+    /* border: 1px solid rgba(255, 255, 255, 0.2); */
+    /* border-radius: 4px; */
 
     font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
 
@@ -18,7 +19,7 @@ button, select {
 button:hover {
     opacity: 1;
     background: rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 } button:active {
     opacity: 0.7;
     transform: scale(0.97) translate(1px, 1px);

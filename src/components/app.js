@@ -236,7 +236,7 @@ export default class App extends Component {
 								<Settings path="/settings" />
 								<About path="/about/:page?" serverWelcome={serverWelcome} />
 								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%;-webkit-app-region:drag">{/* Cinema Mode */}</div>
-								<Effects path="/effects/:selection?" availableEffects={serverWelcome && serverWelcome.availableEffects} connection={this.connection} stream={stream} />
+								<Effects path="/effects/:selection?" availableEffects={serverWelcome.availableEffects} connection={this.connection} stream={stream} />
 								<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
 								<Repl path="/repl" stream={stream} />
 								<Modes path="/spongebob" />

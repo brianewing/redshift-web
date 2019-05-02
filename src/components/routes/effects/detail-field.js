@@ -39,6 +39,8 @@ export default class DetailField extends Component {
 			return 
 		} else if(name == 'Transform') {
 			return <textarea name={name} onInput={this.onInput}>{value}</textarea>
+		} else if(typeof name == "object") {
+			return <pre>{ JSON.stringify(value) }</pre>
 		} else {
 			return <input name={name} value={value} onInput={this.onInput} />
 		}

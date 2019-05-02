@@ -25,10 +25,10 @@ export default class EffectSetEditor extends Component {
 		this.send([...effects.slice(0, index), update, ...effects.slice(index+1)])
 	}
 
-	render({ availableEffects, stream, effects }, { selection }) {
+	render({ availableEffects, stream, effects, preventWide }, { selection }) {
 		const chosenEffect = effects && effects[selection]
 
-		return <div class={style.effectSet} data-effect-selected={chosenEffect != null}>
+		return <div class={style.effectSet + (preventWide ? ' ' + style.preventWide : '')} data-effect-selected={chosenEffect != null}>
 			<div class={style.masterView}>
 				{ <List items={effects}
 						stream={stream}
@@ -44,7 +44,7 @@ export default class EffectSetEditor extends Component {
 										availableEffects={availableEffects}
 										onChange={this.updateSelectedEffect}
 										onBackButton={() => this.selectEffect(null)} />
-					: <h2>{/*Choose an effect*/}</h2> }
+					: <h2>Choose an effect</h2> }
 			</div>
 		</div>
 	}

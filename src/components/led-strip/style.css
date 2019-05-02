@@ -4,6 +4,7 @@
 	height: 100%;
 	padding: 0px;
 	z-index: 0;
+	overflow: hidden;
 	/* opacity: 0.5; */
 }
 

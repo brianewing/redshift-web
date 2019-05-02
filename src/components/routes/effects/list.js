@@ -56,7 +56,9 @@ export default class List extends Component {
 		})
 	}
 
-	reset = () => this.change(() => [{"Type": "Clear"}])
+	reset = () => {
+		this.change(() => [{"Type": "Clear"}])
+	}
 
 	toggleDisabled = (index) => {
 		this.change((items) => {
@@ -70,6 +72,10 @@ export default class List extends Component {
 			items[index] = replacement
 			return items
 		})
+	}
+
+	newClicked = () => {
+		this.change(() => [{"Type": "Rainbow"}])
 	}
 
 	addClicked = (e) => {
@@ -146,7 +152,7 @@ export default class List extends Component {
 			<li class={style.effectListHeader}>
 				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} onSave={this.saveSubmitted} /> }
 
-				<button style="float:left" onClick={this.reset}>New</button>
+				<button style="float:left" onClick={this.newClicked}>New</button>
 				<button style="float:left" onMouseEnter={this.openMouseEnter} onMouseLeave={this.openMouseLeave} onClick={this.openClicked}><FaFolderOpenO /></button>
 				<button style="float:left" onClick={this.saveClicked}><FaFloppyO /></button>
 

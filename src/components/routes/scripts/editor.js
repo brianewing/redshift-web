@@ -1,144 +1,145 @@
 import { h, Component } from 'preact';
 
-import AceEditor from 'react-ace';
 import basicContext from 'basiccontext';
 
-import 'react-ace/node_modules/brace/mode/javascript';
-import 'react-ace/node_modules/brace/mode/python';
+import SimpleCodeEditor from 'react-simple-code-editor';
 
-import 'react-ace/node_modules/brace/keybinding/vim';
-import 'react-ace/node_modules/brace/keybinding/emacs';
-
-import 'react-ace/node_modules/brace/theme/ambiance';
-import 'react-ace/node_modules/brace/theme/merbivore';
-import 'react-ace/node_modules/brace/theme/terminal';
-import 'react-ace/node_modules/brace/theme/monokai';
-import 'react-ace/node_modules/brace/theme/tomorrow_night_bright';
-import 'react-ace/node_modules/brace/theme/vibrant_ink';
+import 'prismjs';
+import 'prismjs/components/prism-python';
 
 import style from './style';
 
-// import GoArrowLeft from 'react-icons/go/arrow-left';
-import MdArrowBack from 'react-icons/md/arrow-back';
-
-let THEMES = ['ambiance', 'merbivore', 'terminal', 'vibrant_ink', 'tomorrow_night_bright']
-
 export default class Editor extends Component {
-	static defaultProps = {
-		mode: 'javascript',
-		theme: 'terminal',
-	}
-
 	state = {
-		fontSize: 0.9,
+		fontSize: 0.70,
+		tabSize: 2,
+		content: null,
 	}
 
 	componentWillMount() {
+		this.setState({
+			content: this.props.content,
+		})
+
 		if(!this.props.content) {
-			/* When a new file is opened (contents is blank), fill it with a sample script
-			 *
-			 * This achieves two things - it allows the user to get started quickly, and
-			 * also creates the file on the server, as the file chooser currently doesn't do this
-			 * when using the "New File" option */
-			const mode = this.props.mode
-			this.handleChange(SAMPLE_SCRIPTS[mode]) 
+			/* When a new file is opened, fill it with a sample script */
+			this.handleChange(sampleScriptFromFileName(this.props.fileName))
 		}
 	}
 
-	shouldComponentUpdate() {
-		/* AceEditor can't handle prop changes, it resets the Ace instance
-		 * So instead we render once, then update using the Ace API */
-		return false;
-	}
-
-	aceCommands() {
-		return [
-			{
-				name: 'save',
-				bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-				exec: this.save,
-			},
-		]
+	componentDidMount() {
+		this.focusTextarea()
+		this.moveCursorToStartOfTextarea()
 	}
 
 	showMenu = (e) => {
-		const { editor } = this.aceComponent
-
 		const changeFontSize = (delta) => {
-			let { fontSize } = this.state
-			fontSize += delta
-			this.setState({ fontSize })
-			this.aceComponent.editor.setFontSize(`${fontSize}em`)
+			this.setState({ fontSize: this.state.fontSize + delta })
 		}
 
-		const setKeyboardHandler = (mode) => {
-			this.aceComponent.editor.setKeyboardHandler(mode ? `ace/keyboard/${mode}` : null)
+		const changeTabSize = (delta) => {
+			this.setState({ tabSize: this.state.tabSize + delta })
 		}
 
 		const toggleLineWrapping = () => {
-			const session = this.aceComponent.editor.getSession()
-			session.setUseWrapMode(!session.getUseWrapMode())
+			this.setState({ lineWrap: !this.state.lineWrap })
 		}
 
 		basicContext.show([
-			{title: 'Font size ++', fn: () => { changeFontSize(+0.1) }},
-			{title: 'Font size --', fn: () => { changeFontSize(-0.1) }},
+			{title: 'Font size ++', fn: () => { changeFontSize(+0.05) }},
+			{title: 'Font size --', fn: () => { changeFontSize(-0.05) }},
 			{},
-			{title: 'Normal mode', fn: () => { setKeyboardHandler(null) }},
-			{title: 'Vim mode',    fn: () => { setKeyboardHandler('vim') }},
-			{title: 'Emacs mode',  fn: () => { setKeyboardHandler('emacs') }},
+			{title: 'Tab size ++', fn: () => { changeTabSize(+1) }},
+			{title: 'Tab size --', fn: () => { changeTabSize(-1) }},
 			{},
 			{title: 'Toggle line wrap', fn: () => { toggleLineWrapping() }},
 			{},
-			{title: 'Saved automatically', disabled: true},
+			{title: 'Saved automatically', fn: this.save},
 		], e)
-	}
-
-	setAceComponent = (component) => {
-		this.aceComponent = component;
 	}
 
 	save = () => {
 		const { onSave } = this.props
-		onSave && onSave(this.state.newContent)
+		onSave && onSave(this.state.content)
 	}
 
 	handleChange = (newText) => {
-		this.setState({ newContent: newText })
+		this.setState({ content: newText })
 		this.save()
 	}
 
-	render({ filename, content, mode, theme, keyboardHandler, onLeave }, { fontSize }) {
-		return <div class={style.editor}>
-			<div class={style.editorHeader}>
-				{onLeave && <a href="javascript:;" style="color:white !important" onClick={onLeave}><MdArrowBack /></a>}
-				Editing {filename}
-			</div>
-			<div class={style.ace} onContextMenu={this.showMenu}>
-				<AceEditor
-					ref={this.setAceComponent}
-					width="100%"
-					height="100%"
-					mode={mode}
-					theme={theme}
-					keyboardHandler={keyboardHandler}
-					showPrintMargin={false}
-					wrapEnabled={true}
-					fontSize="0.9em"
-					commands={this.aceCommands()}
-					defaultValue={content}
-					onChange={this.handleChange}
-					editorProps={{$blockScrolling: false, $hasCssTransforms: true}}
-				  />
-			</div>
+	focusTextarea = () => this.wrapperDiv.querySelector('textarea').focus()
+
+	moveCursorToStartOfTextarea = () => this.wrapperDiv.querySelector('textarea').setSelectionRange(0, 0)
+	moveCursorToEndOfTextarea = () => this.wrapperDiv.querySelector('textarea').setSelectionRange(-1, 0)
+
+	render({ fileName }, { content, fontSize, tabSize }) {
+		const highlight = (code) => Prism.highlight(code, prismLanguageFromFileName(fileName))
+
+		return <div class={style.editor}
+					style={`font-size: ${fontSize}em; height: 100%`}
+					ref={el => this.wrapperDiv = el}
+					onContextMenu={this.showMenu}
+					onClick={this.focusTextarea}>
+			<SimpleCodeEditor
+				value={content}
+				onValueChange={this.handleChange}
+				highlight={highlight}
+				tabSize={tabSize}
+				insertSpaces={true}
+				style={{}} />
 		</div>
 	}
 }
 
+function prismLanguageFromFileName(fileName) {
+	const components = fileName.split('.')
+	const extension = components[components.length-1]
+	switch(extension) {
+		case 'coffee': return Prism.languages.coffeescript
+		case 'js': return Prism.languages.js
+		case 'py': return Prism.languages.python
+	}
+	return Prism.languages.js
+}
+
+function sampleScriptFromFileName(fileName) {
+	const components = fileName.split('.')
+	const extension  = components[components.length-1]
+	switch(extension) {
+		case 'coffee': return SAMPLE_SCRIPTS.coffeescript
+		case 'js': return SAMPLE_SCRIPTS.javascript
+		case 'py': return SAMPLE_SCRIPTS.python
+	}
+	return SAMPLE_SCRIPTS.default
+}
+
 const SAMPLE_SCRIPTS = {
+	default: `#!/bin/sh
+
+echo "Hello world from your new script file!" > /dev/stderr
+
+# Run cat which will echo pixels from stdin to stdout without changing them
+exec cat
+`,
+
+	coffeescript: `#!/usr/bin/env coffee
+
+redshift = require './redshift'
+
+console.info "#{require('path').basename __filename} script running"
+
+redshift (frame) ->
+	frame[0] = [255, 0, 0]
+	frame[frame.length - 1] = [0, 0, 255]
+	frame[Math.floor(frame.length / 1)] = [0, 255, 0]
+`,
+
 	javascript: `#!/usr/bin/env node
 
-let redshift = require('./redshift');
+const redshift = require('./redshift');
+
+console.info(\`\${require('path').basename(__filename)} script running\`);
 
 redshift((frame) => {
 	frame[0] = [255, 0, 0]; // set first pixel to red
@@ -146,7 +147,10 @@ redshift((frame) => {
 
 	python: `#!/usr/bin/env python
 
-from redshift import run
+from os.path import basename
+from redshift import run, log
+
+log('%s script running' % os.path.basename(__file__))
 
 def animation(frame):
 	frame[0] = (255, 0, 0) # set first pixel to red
