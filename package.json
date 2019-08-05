@@ -17,34 +17,33 @@
     "extends": "eslint-config-synacor"
   },
   "devDependencies": {
-    "eslint": "^4.6.0",
-    "eslint-config-synacor": "^1.1.1",
-    "if-env": "^1.0.0",
-    "preact": "^8.2.7",
+    "eslint": "^4.19.1",
+    "eslint-config-synacor": "^1.1.2",
+    "if-env": "^1.0.4",
+    "preact": "^8.4.2",
     "preact-cli": "^2.2.1",
     "preact-range-slider": "^0.2.0",
-    "tslib": "^1.9.0"
+    "tslib": "^1.9.3"
   },
   "dependencies": {
     "basiccontext": "^3.5.1",
-    "basicgrid": "^3.0.0",
+    "basicgrid": "^3.1.2",
     "basicmodal": "^3.3.9",
     "brace": "^0.11.1",
     "coloreact": "^0.2.4",
     "decko": "^1.2.0",
-    "es6-shim": "^0.35.4",
-    "linkstate": "^1.1.0",
-    "preact": "^8.2.5",
-    "preact-compat": "^3.17.0",
-    "preact-portal": "^1.1.2",
-    "preact-router": "^2.5.7",
-    "prismjs": "^1.15.0",
-    "rc-collapse": "^1.10.2",
-    "react-ace": "^6.2.0",
-    "react-color": "^2.13.8",
-    "react-icons": "^2.2.5",
-    "react-simple-code-editor": "^0.9.3",
+    "es6-shim": "^0.35.5",
+    "linkstate": "^1.1.1",
+    "preact-compat": "^3.18.5",
+    "preact-portal": "^1.1.3",
+    "preact-router": "^2.6.1",
+    "prismjs": "^1.16.0",
+    "rc-collapse": "^1.11.1",
+    "react-ace": "^6.5.0",
+    "react-color": "^2.17.3",
+    "react-icons": "^2.2.7",
+    "react-simple-code-editor": "^0.9.10",
     "react-sortable-hoc": "^0.6.8",
-    "react-view-slider": "^3.0.6"
+    "react-view-slider": "^3.0.7"
   }
 }
