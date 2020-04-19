@@ -3,14 +3,13 @@ import style from './style'
 
 export default class LEDStrip extends Component {
 	componentWillMount() {
-		if(!this.props.stream)
-			throw new Error("LEDStrip mounted with null stream")
-
 		window.addEventListener('resize', this.adjustCanvas)
 	}
 
 	componentWillUnmount() {
-		this.props.stream.off('pixels', this.renderFrame)
+		if(this.props.stream)
+			this.props.stream.off('pixels', this.renderFrame)
+
 		window.removeEventListener('resize', this.adjustCanvas)
 	}
 
@@ -68,13 +67,13 @@ export default class LEDStrip extends Component {
 		const ledHeight = canvas.height / Math.sqrt(len)
 
 		// const gapWidth = Math.floor(ledWidth / 40)
-		// const gapWidth =  (window.devicePixelRatio == 1) ? 1 : 0.5
 		// const gapWidth = 2.8
-		const gapWidth = 1
+		const gapWidth = 1 / window.devicePixelRatio
+		// const gapWidth = 10
 
 		for(let i=0; i<len; i++) {
 			const led = (reverse ? buffer[len - i - 1] : buffer[i])
-			
+
 			const x = Math.floor(i % Math.sqrt(len))
 			const y = Math.floor(i / Math.sqrt(len))
 
@@ -87,7 +86,7 @@ export default class LEDStrip extends Component {
 			// // stroke
 			ctx.lineWidth = gapWidth
 			// ctx.strokeStyle = 'rgba(0,0,0,0.55)'
-			ctx.strokeStyle = 'rgba(0,0,0,0.35)'
+			ctx.strokeStyle = 'rgba(0,0,0,1)'
 			// ctx.strokeStyle = 'rgba(255,255,255,0.25)'
 			ctx.strokeRect(ledWidth*x, ledHeight*y, ledWidth, ledHeight)
 		}

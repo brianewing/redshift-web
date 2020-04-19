@@ -1,8 +1,8 @@
 {
-  "name": "Redshift Controller",
+  "name": "Redshift LED Studio",
   "short_name": "Redshift",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#fff",
   "theme_color": "#000",
   "icons": [{

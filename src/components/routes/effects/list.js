@@ -1,12 +1,8 @@
 import { h, Component } from 'preact';
 
-import FaAsterisk from 'react-icons/lib/fa/asterisk';
-import FaFloppyO from 'react-icons/lib/fa/floppy-o';
-import FaPlusSquareO from 'react-icons/lib/fa/plus-square-o';
-import FaFolderOpenO from 'react-icons/lib/fa/folder-open-o';
-import FaRefresh from 'react-icons/lib/fa/repeat';
-import MdAutorenew from 'react-icons/lib/md/autorenew';
-import MdCached from 'react-icons/lib/md/cached';
+import {
+	FaFloppyO, FaPlusSquareO, FaFolderOpenO, FaRandom, FaRedo
+} from 'react-icons/fa';
 
 import basicContext from 'basiccontext';
 
@@ -14,7 +10,7 @@ import Modal from '../../modal';
 import { fetch as fetchEffects, load as loadEffects, save as saveEffects } from '../../../effect-definitions';
 
 import ListItem from './list-item';
-
+                      
 import style from './style';
 
 export default class List extends Component {
@@ -25,12 +21,12 @@ export default class List extends Component {
 	}
 
 	add = (newEffect, index=null) => {
-		if(index == null) {
-			index = this.props.items.length
-		}
-		this.change((items) => {
+		this.change(items => {
+			index = (index === null ? items.length : index)
 			return [...items.slice(0, index), newEffect, ...items.slice(index)]
 		})
+
+		this.props.onSelection && this.props.onSelection(index)
 	}
 
 	move = (index, delta) => {
@@ -75,7 +71,8 @@ export default class List extends Component {
 	}
 
 	newClicked = () => {
-		this.change(() => [{"Type": "Rainbow"}])
+		//this.change(() => [{"Type": "Rainbow"}])
+		this.loadEffectsFile('new.json')
 	}
 
 	addClicked = (e) => {
@@ -85,7 +82,7 @@ export default class List extends Component {
 			})
 			basicContext.show(menu, e)
 		} else {
-			this.add(this.props.items.length)
+			this.add({"Type": "Null"})
 		}
 	}
 
@@ -100,7 +97,7 @@ export default class List extends Component {
 
 	openClicked = (e) => {
 		if(!this.openFilenamesPromise)
-			this.openMouseIn()
+			this.openMouseEnter()
 
 		this.openFilenamesPromise.then((filenames) => {
 			const menu = filenames.map((f) => {
@@ -108,6 +105,16 @@ export default class List extends Component {
 			})
 
 			basicContext.show([{title: "New", fn: this.reset}, {}, ...menu], e)
+		})
+	}
+
+	openRandomSavedSet = () => {
+		if(!this.openFilenamesPromise)
+			this.openMouseEnter()
+
+		this.openFilenamesPromise.then(filenames => {
+			const randomChoice = filenames[Math.floor(Math.random() * filenames.length)]
+			this.loadEffectsFile(randomChoice)
 		})
 	}
 
@@ -121,6 +128,8 @@ export default class List extends Component {
 			} else if(filename.endsWith('.yaml')) {
 				append ? stream.appendEffectsYaml(data) : stream.setEffectsYaml(data)
 			}
+
+			this.setState({ lastEffectsFilename: filename })
 		})
 	}
 
@@ -147,16 +156,25 @@ export default class List extends Component {
 		console.log(e.getData())
 	}
 
-	render({ items, selection, availableEffects }, { shade, saving }) {
+	render({ items, selection, availableEffects }, { shade, saving, lastEffectsFilename }) {
 		return <ul class={shade ? style.shade : ''}>
+			{/* { lastEffectsFilename && 
+				<li class={style.effectListCurrentFilename}>
+					{ lastEffectsFilename && <span>{ lastEffectsFilename }</span> }
+				</li> } */}
+
 			<li class={style.effectListHeader}>
 				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} onSave={this.saveSubmitted} /> }
 
-				<button style="float:left" onClick={this.newClicked}>New</button>
-				<button style="float:left" onMouseEnter={this.openMouseEnter} onMouseLeave={this.openMouseLeave} onClick={this.openClicked}><FaFolderOpenO /></button>
-				<button style="float:left" onClick={this.saveClicked}><FaFloppyO /></button>
+				{ lastEffectsFilename && <div class={style.effectListCurrentFilename}><span>{ lastEffectsFilename }</span></div> }
 
-				<button onClick={this.restartClicked}><MdCached /></button>
+				<button onClick={this.newClicked}>New</button>
+				<button onClick={this.openClicked} onMouseEnter={this.openMouseEnter} onMouseLeave={this.openMouseLeave}><FaFolderOpenO /></button>
+				<button onClick={this.saveClicked}><FaFloppyO /></button>
+
+				<button onClick={this.openRandomSavedSet}><FaRandom /></button>
+				<button onClick={this.restartClicked}><FaRedo /></button> { /* alt icon: MdCached */ }
+
 				<button onClick={this.addClicked}><FaPlusSquareO /></button>
 			</li>
 
@@ -170,6 +188,7 @@ export default class List extends Component {
 					onDuplicate={this.duplicate.bind(null, index)}
 					onReplace={this.replace.bind(null, index)}
 					onRemove={this.remove.bind(null, index)} />) }
+
 		</ul>
 	}
 }

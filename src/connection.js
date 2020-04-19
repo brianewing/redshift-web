@@ -31,7 +31,9 @@ export default class Connection {
 
 	CmdClose = 15
 
-	/* This array tracks streams opened with CmdOpenStream, indexed by channel */
+	CmdUpdateEffectsInPlace = 16
+
+	/* an array of streams opened with CmdOpenStream, indexed by channel */
 	_streams = []
 
 	_pongListeners = {} // callbacks waiting on response to CmdPing, indexed by ping msg
@@ -97,13 +99,13 @@ export default class Connection {
 		})
 	}
 
-	openStream(desc) {
+	async openStream(desc) {
 		const stream = new Stream(this)
 		stream.channel = this._streams.length
 
 		this._streams.push(stream)
 
-		return this.connect().then(() => {
+		return await this.connect().then(() => {
 			this.sendSysEx(stream.channel, this.CmdOpenStream, desc)
 			return stream
 		})
@@ -124,6 +126,11 @@ export default class Connection {
 	appendEffects = (channel, effects) => this.appendEffectsJson(channel, JSON.stringify(effects))
 	appendEffectsJson = (channel, json) => this.sendSysEx(channel, this.CmdAppendEffectsJson, json)
 	appendEffectsYaml = (channel, yaml) => this.sendSysEx(channel, this.CmdAppendEffectsYaml, yaml)
+
+	updateEffectsInPlace = (channel, path, effects) => {
+		const data = `${path}\0${JSON.stringify(effects)}`
+		this.sendSysEx(channel, this.CmdUpdateEffectsInPlace, data)
+	}
 
 	requestOscSummary = () => {
 		this.sendSysEx(0, this.CmdOscSummary)

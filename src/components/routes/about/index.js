@@ -10,6 +10,7 @@ import Licenses from './licenses';
 import style from './style';
 
 const pages = {
+	"docs":     Docs,
 	"licenses": Licenses,
 	"help":     () => <div />,
 }
@@ -19,6 +20,12 @@ export default function About({ page, serverWelcome }) {
 
 	return <div class={style.about}>
 		<Page serverWelcome={serverWelcome} />
+	</div>
+}
+
+function Docs() {
+	return <div class={style.about}>
+		<iframe src="http://localhost:3000" frameBorder={0} style="width:100%;height:100%;" />
 	</div>
 }
 
@@ -45,7 +52,7 @@ function Index({ serverWelcome }) {
 		</pre>
 
 		<ul>
-			<li onClick={ () => alert('not available yet') }>
+			<li onClick={ () => route('/about/docs') }>
 				Open Documentation
 			</li>
 

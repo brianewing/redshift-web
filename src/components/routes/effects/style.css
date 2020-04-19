@@ -6,9 +6,9 @@
 	width: 100%;
 	height: 100%;
 	/* padding: 0.5em; */
-	padding: 1px;
+	/* padding: 1px; */
 	color: white;
-	text-align: center;
+	/* text-align: center; */
 	/* background-color: rgba(0, 0, 0, 0.5); */
 }
 
@@ -38,7 +38,7 @@
 
 .masterView {
 	display: inline-block;
-	width: 30%;
+	width: 20%;
 	height: 100%;
 	overflow: scroll;
 }
@@ -46,16 +46,19 @@
 .detailView {
 	display: inline-block;
 	height: 100%;
-	width: 70%;
+	width: 80%;
 	vertical-align: top;
 	overflow: scroll;
+
+	/* padding: 0em 0.5em; */
+	padding-right: 0.05em;
 }
 
 .detailMobileNav {
 	display: none;
 }
 
-@media(max-width: 1640px) {
+@media(max-width: 8400px) {
 	.masterView, .detailView {
 		width: 100%;
 	}
@@ -71,7 +74,7 @@
 	.detailMobileNav {
 		vertical-align: top;
 		height: 100%;
-		text-align: center;
+		/* text-align: center; */
 		width: 10%;
 		cursor: pointer;
 	}
@@ -107,89 +110,137 @@
  */
 
 .effectListHeader {
-	text-align: right;
-	padding-bottom: 0.5em;
+	display: flex;
+	flex-wrap: wrap;
+	/* margin: 2px; */
+	width: 100%;
+}
+
+/* @media(max-width: 840px) {
+	.effectListHeader {
+		flex-direction: column;
+		flex-basis: 
+	}
+
+	.effectListHeader button:not(:first-child) {
+		margin-top: 0.25em;
+		margin-left: 0.25em;
+	}
+} */
+
+.effectListHeader button {
+	flex: 2;
+	flex-grow: 1;
+	/* border-radius: 4px; */
+	margin-bottom: 2px;
+	font-weight: bold;
 }
 
 .effectListHeader button:not(:first-child) {
-	margin-left: 0.25em;
+	/* margin-left: 0.20em; */
+}
+
+.effectListHeader button:not(:last-child) {
+	/* margin-right: 1px; */
+	/* border-right: 1px solid rgba(255, 255, 255, 0); */
 }
 
 .effectListHeader button svg {
 	color: white;
-} .effectListHeader button:hover svg {
+}
+
+.effectListHeader button:hover, .effectListHeader button:hover svg {
+	border: none;
 	color: rgb(255, 210, 50);
 }
 
-.effectListItem {
+.effectListCurrentFilename {
+	/* background: rgba(0, 0, 0, 0.7); */
+	/* text-align: right; */
+	padding: 0em 0.5em;
+	/* font-size: 0.85em; */
+	vertical-align: middle;
+	display: flex;
+	flex: 1;
+	font-size: 0.8em;
+	margin: auto;
+	height: 100%;
+	width: 100%;
 	text-align: center;
-	list-style: none;
-	min-height: 2.5em;
+}
 
-	border-radius: 1px;
+.effectListItem {
+	/* text-align: center; */
+	list-style: none;
+	min-height: 2.2em;
 	background: rgba(0, 0, 0, 0.60);
 } .effectListItem:not(:last-child) {
-	margin-bottom: 0.5em;
+	margin-bottom: 1px;
 }
 
 .effectListItem:hover {
-	background: rgba(0, 0, 0, 0.70);
-} .effectListItem:hover > .effectToolbar {
-	border: 1px solid rgba(255, 255, 255, 0.5);
+	background: rgba(0, 0, 0, 0.78);
+	/* border: 1px solid rgba(255, 255, 255, 0.5); */
 }
 
 .effectListItem.selected {
-	background: rgba(0, 0, 0, 0.8);
-} .effectListItem.selected > .effectToolbar {
-	border: 1px solid rgba(255, 255, 255, 0.7);
+	background: rgba(0, 0, 0, 0.9);
+	/* border: 1px solid rgba(255, 255, 255, 0.5); */
 }
 
 .disabledEffect:not(.selected) {
-	opacity: 0.75;
+	opacity: 0.8;
 } .disabledEffect .effectName {
 	text-decoration: line-through;
 }
 
 .effectToolbar {
 	line-height: 2.5em;
-	padding: 0em 1em;
-	background: rgba(0, 0, 0, 0.30);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	/* padding: 0em 1em; */
+	/* background: rgba(0, 0, 0, 0.30); */
+	/* border: 1px solid rgba(255, 255, 255, 0.2); */
 	position: relative;
-	margin-bottom: 0.5em;
+	/* margin-bottom: 0.25em; */
 }
 
 .effectToolbar .effectName {
 	display: inline-block;
+	padding-left: 1em;
 	/* width: 30%; */
 	/* width: 70%; */
 	text-align: left;
 }
 
 .effectToolbar .toolbarButtons {
-	/* display: inline-block; */
-	display: none;
-	width: 30%;
-	text-align: right;
+	display: flex;
+	/* display: none; */
+	width: 100%;
 	padding: 0px 0px;
 }
 
 .effectToolbar .toolbarButtons button {
+	flex: 1;
+}
+/* .effectToolbar .toolbarButtons button {
 	position: relative;
 	display: inline-block;
 	vertical-align: top;
 	height: 3.0em;
 	line-height: 1em;
 	border: none;
-	/* border-right: 1px solid rgba(255, 255, 255, 0.3); */
+	/* border-right: 1px solid rgba(255, 255, 255, 0.3); /
 	border-radius: none;
 	min-width: 3em;
 
 	background: none;
-}
+} */
 
 .toolbarButtons button:last-child {
 	border-right-width: 0px;
+}
+
+.toolbarButtons button:first-child {
+
 }
 
 /*
@@ -197,22 +248,18 @@
  */
 
 .effectDetail {
-	padding: 0em 0.5em;
-	padding-right: 0.05em;
 	/* padding: 1em */
 }
 
 .effectDetail .effectType {
 	width: 100%;
-	text-align: center;
-	text-align-last: center;
+	/* text-align: center; */
+	/* text-align-last: center; */
 	background: rgba(0, 0, 0, 0.5);
 	color: #fff;
-	border: none;
 	font-weight: bold;
 	font-size: 1em;
 	margin-bottom: 0.5em;
-	height: 2.5em;
 }
 
 .effectDetail .effectType:hover {
@@ -226,8 +273,18 @@
 }
 
 .effectDetail .effectParams {
+	/* background: rgba(0, 0, 0, 0.4); */
 	/* padding: 0em 0.4em; */
 	/* background-color: rgba(0, 0, 0, 0.6); */
+	/* display: flex; */
+	/* flex-wrap: wrap; */
+}
+
+.effectDetail .effectParams > div:not(.effectSet) {
+	/* flex: 1 0 33%; */
+	flex: 1;
+	flex-grow: 1;
+	padding: 1em;
 }
 
 .effectDetail .effectParamName {
@@ -237,7 +294,6 @@
 	font-weight: bold;
 
 	padding: 0;
-	margin: 1em 0em 0em 0em;
 }
 
 .effectDetail .effectParams .color {
@@ -250,7 +306,7 @@
 
 .effectDetail .actions {
 	text-align: left;
-	margin-bottom: 0.5em;
+	margin-bottom: 2px;
 	display: flex;
 }
 
@@ -265,13 +321,15 @@
 }
 
 .effectDetail .actions button:last-child {
-	margin-left: 0.2em;
+	/* margin-left: 0.2em; */
 	margin-right: 0em;
 }
 
-/* .effectDetail .effectSet {
-	margin-top: 1em;
-} */
+.effectDetail .effectSet {
+	padding: 0 0.5em;
+	width: 100%;
+	/* margin-top: 1em; */
+}
 
 /*
  * Control Sets
@@ -279,10 +337,12 @@
 
 .controlSet {
 	padding-bottom: 0.5em;
-	/* display: flex; */
+	display: flex;
 }
 
 .controlEnvelope {
+	flex: 1;
+	/* border: 1px solid yellow; */
 	/* background-color: rgba(255, 0, 0, 0.3); */
 }
 
@@ -316,7 +376,7 @@
 
 	margin: 1em;
 
-	text-align: center;
+	/* text-align: center; */
 }
 
 .controlParamName {

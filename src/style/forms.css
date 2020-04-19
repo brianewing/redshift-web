@@ -1,28 +1,50 @@
 button { min-height: 2.9em; min-width: 2.9em; font-size: 0.80em; }
 
+button, select, input {
+    width: 100%;
+}
+
 button, select {
     padding: 0.5em;
 
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
+    background: rgba(0, 0, 0, 0.8);
     /* border: 1px solid rgba(255, 255, 255, 0.2); */
     /* border-radius: 4px; */
 
     font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
+    font-weight: bold;
 
     color: white;
     opacity: 1.0;
 
     outline: none;
+    border: 1px solid transparent;
+
+    padding: 1em;
+    font-size: 1.5em;
 }
 
 button:hover {
     opacity: 1;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.4);
 } button:active {
     opacity: 0.7;
     transform: scale(0.97) translate(1px, 1px);
+}
+
+button[data-toggle] {
+    /* border: 5px solid rgba(230, 0, 0, 0.7); */
+    background: rgba(140, 0, 0, 0.8);
+}
+
+button[data-toggled] {
+    /* border: 5px solid rgba(255, 255, 255, 0.8); */
+    background: rgba(0, 150, 0, 0.8);
+}
+
+select {
+    padding: 1em;
 }
 
 input::placeholder {

@@ -15,15 +15,15 @@
 @import './forms';
 @import './vendor-overrides';
 
-@import url('https://fonts.googleapis.com/css?family=Dosis');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 ::-webkit-scrollbar { display: none; }
 
 * {
-  box-sizing: border-box;
-  /* border-radius: 0px !important; */
-  /* text-shadow: none !important; */
-  /* box-shadow: none !important; */
+	box-sizing: border-box;
+	/* border-radius: 0px !important; */
+	/* text-shadow: none !important; */
+	/* box-shadow: none !important; */
 	-webkit-font-smoothing: subpixel-antialiased !important;
 	-webkit-backface-visibility: unset;
 }
@@ -35,7 +35,9 @@ html, body {
 	padding: 0;
 	margin: 0;
 
-	font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif;
+	/* font-family: 'Dosis', 'Helvetica Neue', arial, sans-serif; */
+	font-family: 'Source Sans Pro', arial, sans-serif;
+	/* font-size: 0.95em; */
 
 	background: #111;
 	color: white;
@@ -51,7 +53,7 @@ html, body {
 	user-select: none;
 	cursor: default;
 
-	border-radius: 4px;
+	/* border-radius: 4px; */
 	background: #000 !important;
 }
 
@@ -59,8 +61,13 @@ html, body {
 	height: 100%;
 	width: 100%;
 	position: absolute;
+	border-radius: 4px;
+}
+
+@media only screen and (max-device-width: 1024px) {
 	font-size: 1.15em;
 }
+
 
 h1, h2, h3 {
 	font-weight: normal;
@@ -78,12 +85,12 @@ a {
 	right: 0px;
 
 	margin: 0em;
-	top: 2.80em;
+	top: 3.3em;
 
 	/* padding: 0.5em; */
 
 	border: 1px solid rgba(255, 255, 255, 0);
-	border-radius: 4px !important;
+	/* border-radius: 4px !important; */
 
 	width: 100%;
 	height: calc(100% - 2.8em);
@@ -97,11 +104,11 @@ a {
 	opacity: 1.0;
 }
 
-@media(min-width: 800px) {
+/* @media(max-device-width: 1024px) {
 	#main {
 		padding: 0.5em;
 	}
-}
+} */
 
 #main.headerHidden {
 	transform: translateY(-2.80em);
@@ -120,4 +127,8 @@ a {
 
 #main .route-active {
 	opacity: 1;
+}
+
+a, button {
+  -webkit-app-region: no-drag;
 }

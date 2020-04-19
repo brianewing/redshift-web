@@ -25,7 +25,14 @@ export default class EffectSetEditor extends Component {
 		this.send([...effects.slice(0, index), update, ...effects.slice(index+1)])
 	}
 
-	render({ availableEffects, stream, effects, preventWide }, { selection }) {
+	removeSelectedEffect = () => {
+		const effects = this.props.effects || []
+		const index = this.state.selection
+
+		this.send([...effects.slice(0, index), ...effects.slice(index+1)])
+	}
+
+	render({ availableEffects, oscSummary, stream, effects, preventWide }, { selection }) {
 		const chosenEffect = effects && effects[selection]
 
 		return <div class={style.effectSet + (preventWide ? ' ' + style.preventWide : '')} data-effect-selected={chosenEffect != null}>
@@ -42,9 +49,11 @@ export default class EffectSetEditor extends Component {
 				{ chosenEffect
 					? <Detail effect={chosenEffect}
 										availableEffects={availableEffects}
+										oscSummary={oscSummary}
 										onChange={this.updateSelectedEffect}
+										onRemove={this.removeSelectedEffect}
 										onBackButton={() => this.selectEffect(null)} />
-					: <h2>Choose an effect</h2> }
+					: <h2 style={'text-align:center'}>Choose an effect</h2> }
 			</div>
 		</div>
 	}

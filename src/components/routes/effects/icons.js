@@ -1,23 +1,21 @@
-// import FaAutomobile from 'react-icons/lib/fa/automobile';
-import FaCab from 'react-icons/lib/fa/cab';
-import FaClone from 'react-icons/lib/fa/clone';
-// import FaCircleThin from 'react-icons/lib/fa/circle-thin';
-import FaCode from 'react-icons/lib/fa/code';
-import FaEraser from 'react-icons/lib/fa/eraser';
-import FaEllipsisH from 'react-icons/lib/fa/ellipsis-h';
-// import FaLightbulbO from 'react-icons/lib/fa/lightbulb-o';
-import FaSquareO from 'react-icons/lib/fa/square-o';
+import {
+	MdBrightness5, MdFlip, MdLooks, MdLinearScale
+} from 'react-icons/md';
 
-import MdBrightness5 from 'react-icons/lib/md/brightness-5';
-import MdFlip from 'react-icons/lib/md/flip';
-import MdLooks from 'react-icons/lib/md/looks';
-import MdLinearScale from 'react-icons/lib/md/linear-scale';
+import {
+	FaCab, FaClone, FaCode, FaEraser, FaEllipsisH, FaSquareO
+} from 'react-icons/fa';
+
+import {
+	GiConwayLifeGlider
+} from 'react-icons/gi';
 
 export default function renderIcon(effectType) {
 	switch(effectType) {
 		case 'Brightness': return <MdBrightness5 />
 		case 'Clear': return <FaEraser />
 		case 'External': return <FaCode />
+		case 'GameOfLife': return <GiConwayLifeGlider />
 		case 'LarsonEffect': return <FaCab />
 		case 'Layer': return <FaClone />
 		case 'Mirror': return <MdFlip />

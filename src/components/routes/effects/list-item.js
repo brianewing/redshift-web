@@ -99,8 +99,9 @@ export default class ListItem extends Component {
 					{renderIcon(effect.Type)} <strong>{effect.Type}</strong> {this.renderSummary()}
 				</div>
 
-				<div class={style.toolbarButtons}>
-					{/*<button onClick={this.toggleDisabled}>{effect.Disabled ? 'Enable' : 'Disable'}</button>*/}
+				<div class={style.toolbarButtons} onClick={(e) => e.stopPropagation()}>
+					<button onClick={this.toggleDisabled}>{effect.Disabled ? 'Enable' : 'Disable'}</button>
+					<button onClick={this.remove}>Remove</button>
 					<button onClick={this.moveDown}>&darr;</button>
 					<button onClick={this.moveUp}>&uarr;</button>
 				</div>

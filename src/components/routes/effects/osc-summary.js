@@ -13,7 +13,7 @@ export default class OscSummary extends Component {
     interval = null
 
     componentWillMount() {
-        // this.interval = setInterval(this.request, 1000 / SUMMARY_FPS)
+         this.interval = setInterval(this.request, 1000 / SUMMARY_FPS)
     }
 
     componentWillUnmount() {
@@ -21,9 +21,12 @@ export default class OscSummary extends Component {
     }
 
     request = () => {
-        const { connection } = this.props
+        const { connection, onReceive } = this.props
         if(connection)
-            connection.requestOscSummary().then((summary) => this.setState({ summary }))
+            connection.requestOscSummary().then(summary => {
+                this.setState({ summary })
+                onReceive && onReceive(summary)
+            })
     }
 
     clear = () => {
@@ -37,10 +40,10 @@ export default class OscSummary extends Component {
     render({}, { summary }) {
         const numAddresses = Object.keys(summary).length
 
-        if(!numAddresses)
+        if(!numAddresses && true)
             return <div></div>
 
-		return <div class={style.oscSummary}>
+        return <div class={style.oscSummary}>
             <Collapse accordion={true}>
                 <Collapse.Panel header={'OSC Summary' + (numAddresses ? ` (${numAddresses} Addresses)` : '')}>
                     <button onClick={this.clear}>Clear</button>
@@ -52,6 +55,6 @@ export default class OscSummary extends Component {
                     </ul>
                 </Collapse.Panel>
             </Collapse>
-		</div>
+        </div>
     }
 }

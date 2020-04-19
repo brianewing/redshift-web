@@ -6,7 +6,7 @@ import OscSummary from './osc-summary';
 
 import style from './style';
 
-const EFFECTS_FPS = 10
+const EFFECTS_FPS = 3
 
 /*
  * Receives effects JSON from stream and allows user
@@ -37,9 +37,11 @@ export default class Effects extends Component {
 
 	/* send / receive */
 
-	receiveEffects = (effects) => {
+	receiveEffects = (effects) =>
 		this.setState({ effects: effects || [] })
-	}
+
+	receiveOscSummary = (oscSummary) =>
+		this.setState({ oscSummary })
 
 	send = (effects) => {
 		this.props.stream.setEffects(effects)
@@ -48,10 +50,10 @@ export default class Effects extends Component {
 	/* render */
 
 	// todo: find better name for availableEffects
-	render({ availableEffects, stream, connection }, { effects }) {
+	render({ availableEffects, stream, connection }, { effects, oscSummary }) {
 		return <div class={style.effects}>
-			<EffectSetEditor effects={effects} availableEffects={availableEffects} stream={stream} onChange={this.send} />
-			<OscSummary connection={connection} />
+			<EffectSetEditor effects={effects} availableEffects={availableEffects} oscSummary={oscSummary} stream={stream} onChange={this.send} />
+			{<OscSummary connection={connection} onReceive={this.receiveOscSummary} />}
 		</div>
 	}
 

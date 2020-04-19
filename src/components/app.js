@@ -18,13 +18,15 @@ import Settings from './routes/settings/index'
 import Config from '../config'
 import Connection from '../connection'
 
+import { load as loadEffectSet } from '../effect-definitions'
+
 const HOST = Config.host
-const WS_URL = `ws://${HOST}:9191`
+const WS_URL = `${window.location.protocol == 'http:'? 'ws' : 'wss'}://${HOST}:9191`
 const SCRIPTS_URL = `http://${HOST}:9292`
 
 const clientInfo = {
 	AppType: 0, // redshift app
-	AppVersionMajor: 1,
+	AppVersionMajor: 0,
 	AppVersionMinor: 5,
 	DeviceName: "",
 }
@@ -53,19 +55,25 @@ export default class App extends Component {
 	}
 
 	showMenu = (e) => {
-		let go = (url) => () => route(url)
+		const go = (url) => () => route(url)
 		basicContext.show([
-			{title: 'Cinema', fn: go('/')},
+			{title: 'Cinema', fn: go('/cinema')},
 			{title: 'Effects', fn: go('/effects')},
-			{title: 'Script Editor', fn: go('/scripts')},
+			{title: 'Scripts', fn: go('/scripts')},
 			{title: 'Help', fn: go('/about')},
 			{},
 			{title: 'Settings', fn: go('/settings')},
 			{title: (this.state.off ? 'Connect' : 'Disconnect'), fn: this.toggleOff},
 			{},
-			// {title: 'Test Ping', fn: () => this.pingTest(true)},
-			{title: 'Refresh', fn: () => window.location = window.location},
-			{title: 'Fullscreen', fn: document.fullscreenEnabled && this.toggleFullscreen}
+			{title: 'New Scratchpad', fn: () => {
+				this.state.stream.close()
+				this.openStream('virtual 100', '/scratch.json')
+			}},
+			{},
+			{title: 'Test Ping', fn: () => this.pingTest(true)},
+			{title: 'Fullscreen', fn: document.fullscreenEnabled && this.toggleFullscreen},
+			{},
+			{title: 'Refresh', fn: () => window.location = window.location}
 		], e)
 	}
 
@@ -138,8 +146,8 @@ export default class App extends Component {
 				case "Digit1":    route('/');          match = true; break
 				case "Digit2":    route('/effects');   match = true; break
 				case "Digit3":    route('/scripts');   match = true; break
-				case "Digit4":    route('/repl');      match = true; break
-				case "Digit5":    route('/about');     match = true; break
+				case "Digit4":    route('/about');     match = true; break
+				case "Digit5":    route('/repl');      match = true; break
 				case "Digit6":    this.toggleOff();    match = true; break
 			}
 			if(match) e.preventDefault()
@@ -200,10 +208,11 @@ export default class App extends Component {
 			this.connection.close()
 	}
 
-	openStream() {
-		return this.connection.openStream('strip').then((stream) => {
+	openStream(desc='strip', load=null) {
+		return this.connection.openStream(desc).then((stream) => {
 			this.setState({ stream: stream })
 			stream.setFps(Config.bufferFps)
+			load && loadEffectSet(load).then(effectSet => stream.setEffectsJson(effectSet))
 		})
 	}
 
@@ -225,23 +234,25 @@ export default class App extends Component {
 				{ /* the background LED strip */ }
 				{ stream && <LEDStrip stream={stream} paused={off} /> }
 
-				{ ping ? <Modal onClose={() => this.setState({ ping: null })}>
-					<h2>Ping { ping }ms</h2>
-					Average { (this._pings.reduce((a,b) => a+b, 0) / this._pings.length).toFixed(2) }
-				</Modal> : null }
-
 				<main id="main" class={(hideHeader ? 'headerHidden' : '')}>
 					{ serverWelcome
 						? <Router onChange={this.handleRoute}>
 								<Settings path="/settings" />
 								<About path="/about/:page?" serverWelcome={serverWelcome} />
-								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%;-webkit-app-region:drag">{/* Cinema Mode */}</div>
+								<div path="/" onClick={this.toggleHeader} style="width:100%;height:100%;">{/* Cinema Mode */}</div>
 								<Effects path="/effects/:selection?" availableEffects={serverWelcome.availableEffects} connection={this.connection} stream={stream} />
 								<Scripts path="/scripts" serverUrl={SCRIPTS_URL} />
 								<Repl path="/repl" stream={stream} />
 								<Modes path="/spongebob" />
 							</Router>
-						: <Modal><input onInput={(e) => Config.host = e.currentTarget.value} value={Config.host} />Connecting...</Modal> }
+						: <Modal>
+							<input onInput={e => {
+								Config.host = e.currentTarget.value
+								this.closeConnection()
+								this.openConnection()
+							}} value={Config.host} />
+							Connecting...
+						</Modal> }
 				</main>
 			</div>
 		);

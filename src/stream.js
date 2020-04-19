@@ -23,6 +23,8 @@ export default class Stream {
 	appendEffectsJson(json) { this.connection.appendEffectsJson(this.channel, json) }
 	appendEffectsYaml(yaml) { this.connection.appendEffectsYaml(this.channel, yaml) }
 
+	updateEffectsInPlace(path, effects) { this.connection.updateEffectsInPlace(this.channel, path, effects) }
+
 	repl(cmd) {
 		this.connection.sendReplCommand(this.channel, cmd)
 	}

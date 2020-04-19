@@ -11,7 +11,7 @@ import style from './style';
 
 export default class Editor extends Component {
 	state = {
-		fontSize: 0.70,
+		fontSize: 0.9,
 		tabSize: 2,
 		content: null,
 	}
@@ -71,7 +71,7 @@ export default class Editor extends Component {
 	focusTextarea = () => this.wrapperDiv.querySelector('textarea').focus()
 
 	moveCursorToStartOfTextarea = () => this.wrapperDiv.querySelector('textarea').setSelectionRange(0, 0)
-	moveCursorToEndOfTextarea = () => this.wrapperDiv.querySelector('textarea').setSelectionRange(-1, 0)
+	moveCursorToEndOfTextarea =   () => this.wrapperDiv.querySelector('textarea').setSelectionRange(-1, 0)
 
 	render({ fileName }, { content, fontSize, tabSize }) {
 		const highlight = (code) => Prism.highlight(code, prismLanguageFromFileName(fileName))
@@ -80,13 +80,14 @@ export default class Editor extends Component {
 					style={`font-size: ${fontSize}em; height: 100%`}
 					ref={el => this.wrapperDiv = el}
 					onContextMenu={this.showMenu}
-					onClick={this.focusTextarea}>
+					onClick={this.focusTextarea}
+					spellcheck={false}>
 			<SimpleCodeEditor
 				value={content}
 				onValueChange={this.handleChange}
 				highlight={highlight}
 				tabSize={tabSize}
-				insertSpaces={true}
+				insertSpaces={false}
 				style={{}} />
 		</div>
 	}

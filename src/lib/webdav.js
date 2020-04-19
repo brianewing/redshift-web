@@ -145,6 +145,9 @@ WebDAV.Fs = function(rootUrl) {
 	};
 
 	this.urlFor = function(href) {
+		if(href.startsWith('//')) {
+			href = window.location.protocol + href;
+		}
 		return (/^http/.test(href) ? href : this.rootUrl + href);
 	};
 

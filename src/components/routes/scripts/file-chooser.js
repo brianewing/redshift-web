@@ -67,7 +67,7 @@ export default class FileChooser extends Component {
 	render({ currentFileUrl }, { newFileDialogOpen, files }) {
 		return <div class={style.fileChooser}>
 			<button onClick={this.openNewFileDialog}>
-				New Script <GoPlus />
+				<GoPlus />
 			</button>
 
 			{newFileDialogOpen ? <NewFileDialog onClose={this.closeNewFileDialog}
@@ -79,8 +79,9 @@ export default class FileChooser extends Component {
 
 	renderFileList(files, currentFileUrl) {
 		const ignorePatterns = [
-			/^__pycache__$/, /\.pyc$/,
 			/^.DS_Store$/,
+			/^redshift\.(py|js)$/,
+			/^__pycache__$/, /\.pyc$/,
 		]
 
 		const isIgnored = (name) => ignorePatterns.find(p => name.match(p))
@@ -88,6 +89,8 @@ export default class FileChooser extends Component {
 		const fileFilter = (f) => {
 			return f.type != 'dir' && !isIgnored(f.name)
 		}
+
+		window.files = files
 
 		if(files.length == 0) {
 			return <i>Nothing to show</i>
