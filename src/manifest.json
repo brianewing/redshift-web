@@ -1,9 +1,9 @@
 {
-  "name": "Redshift LED Studio",
+  "name": "LedPlane LED Studio",
   "short_name": "Redshift",
   "start_url": "/",
   "display": "fullscreen",
-  "background_color": "#fff",
+  "background_color": "#222",
   "theme_color": "#000",
   "icons": [{
     "src": "/assets/icons/icon-512x512.png",

@@ -6,7 +6,7 @@ import OscSummary from './osc-summary';
 
 import style from './style';
 
-const EFFECTS_FPS = 3
+const EFFECTS_FPS = 10
 
 /*
  * Receives effects JSON from stream and allows user

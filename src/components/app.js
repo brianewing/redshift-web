@@ -39,8 +39,10 @@ export default class App extends Component {
 	componentWillMount() {
 		window.app = this
 		this.openConnection()
+		//this.startWasm()
 
 		document.body.addEventListener('keydown', this.handleKeyDown)
+		document.addEventListener('hide', this.turnOff);
 		document.addEventListener('visibilitychange', this.handleVisibilityChange, false)
 		document.addEventListener('mouseenter', this.handleMouseEnter)
 		document.addEventListener('mouseleave', this.handleMouseLeave)
@@ -52,6 +54,13 @@ export default class App extends Component {
 		document.removeEventListener('visibilitychange', this.handleVisibilityChange)
 		document.removeEventListener('mouseenter', this.handleMouseEnter)
 		document.removeEventListener('mouseleave', this.handleMouseLeave)
+	}
+
+	startWasm() {
+		const wasm = new RedshiftWasm
+		wasm.init()
+
+		this.setState({ wasm })
 	}
 
 	showMenu = (e) => {

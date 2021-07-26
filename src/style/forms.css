@@ -4,7 +4,7 @@ button, select, input {
     width: 100%;
 }
 
-button, select {
+button, select, input {
     padding: 0.5em;
 
     background: rgba(0, 0, 0, 0.8);
@@ -20,17 +20,21 @@ button, select {
     outline: none;
     border: 1px solid transparent;
 
+    font-size: 0.8em; /* todo: make this ui configurable */
+}
+
+button, select {
     padding: 1em;
-    font-size: 1.5em;
 }
 
 button:hover {
     opacity: 1;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    /* background: rgba(128, 91, 91, 0.7); */
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 } button:active {
     opacity: 0.7;
-    transform: scale(0.97) translate(1px, 1px);
+    transform: scale(0.8) translate(0px, 1px);
 }
 
 button[data-toggle] {
@@ -54,15 +58,13 @@ input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
 
+input {
+    font-size: 2em;
+}
+
 input:not([type="file"]), textarea {
-    text-shadow: none;
-
-    padding: 0.5em;
-
     border: 1px solid rgba(255, 255, 255, 0.2);
-    /* border-radius: 6px; */
     border-radius: 0px;
-
 
     color: white;
 
@@ -72,9 +74,6 @@ input:not([type="file"]), textarea {
     text-shadow: 1px 1px 0px #000;
 
     text-align: center;
-    font-family: 'Dosis';
-
-    font-size: 1em;
 } input:not([type="file"]):focus, textarea:focus {
     background: rgba(100, 100, 100, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.5);

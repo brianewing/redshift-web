@@ -1,4 +1,4 @@
-@import "https://fonts.googleapis.com/css?family=Source+Code+Pro";
+ @import "https://fonts.googleapis.com/css?family=Source+Code+Pro";
 
 .scripts {
 	display: flex;
@@ -70,7 +70,7 @@
 }
 
 .fileChooser li {
-	opacity: 0.90;
+	/* opacity: 0.90; */
 	cursor: pointer;
 
 	padding: 0.5em;

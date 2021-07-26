@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 
 import {
 	FaFloppyO, FaPlusSquareO, FaFolderOpenO, FaRandom, FaRedo
-} from 'react-icons/fa';
+} from 'react-icons/lib/fa';
 
 import basicContext from 'basiccontext';
 
@@ -157,20 +157,16 @@ export default class List extends Component {
 	}
 
 	render({ items, selection, availableEffects }, { shade, saving, lastEffectsFilename }) {
+		lastEffectsFilename = (lastEffectsFilename || '').replace(/\.json$/, '')
 		return <ul class={shade ? style.shade : ''}>
-			{/* { lastEffectsFilename && 
-				<li class={style.effectListCurrentFilename}>
-					{ lastEffectsFilename && <span>{ lastEffectsFilename }</span> }
-				</li> } */}
-
 			<li class={style.effectListHeader}>
 				{ saving && <SaveDialog onClose={() => this.setState({ saving: false })} onSave={this.saveSubmitted} /> }
 
 				{ lastEffectsFilename && <div class={style.effectListCurrentFilename}><span>{ lastEffectsFilename }</span></div> }
 
 				<button onClick={this.newClicked}>New</button>
-				<button onClick={this.openClicked} onMouseEnter={this.openMouseEnter} onMouseLeave={this.openMouseLeave}><FaFolderOpenO /></button>
-				<button onClick={this.saveClicked}><FaFloppyO /></button>
+				<button onClick={this.openClicked} onMouseEnter={this.openMouseEnter} onMouseLeave={this.openMouseLeave}><FaFolderOpenO /><span>Open</span></button>
+				<button onClick={this.saveClicked}><FaFloppyO /><span>Save</span></button>
 
 				<button onClick={this.openRandomSavedSet}><FaRandom /></button>
 				<button onClick={this.restartClicked}><FaRedo /></button> { /* alt icon: MdCached */ }

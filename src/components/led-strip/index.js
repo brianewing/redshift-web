@@ -68,8 +68,9 @@ export default class LEDStrip extends Component {
 
 		// const gapWidth = Math.floor(ledWidth / 40)
 		// const gapWidth = 2.8
-		const gapWidth = 1 / window.devicePixelRatio
+		// const gapWidth = 1 / window.devicePixelRatio
 		// const gapWidth = 10
+		const gapWidth = 1
 
 		for(let i=0; i<len; i++) {
 			const led = (reverse ? buffer[len - i - 1] : buffer[i])

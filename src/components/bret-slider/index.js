@@ -4,45 +4,46 @@ import style from './style'
 
 export default class BretSlider extends Component {
     state = {
-        mouseDownPosition: null,
+        origin: null,
     }
 
     componentDidMount() {
-        document.body.addEventListener('mouseup', this.onMouseUp)
-        document.body.addEventListener('mousemove', this.onMouseMove)
+        document.body.addEventListener('pointerup', this.onPointerUp)
+        document.body.addEventListener('pointermove', this.onPointerMove)
     }
 
     componentWillUnmount() {
-        document.body.removeEventListener('mouseup', this.onMouseUp)
-        document.body.removeEventListener('mousemove', this.onMouseMove)
+        document.body.removeEventListener('pointerup', this.onPointerUp)
+        document.body.removeEventListener('pointermove', this.onPointerMove)
     }
 
     onContextMenu = (e) => {
         this.props.onChange(0)
+        e.preventDefault()
     }
 
-    onMouseDown = (e) => {
-        this.setState({ mouseDownPosition: [ e.clientX, e.clientY ] })
+    onPointerDown = (e) => {
+        this.setState({ origin: [ e.clientX, e.clientY ] })
     }
 
-    onMouseUp = (e) => {
-        this.setState({ mouseDownPosition: null })
+    onPointerUp = (e) => {
+        this.setState({ origin: null })
     }
 
-    onMouseMove = (e) => {
-        if(this.state.mouseDownPosition) {
-            const [ x, y ] = this.state.mouseDownPosition
+    onPointerMove = (e) => {
+        if(this.state.origin) {
+            const [ x, y ] = this.state.origin
 
-            if(Math.abs(y - e.clientY) > 2) {
-                this.setState({ mouseDownPosition: [ e.clientX, e.clientY ] })
+            if(Math.abs(y - e.clientY) > 1) {
+                this.setState({ origin: [ e.clientX, e.clientY ] })
 
                 const direction = (y - e.clientY) < 0 ? -1 : 1
                 const delta = (this.props.step || 1) * direction
                 const newValue = this.props.value + delta
 
                 this.props.onChange && this.props.onChange(newValue)
-            } else if(Math.abs(x - e.clientX) > 2) {
-                this.setState({ mouseDownPosition: [ e.clientX, e.clientY ] })
+            } else if(Math.abs(x - e.clientX) > 1) {
+                this.setState({ origin: [ e.clientX, e.clientY ] })
 
                 const direction = (x - e.clientX) < 0 ? 1 : -1
                 const delta = (this.props.step || 1) * direction
@@ -50,13 +51,16 @@ export default class BretSlider extends Component {
 
                 this.props.onChange && this.props.onChange(newValue)
             }
+
+            e.preventDefault()
+            e.stopPropagation()
         }
     }
 
     render() {
         return <span
             class={style.bretSlider}
-            onMouseDown={this.onMouseDown}
+            onPointerDown={this.onPointerDown}
             onContextMenu={this.onContextMenu}>
                 {this.props.step < 1 ? this.props.value.toFixed(2) : this.props.value}
             </span>

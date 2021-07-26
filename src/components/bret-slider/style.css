@@ -10,4 +10,5 @@
     background-color: rgba(80, 80, 80, 0.6);
 
     cursor: pointer;
+    touch-action: none; /* disable touch-scrolling from touches originated in this element. */
 }

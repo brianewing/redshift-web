@@ -1,4 +1,5 @@
 import './style';
+import './lib/redshift-wasm';
 
 // import 'es6-shim';
 
@@ -17,6 +18,8 @@ const viewportTag = document.querySelector('meta[name=viewport]');
 viewportTag.content += ',user-scalable=no';
 
 const _basicContextShow = basicContext.show
+
+const redshiftWasm = new RedshiftWasm
 
 // patch basicContext to vibrate when a context menu is shown
 basicContext.show = (...args) => {

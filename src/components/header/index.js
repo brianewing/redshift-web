@@ -11,8 +11,6 @@ import {
 	GoTerminal, GoScreenFull
 } from 'react-icons/go';
 
-// try MdGamepad for remote control
-
 export default class Header extends Component {
 	render({ pageTitle, disconnected, hide, onTitleClick, onPowerToggle }) {
 		const icon = disconnected ? <FaChainBroken /> : <FaBars />
@@ -24,7 +22,7 @@ export default class Header extends Component {
 
 					{ disconnected && false
 						? 'Disconnected'
-						: pageTitle || 'Redshift' }
+						: pageTitle || ' Home' }
 				</h1>
 
 				{this.props.children}
