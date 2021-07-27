@@ -34,23 +34,27 @@ export default class BretSlider extends Component {
         if(this.state.origin) {
             const [ x, y ] = this.state.origin
 
+            let newValue = this.props.value
+
             if(Math.abs(y - e.clientY) > 1) {
                 this.setState({ origin: [ e.clientX, e.clientY ] })
 
                 const direction = (y - e.clientY) < 0 ? -1 : 1
                 const delta = (this.props.step || 1) * direction
-                const newValue = this.props.value + delta
 
-                this.props.onChange && this.props.onChange(newValue)
-            } else if(Math.abs(x - e.clientX) > 1) {
+                newValue += delta
+            }
+            
+            if(Math.abs(x - e.clientX) > 1) {
                 this.setState({ origin: [ e.clientX, e.clientY ] })
 
                 const direction = (x - e.clientX) < 0 ? 1 : -1
                 const delta = (this.props.step || 1) * direction
-                const newValue = this.props.value + delta
 
-                this.props.onChange && this.props.onChange(newValue)
+                newValue += delta
             }
+
+            this.props.onChange && this.props.onChange(newValue)
 
             e.preventDefault()
             e.stopPropagation()
